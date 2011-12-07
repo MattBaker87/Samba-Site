@@ -22,6 +22,7 @@
                 <li><span class="label important">Question</span> Only one instrument per person?</li>
             </ul>
         </li>
+        <li>If event is in the past and you signed-up for an instrument, link to sign the instrument back in</li>
         <li>Note that the instrument list will also act as a "who's going" list</li>
         <li><span class="label notice">Admin</span> Edit event</li>
     </ul>
@@ -30,6 +31,8 @@
 {% block links %}
     <ul>
         <li><span class="label notice">Admin</span> <a href="{% url event_edit %}">Edit event</a></li>
+        <li><span class="label notice">Admin</span> <a href="{% url event_delete %}">Delete event</a></li>
+        <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
         <li><a href="{% url events_upcoming %}">Back to list of events</a></li>
         <li><a href="{% url home %}">Back to homepage</a></li>
         <li><a href="{% url index %}">Logout</a></li>

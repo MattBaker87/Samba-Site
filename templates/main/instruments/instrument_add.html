@@ -1,0 +1,20 @@
+{% extends "main/base.html" %}
+
+{% block title %}Add instrument{% endblock %}
+{% block header %}Add instrument{% endblock %}
+
+{% block content %}
+    <ul>
+        <li><span class="label notice">Admin</span> Whole page is admin only</li>
+        <li>Basic form to add an instrument</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><a href="{% url instrument_list %}">Add instrument and go to instrument list</a></li>
+        <li><a href="{% url instrument_list %}">Cancel add and go to instrument list</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}

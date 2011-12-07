@@ -14,15 +14,16 @@
                 <li>Who's going (simple list)</li>
             </ul>
         </li>
-        <li><span class="label notice">Admin</span> Option to edit upcoming events, or add an event if you're an admin</li>
+        <li><span class="label notice">Admin</span> Option to edit, delete and add events</li>
     </ul>
 {% endblock %}
 
 {% block links %}
     <ul>
         <li><a href="{% url event_detail %}">View specific event</a></li>
-        <li><span class="label notice">Admin</span> <a href="{% url event_add %}">Add an event event</a></li>
-        <li><span class="label notice">Admin</span> <a href="{% url event_edit %}">Edit an event event</a></li>
+        <li><span class="label notice">Admin</span> <a href="{% url event_add %}">Add an event</a></li>
+        <li><span class="label notice">Admin</span> <a href="{% url event_edit %}">Edit an event</a></li>
+        <li><span class="label notice">Admin</span> <a href="{% url event_delete %}">Delete an event</a></li>
         <li><a href="{% url home %}">Back to homepage</a></li>
         <li><a href="{% url index %}">Logout</a></li>
     </ul>

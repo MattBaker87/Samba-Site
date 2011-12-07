@@ -1,0 +1,39 @@
+{% extends "main/base.html" %}
+
+{% block title %}Instrument detail{% endblock %}
+{% block header %}Instrument detail{% endblock %}
+
+{% block content %}
+    <ul>
+        <li>Full instrument history, by event
+            <ul>
+                <li>Name of the event</li>
+                <li>Date</li>
+                <li>Location</li>
+                <li>Who played the instrument</li>
+                <li>Any further details / notes when they signed the instrument back in</li>
+            </ul>
+        </li>
+        <li>Future bookings
+            <ul>
+                <li>Name of the event</li>
+                <li>Date</li>
+                <li>Location</li>
+                <li>Who will play the instrument</li>
+            </ul>
+        </li>
+        <li>Current instrument location (this will be the store-room unless someone has it out and hasn't signed it back in)</li>
+        <li>Link to sign instrument back in if you're the one who's got it out</li>
+        <li><span class="label notice">Admin</span> Delete instrument</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><span class="label notice">Admin</span> <a href="{% url instrument_delete %}">Delete instrument</a></li>
+        <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
+        <li><a href="{% url instrument_list %}">Back to list of instruments</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}

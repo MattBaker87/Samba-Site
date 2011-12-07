@@ -1,0 +1,19 @@
+{% extends "main/base.html" %}
+
+{% block title %}Delete event{% endblock %}
+{% block header %}Delete event{% endblock %}
+
+{% block content %}
+    <ul>
+        <li><span class="label notice">Admin</span> Whole page is admin only</li>
+        <li>Ask for confirmation that you want to delete an event. Send an email to all those who have signed up for it saying that it's cancelled (should give a box allowing admin to type a message to them)</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><a href="{% url events_upcoming %}">Back to event list</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}
