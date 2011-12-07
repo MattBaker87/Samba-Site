@@ -12,7 +12,8 @@
             <a class="brand" href="{% url index %}">Samba Site</a>
             <ul class="nav">
                 <li class="active"><a href="{% url index %}">Home</a></li>
-                <li><a href="#">About</a></li>
+                <li><a href="#">Events</a></li>
+                <li><a href="#">Instruments</a></li>
             </ul>
             {% if user.is_authenticated %}
                 <ul class="nav secondary-nav">
@@ -58,7 +59,7 @@
     </div>
 
     <footer>
-        <p>&copy; Company 2011</p>
+        <p>&copy; 2011</p>
     </footer>
 
 </div>

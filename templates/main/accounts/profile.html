@@ -1,0 +1,27 @@
+{% extends "main/base.html" %}
+
+{% block title %}User profile{% endblock %}
+{% block header %}User profile{% endblock %}
+
+{% block content %}
+    <ul>
+        <li>Full user profile page, including
+            <ul>
+                <li>Contact details and option to change them</li>
+                <li>Option to change password</li>
+                <li>Previous events</li>
+                <li><span class="label important">Question</span> Should we have a free text box description for people here?</li>
+            </ul>
+        </li>
+        <li>Ideally this will be built so it also forms the 'view someone else's profile page (but other users won't see the change options, unless they're an admin)</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><a href="{% url edit_contact %}">Edit contact details</a></li>
+        <li><a href="{% url change_password %}">Change password</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}

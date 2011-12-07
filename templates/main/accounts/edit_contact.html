@@ -1,0 +1,18 @@
+{% extends "main/base.html" %}
+
+{% block title %}Edit contact details{% endblock %}
+{% block header %}Edit contact details{% endblock %}
+
+{% block content %}
+    <ul>
+        <li>Simple form to edit contact details. Allows user to update their email address and phone number. Only accept one of each.</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><a href="{% url profile %}">Back to profile</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}

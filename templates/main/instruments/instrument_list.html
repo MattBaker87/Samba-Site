@@ -1,0 +1,28 @@
+{% extends "main/base.html" %}
+
+{% block title %}Instrument list{% endblock %}
+{% block header %}Instrument list{% endblock %}
+
+{% block content %}
+    <ul>
+        <li>List of instruments currently owned by the band, and where they are
+            <ul>
+                <li>Name of instrument</li>
+                <li>Type of instrument</li>
+                <li>Currently sign-ed out?</li>
+                <li>If so, by who?</li>
+                <li>If so, when was it sign-ed out?</li>
+            </ul>
+        </li>
+        <li><span class="label notice">Admin</span> Option to add/remove instruments</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><span class="label notice">Admin</span> <a href="#">Add instrument</a></li>
+        <li><span class="label notice">Admin</span> <a href="#">Delete instrument</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}

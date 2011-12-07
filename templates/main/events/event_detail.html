@@ -1,0 +1,37 @@
+{% extends "main/base.html" %}
+
+{% block title %}Event detail{% endblock %}
+{% block header %}Event detail{% endblock %}
+
+{% block content %}
+    <ul>
+        <li>Context
+            <ul>
+                <li>Name of the event</li>
+                <li>When is it?</li>
+                <li>Where</li>
+                <li>Organiser (with contact details)</li>
+                <li>Any further details / notes</li>
+            </ul>
+        </li>
+        <li>Sign-up for an instrument (and see who's sign-ed out what)
+            <ul>
+                <li>List of instruments that will be going to the event</li>
+                <li>Name against each instrument, or option to sign it out for this event</li>
+                <li>Option to remove your name from an instrument</li>
+                <li><span class="label important">Question</span> Only one instrument per person?</li>
+            </ul>
+        </li>
+        <li>Note that the instrument list will also act as a "who's going" list</li>
+        <li><span class="label notice">Admin</span> Edit event</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><span class="label notice">Admin</span> <a href="{% url event_edit %}">Edit event</a></li>
+        <li><a href="{% url events_upcoming %}">Back to list of events</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}

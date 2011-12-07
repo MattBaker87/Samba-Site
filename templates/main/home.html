@@ -1,0 +1,59 @@
+{% extends "main/base.html" %}
+
+{% block title %}User homepage{% endblock %}
+{% block header %}User homepage{% endblock %}
+
+{% block content %}
+    <ul>
+        <li>Profile
+            <ul>
+                <li>Your phone number and email address to encourage people to keep them up to date (include edit link)</li>
+                <li>Link to your full profile info (will include join date, events you've been on, etc.)</li>
+            </ul>
+        </li>
+        <li>Events
+            <ul>
+                <li>List of upcoming events, with who's coming to each
+                    <ul>
+                        <li>Obvious label on events you're going to</li>
+                        <li>Click on each event for more info</li>
+                    </ul>
+                </li>
+                <li>Link to list of all upcoming events, all past events, and all events you're signed up for</li>
+                <li><span class="label notice">Admin</span> Add a new event</li>
+            </ul>
+        </li>
+        <li>Instruments / name and shame
+            <ul>
+                <li>List of instruments that are due back, with the name of the person who owes them</li>
+                <li>Link to see where all of the instruments are</li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li>Profile
+            <ul>
+                <li><a href="{% url edit_contact %}">Edit contact details</a></li>
+                <li><a href="{% url profile %}">View full profile info</a></li>
+            </ul>
+        </li>
+        <li>Events
+            <ul>
+                <li><a href="{% url event_detail %}">View specific event</a></li>
+                <li><a href="{% url events_upcoming %}">List of upcoming events</a></li>
+                <li><a href="{% url events_past %}">List of past events</a></li>
+                <li><a href="{% url events_yours %}">List of your (future) events</a></li>
+                <li><span class="label notice">Admin</span> <a href="{% url event_add %}">Add an event</a></li>
+            </ul>
+        </li>
+        <li>Instruments
+            <ul>
+                <li><a href="{% url instrument_list %}">List of all instruments and where they are</li>
+            </ul>
+        </li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}

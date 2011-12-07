@@ -8,13 +8,15 @@
         <li>Logo</li>
         <li>Sign-up</li>
         <li>Sign-in</li>
+        <li>Forgotten your password</li>
     </ul>
 {% endblock %}
 
 {% block links %}
     <ul>
-        <li><a href="#">Login as user</a></li>
-        <li><a href="#">Login as admin</a></li>
-        <li><a href="#">Signup</a></li>
+        <li><a href="{% url home %}">User homepage (after login)</a></li>
+        <li><a href="{% url home %}">Admin homepage (after login)</a></li>
+        <li><a href="{% url signup %}">Signup</a></li>
+        <li><a href="{% url forgotten %}">Forgotten password</a></li>
     </ul>
 {% endblock %}

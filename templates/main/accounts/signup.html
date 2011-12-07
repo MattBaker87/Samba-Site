@@ -1,0 +1,18 @@
+{% extends "main/base.html" %}
+
+{% block title %}Sign-up page{% endblock %}
+{% block header %}Sign-up page{% endblock %}
+
+{% block content %}
+    <ul>
+        <li>Simple sign-up form, asking for name, email and password</li>
+        <li>Note: user email address as their login. Name is their display-name</li>
+        <li>On sign-up, send an email asking for authorisation to an admin, who then has to approve new members. (This is an arse, but if you want to empower users then it's probably best you vet them...)</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><a href="{% url index %}">Back to not logged-in</a></li>
+    </ul>
+{% endblock %}

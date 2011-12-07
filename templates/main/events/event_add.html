@@ -1,0 +1,20 @@
+{% extends "main/base.html" %}
+
+{% block title %}Add event{% endblock %}
+{% block header %}Add event{% endblock %}
+
+{% block content %}
+    <ul>
+        <li><span class="label notice">Admin</span> Whole page is admin only</li>
+        <li>Basic form to add events. Asks you which instruments you want to add (and an option to add all of them so it's not a total pain in the arse)</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><a href="{% url event_detail %}">Add event and view details</a></li>
+        <li><a href="{% url events_upcoming %}">Back to event list</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url index %}">Logout</a></li>
+    </ul>
+{% endblock %}
