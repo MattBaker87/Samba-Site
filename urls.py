@@ -5,5 +5,5 @@ from django.conf.urls.defaults import patterns, include, url
 # admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'', include('sambasite.main.urls')),
+    url(r'', include('sambasite.main.urls_main')),
 )

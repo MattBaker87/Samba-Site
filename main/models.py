@@ -15,6 +15,7 @@ class Event(models.Model):
 
 class Instrument(models.Model):
     name = models.CharField(max_length=SHORT)
+    damaged = models.BooleanField(default=False)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
