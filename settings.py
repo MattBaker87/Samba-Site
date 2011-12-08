@@ -33,7 +33,7 @@ else:
 	DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'greysteil_mysite',                      # Or path to database file if using sqlite3.
+        'NAME': 'greysteil_samba',                      # Or path to database file if using sqlite3.
         'USER': 'greysteil',                      # Not used with sqlite3.
         'PASSWORD': 'ABCD1234',                  # Not used with sqlite3.
         'HOST': 'mysql.alwaysdata.com',                      # Set to empty string for localhost. Not used with sqlite3.
@@ -66,12 +66,16 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+	import os
+	MEDIA_ROOT = PROJECT_DIR.replace('\\', '/')
+else:
+	MEDIA_ROOT = '/home/greysteil/sambasite/public/site_media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/site_media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -123,9 +127,18 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'sambasite.urls'
 
-TEMPLATE_DIRS = (
-    os.path.join(PROJECT_DIR, "templates")
-)
+if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+	import os.path
+	TEMPLATE_DIRS = (
+		os.path.join(PROJECT_DIR, 'templates').replace('\\', '/'),
+	 	# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
+		# Always use forward slashes, even on Windows.
+		# Don't forget to use absolute paths, not relative paths.
+		)
+else:
+	TEMPLATE_DIRS = (
+		'/home/greysteil/sambasite/public/site_media/templates',
+		)
 
 INSTALLED_APPS = (
     'django.contrib.auth',
