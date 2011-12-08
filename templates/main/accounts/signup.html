@@ -1,17 +1,42 @@
-{% extends "main/base.html" %}
+{% extends "main/base_new.html" %}
 
 {% block title %}Sign-up page{% endblock %}
-{% block header %}Sign-up page{% endblock %}
 
 {% block content %}
+<div class="signup-header">
+    <h1>Sign up for samba</h1>
+</div>
+<form id="signup-form" action="" method="post">
+    {% csrf_token %}
+    <fieldset>
+        {% for boundfield in form %}
+            <div class="clearfix {% if boundfield.errors %}error{% endif %}">
+                <div class="input">
+                    {% if boundfield.errors %}
+                        {% for error in boundfield.errors %}
+                            <span class="help-inline">{{ error }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="help-inline">{{ boundfield.help_text }}</span>
+                    {% endif %}
+                    {{ boundfield }}
+				</div>
+			</div>
+		{% endfor %}
+	</fieldset>
+    <div class="input">
+        <button class="btn large success" type="submit">Sign up</button>
+    </div>
+</form>
+{% endblock %}
+
+{% block wireframe_content %}
     <ul>
-        <li>Simple sign-up form, asking for name, email and password</li>
-        <li>Note: user email address as their login. Name is their display-name</li>
-        <li>On sign-up, send an email asking for authorisation to an admin, who then has to approve new members. (This is an arse, but if you want to empower users then it's probably best you vet them...)</li>
+        <li>TODO: on sign-up, send an email asking for authorisation to an admin, who then has to approve new members (at the moment it just creates a new user)</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_links %}
     <ul>
         <li><a href="{% url index %}">Back to not logged-in</a></li>
     </ul>

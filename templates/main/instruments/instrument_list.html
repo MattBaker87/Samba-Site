@@ -3,20 +3,35 @@
 {% block title %}Instrument list{% endblock %}
 {% block header %}Instrument list{% endblock %}
 
+{% block nav %}
+    {% with "instruments" as active %}
+        {% include 'main/nav.html' %}
+    {% endwith %}
+{% endblock %}
+
 {% block content %}
     <ul>
         <li>Table of instruments currently owned by the band, and where they are
             <ul>
                 <li>Name of instrument</li>
-                <li>Last signed out for... (event and date)</li>
-                <li>...by</li>
-                <li>Notes (either notes when signed back in or a not saying not signed in)</li>
+                <li>Location
+                    <ul>
+                        <li>Either in kit room or give details of who currently has it signed out (and when they signed it out)</li>
+                    </ul>
+                </li>
+                <li>Damaged?
+                    <ul>
+                        <li>A flag for damaged instruments</li>
+                    </ul>
+                </li>
+                <li>Most recent note - e.g., a damage report or an admin writing that they've fixed it</li>
                 <li>Next user</li>
                 <li>...for (event and date)</li>
             </ul>
         </li>
         <li>Option to sign instrument back in if it's you that has it</li>
         <li><span class="label notice">Admin</span> Option to add/remove instruments from the database (this really is an admin-only privilege)</li>
+        <li><span class="label notice">Admin</span> Option to edit location (sign back in), damaged flag, and write a note on each instrument</li>
     </ul>
 {% endblock %}
 
@@ -26,7 +41,8 @@
         <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
         <li><span class="label notice">Admin</span> <a href="{% url instrument_add %}">Add instrument</a></li>
         <li><span class="label notice">Admin</span> <a href="{% url instrument_delete %}">Delete instrument</a></li>
+        <li><span class="label notice">Admin</span> <a href="{% url instrument_edit %}">Edit instrument flag and details</a></li>
         <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url index %}">Logout</a></li>
+        <li><a href="{% url logout %}">Logout</a></li>
     </ul>
 {% endblock %}

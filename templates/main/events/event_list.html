@@ -3,6 +3,12 @@
 {% block title %}Event list{% endblock %}
 {% block header %}Event list{% endblock %}
 
+{% block nav %}
+    {% with "events" as active %}
+        {% include 'main/nav.html' %}
+    {% endwith %}
+{% endblock %}
+
 {% block content %}
     <ul>
         <li>List of events (may be future events, past events, etc. Same format.)
@@ -12,6 +18,7 @@
                 <li>Where</li>
                 <li>Organiser (with contact details)</li>
                 <li>Who's going (simple list)</li>
+                <li>Label on each event for whether current number of sign-ups is enough (0-10, 10-15, 15+)</li>
             </ul>
         </li>
         <li><span class="label notice">Admin</span> Option to edit, delete and add events</li>
@@ -25,6 +32,6 @@
         <li><span class="label notice">Admin</span> <a href="{% url event_edit %}">Edit an event</a></li>
         <li><span class="label notice">Admin</span> <a href="{% url event_delete %}">Delete an event</a></li>
         <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url index %}">Logout</a></li>
+        <li><a href="{% url logout %}">Logout</a></li>
     </ul>
 {% endblock %}

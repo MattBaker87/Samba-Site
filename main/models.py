@@ -18,7 +18,8 @@ class Instrument(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User)
-    telephone = models.CharField(max_length=15)
+    name = models.CharField(max_length=SHORT, blank=True)
+    telephone = models.CharField(max_length=15, blank=True)
 
 class Booking(models.Model):
     user = models.ForeignKey(User, related_name='bookings')

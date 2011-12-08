@@ -5,6 +5,14 @@
 
 {% block content %}
     <ul>
+        <li>Instrument status and notes
+            <ul>
+                <li>Current location (i.e., kit room or who has responsibility for it)</li>
+                <li>Damage status</li>
+                <li>Most recent note, with date</li>
+                <li><span class="label notice">Admin</span> Option to edit status, location, and add a note</li>
+            </ul>
+        </li>
         <li>Full instrument history, by event
             <ul>
                 <li>Name of the event</li>
@@ -31,9 +39,10 @@
 {% block links %}
     <ul>
         <li><span class="label notice">Admin</span> <a href="{% url instrument_delete %}">Delete instrument</a></li>
+        <li><span class="label notice">Admin</span> <a href="{% url instrument_edit %}">Edit instrument flag and details</a></li>
         <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
         <li><a href="{% url instrument_list %}">Back to list of instruments</a></li>
         <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url index %}">Logout</a></li>
+        <li><a href="{% url logout %}">Logout</a></li>
     </ul>
 {% endblock %}

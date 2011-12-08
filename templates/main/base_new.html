@@ -2,27 +2,27 @@
 <html>
 <head>
     <title>Samba Site - {% block title %}Default{% endblock %}</title>
-    <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}wireframe.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}samba_base.css">
 </head>
 <body>
 {% block nav %}
     {% include 'main/nav.html' %}
 {% endblock %}
 <div class="container">
-    <div class="content">
-        <div class="page-header">
-            <h1>{% block header %}Default{% endblock %}</h1>
-        </div>
+        {% block content %}
+        {% endblock %}
+        
+        <div class="content">
         <div class="row">
+            <hr>
             <div class="span12">
                 <h3>Content</h3>
-                {% block content %}
+                {% block wireframe_content %}
                 {% endblock %}
             </div>
             <div class="span4">
                 <h3>Links</h3>
-                {% block links %}
+                {% block wireframe_links %}
                 {% endblock %}
             </div>
         </div>

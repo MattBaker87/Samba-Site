@@ -1,7 +1,12 @@
 # Django settings for sambasite project.
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
+import socket
+if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+    DEBUG = True
+    TEMPLATE_DEBUG = DEBUG
+else:
+    DEBUG = False
+    TEMPLATE_DEBUG = False
 
 import os
 PROJECT_DIR = os.path.dirname(__file__)
@@ -12,13 +17,26 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-DATABASES = {
+import socket
+if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+	DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': os.path.join(PROJECT_DIR, 'database'),                      # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'django_samba',                      # Or path to database file if using sqlite3.
+        'USER': 'django',                      # Not used with sqlite3.
+        'PASSWORD': 'password',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+	}
+else:
+	DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'greysteil_mysite',                      # Or path to database file if using sqlite3.
+        'USER': 'greysteil',                      # Not used with sqlite3.
+        'PASSWORD': 'ABCD1234',                  # Not used with sqlite3.
+        'HOST': 'mysql.alwaysdata.com',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -123,6 +141,8 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'sambasite.main'
 )
+
+AUTH_PROFILE_MODULE = 'main.UserProfile'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

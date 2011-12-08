@@ -5,13 +5,13 @@
 
 {% block content %}
     <ul>
-        <li>Simple form to sign your instrument back in. Just gives a free text box for notes on the state of the instrument when you signed it back in. When all instruments for an event are signed back in it would be nice to email the event organiser</li>
+        <li>Simple form to sign your instrument back in. Gives a free text box for notes on the state of the instrument when you signed it back in, and the option to flag the instrument as damaged. When all instruments for an event are signed back in it would be nice to email the event organiser.</li>
     </ul>
 {% endblock %}
 
 {% block links %}
     <ul>
         <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url index %}">Logout</a></li>
+        <li><a href="{% url logout %}">Logout</a></li>
     </ul>
 {% endblock %}

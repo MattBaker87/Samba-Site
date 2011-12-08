@@ -1,14 +1,18 @@
 from django.conf.urls.defaults import include, patterns, url
+from django.core.urlresolvers import reverse
+from django.utils.functional import lazy
+
+from forms import LoginForm
+
+reverse_lazy = lazy(reverse, str)
 
 urlpatterns = patterns('sambasite.main.views',
-    # url(r'^$', 'index', name='index'),
+    url(r'^$', 'index', name='index'),
+    url(r'^accounts/signup$', 'signup', name='signup'),
 )
 
 urlpatterns += patterns('django.views.generic',
-    url(r'^$', 'simple.direct_to_template', {'template': 'main/index.html'}, name='index'),
     url(r'^home$', 'simple.direct_to_template', {'template': 'main/home.html'}, name='home'),
-    url(r'^accounts/signup$', 'simple.direct_to_template', {'template': 'main/accounts/signup.html'},
-                                                                            name='signup'),
     url(r'^accounts/profile$', 'simple.direct_to_template', {'template': 'main/accounts/profile.html'},
                                                                             name='profile'),
     url(r'^accounts/contact$', 'simple.direct_to_template', {'template': 'main/accounts/edit_contact.html'},
@@ -41,8 +45,12 @@ urlpatterns += patterns('django.views.generic',
                                                                             name='instrument_add'),
     url(r'^instruments/delete$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_delete.html'},
                                                                             name='instrument_delete'),
+    url(r'^instruments/edit$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_edit.html'},
+                                                                            name='instrument_edit'),
 )
 
 urlpatterns += patterns('django.contrib',
-    # url(r'^accounts/login/$', 'auth.views.login', {'template_name': 'main/accounts/login.html'}, name='login'),
+    url(r'^accounts/login/$', 'auth.views.login', {'authentication_form': LoginForm, 'template_name': 'main/index.html'},
+    													name='login'),
+    url(r'^accounts/logout/$', 'auth.views.logout', {'next_page': reverse_lazy('index')}, name='logout'),
 )

@@ -3,6 +3,12 @@
 {% block title %}User homepage{% endblock %}
 {% block header %}User homepage{% endblock %}
 
+{% block nav %}
+    {% with "home" as active %}
+        {% include 'main/nav.html' %}
+    {% endwith %}
+{% endblock %}
+
 {% block content %}
     <ul>
         <li>Profile
@@ -16,6 +22,7 @@
                 <li>List of upcoming events, with who's coming to each
                     <ul>
                         <li>Obvious label on events you're going to</li>
+                        <li>Label on each event for whether current number of sign-ups is enough (0-9, 10-14, 15+)</li>
                         <li>Click on each event for more info</li>
                     </ul>
                 </li>
@@ -61,6 +68,6 @@
                 <li><a href="{% url instrument_list %}">List of all instruments and where they are</a></li>
             </ul>
         </li>
-        <li><a href="{% url index %}">Logout</a></li>
+        <li><a href="{% url logout %}">Logout</a></li>
     </ul>
 {% endblock %}

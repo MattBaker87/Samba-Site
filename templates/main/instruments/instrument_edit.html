@@ -1,0 +1,20 @@
+{% extends "main/base.html" %}
+
+{% block title %}Update instrument details{% endblock %}
+{% block header %}Update instrument details{% endblock %}
+
+{% block content %}
+    <ul>
+        <li><span class="label notice">Admin</span> Whole page is admin only</li>
+        <li>Basic form to update instrument status for admins. Allows them to change the damage status, sign the instrument back in, and write notes on the instrument.</li>
+    </ul>
+{% endblock %}
+
+{% block links %}
+    <ul>
+        <li><a href="{% url instrument_list %}">Update instrument and go to instrument list</a></li>
+        <li><a href="{% url instrument_list %}">Cancel update and go to instrument list</a></li>
+        <li><a href="{% url home %}">Back to homepage</a></li>
+        <li><a href="{% url logout %}">Logout</a></li>
+    </ul>
+{% endblock %}
