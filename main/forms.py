@@ -77,16 +77,16 @@ class LoginForm(AuthenticationForm):
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-
+        
         if username and password:
             try:
                 User.objects.get(username=username)
             except User.DoesNotExist:
-                raise forms.ValidationError(_("That email address isn't registered with us!"))
+                raise forms.ValidationError(_("That email address isn't registered with us"))
             
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
-                raise forms.ValidationError(_("Password didn't match username!"))
+                raise forms.ValidationError(_("Password didn't match username"))
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(_("This account is inactive."))
         self.check_for_test_cookie()
