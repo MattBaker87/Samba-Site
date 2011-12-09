@@ -10,7 +10,7 @@
     <table class="condensed-table dimmed">
         <thead>
             <tr>
-                <th colspan="2">Current instruments</th>
+                <th colspan="2">All instruments</th>
             </tr>
         </thead>
         <tbody>
@@ -41,6 +41,19 @@
                     {% endif %}
 				</div>
 			</div>
+            <div class="clearfix {% if form.instrument_type.errors %}error{% endif %}">
+                {{ form.instrument_type.label_tag }}
+                <div class="input">
+                    {{ form.instrument_type }}
+                    {% if form.instrument_type.errors %}
+                        {% for error in form.instrument_type.errors %}
+                            <span class="help-inline">{{ error }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="help-inline">{{ form.instrument_type.help_text }}</span>
+                    {% endif %}
+				</div>
+			</div>
 			<div class="clearfix">
 			    <label id="optionsCheckboxes">Flags</label>
 			    <div class="input">
@@ -64,8 +77,7 @@
 
 {% block wireframe_content %}
     <ul>
-        <li><span class="label notice">Admin</span> Whole page is admin only</li>
-        <li>Basic form to add an instrument</li>
+        <li>TODO: Fix CSS so this isn't really ugly. May want to make the content part of this span13 if there are no options/links we want to put on the right</li>
     </ul>
 {% endblock %}
 

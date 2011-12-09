@@ -18,7 +18,17 @@ class Event(models.Model):
         ordering = ['when']
 
 class Instrument(models.Model):
+    INSTRUMENT_CHOICES = (
+        ('surd', 'Surdo'),
+        ('agog', 'Agogo'),
+        ('caix', 'Caixa'),
+        ('repi', 'Repinique'),
+        ('tamb', 'Tamborim'),
+        ('shak', 'Shaker'),
+        )
+    
     slug = models.SlugField(unique=True, primary_key=True)
+    instrument_type = models.CharField(max_length=4, choices=INSTRUMENT_CHOICES, verbose_name="Instrument type")
     name = models.CharField(max_length=SHORT, verbose_name="Instrument name")
     damaged = models.BooleanField(default=False, verbose_name="This instrument is damaged")
     

@@ -67,7 +67,6 @@ USE_L10N = True
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 if socket.gethostname() == 'grey-bakers-macbook-pro.local':
-	import os
 	MEDIA_ROOT = PROJECT_DIR.replace('\\', '/')
 else:
 	MEDIA_ROOT = '/home/greysteil/sambasite/public/site_media/'
@@ -85,7 +84,10 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, "static")
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+	STATIC_URL = '/static/'
+else:
+	STATIC_URL = '/site_media/styles/css/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.

@@ -26,6 +26,7 @@
 
 {% block content %}
     <p><b>Name:</b> {{ instrument.name }}</p>
+    <p><b>Type:</b> {{ instrument.get_instrument_type_display }}</p>
     {% if instrument.damaged %}
         <p><b>Damage:</b> This instrument is flagged as damaged</p>
     {% endif %}
@@ -66,34 +67,27 @@
 
 {% block wireframe_content %}
     <ul>
-        <li>Instrument status and notes
+        <li>TODO at next opportunity:
             <ul>
-                <li>Current location (i.e., kit room or who has responsibility for it)</li>
-                <li>Damage status</li>
-                <li>Most recent note, with date</li>
-                <li><span class="label notice">Admin</span> Option to edit status, location, and add a note</li>
+                <li>Add breadcrumbs to bottom of page to make it easier to navigate</li>
+                <li>Add link back to instrument list to the options bar on the right</li>
+                <li>Fix CSS of buttons on the right so that they're all the same size, and so that tops of columns align nicely</li>
             </ul>
         </li>
-        <li>Full instrument history, by event
+        <li>TODO after adding event functionality:
             <ul>
-                <li>Name of the event</li>
-                <li>Date</li>
-                <li>Location</li>
-                <li>Who played the instrument</li>
-                <li>Any further details / notes when they signed the instrument back in</li>
+                <li>Check the display table of past events the instrument has been to is working (currently not showing as there are no events in the system!)</li>
+                <li>Add pagination to the above list of past events, or limit them to the last 10</li>
+                <li>Add sign instrument in functionality</li>
+                <li>Add edit instrument functionality (for admin)</li>
+                <li>Add ability to make notes, and figure out a sensible way of displaying them alongside events</li>
             </ul>
         </li>
-        <li>Future bookings
+        <li>TODO lower priority:
             <ul>
-                <li>Name of the event</li>
-                <li>Date</li>
-                <li>Location</li>
-                <li>Who will play the instrument</li>
+                <li>Build admin distinction, so buttons aren't shown to everyone</li>
             </ul>
         </li>
-        <li>Current instrument location (this will be the store-room unless someone has it out and hasn't signed it back in)</li>
-        <li>Link to sign instrument back in if you're the one who's got it out</li>
-        <li><span class="label notice">Admin</span> Delete instrument</li>
     </ul>
 {% endblock %}
 

@@ -17,6 +17,7 @@
         <thead>
             <tr>
                 <th>Instrument</th>
+                <th>Type</th>
                 <th>Location</th>
                 <th>Last user</th>
                 <th>Next booked for</th>
@@ -28,6 +29,7 @@
             {% for instrument in instrument_list %}
                 <tr>
                     <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
+                    <td>{{ instrument.get_instrument_type_display }}</td>
                     <td>{{ instrument.location }}</td>
                     <td>{% if instrument.last_booking %}{{ instrument.last_booking.user.get_profile.name }}{% else %}Brand new!{% endif %}</td>
                     <td>{% if instrument.next_booking %}{{ instrument.next_booking.event.when }}{% else %}No future bookings{% endif %}</td>
