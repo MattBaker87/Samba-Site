@@ -1,16 +1,54 @@
-{% extends "main/base.html" %}
+{% extends "main/base_new.html" %}
 
 {% block title %}Add instrument{% endblock %}
 {% block header %}Add instrument{% endblock %}
 
 {% block content %}
+    <h1>Add an instrument</h1>
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            <div class="clearfix {% if form.name.errors %}error{% endif %}">
+                {{ form.name.label_tag }}
+                <div class="input">
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        {% for error in form.name.errors %}
+                            <span class="help-inline">{{ error }}</span>
+                        {% endfor %}
+                    {% else %}
+                        <span class="help-inline">{{ form.name.help_text }}</span>
+                    {% endif %}
+				</div>
+			</div>
+			<div class="clearfix">
+			    <label id="optionsCheckboxes">Flags</label>
+			    <div class="input">
+			        <ul class="inputs-list">
+			            <li>
+			                <label>
+			                    {{ form.damaged }}
+			                    <span>{{ form.damaged.label }}</span>
+			                </label>
+			            </li>
+			        </ul>
+			    </div>
+			</div>
+    	</fieldset>
+        <div class="input">
+            <button class="btn success" type="submit">Add instrument</button>
+        </div>
+    </form>
+{% endblock %}
+
+{% block wireframe_content %}
     <ul>
         <li><span class="label notice">Admin</span> Whole page is admin only</li>
         <li>Basic form to add an instrument</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_links %}
     <ul>
         <li><a href="{% url instrument_list %}">Add instrument and go to instrument list</a></li>
         <li><a href="{% url instrument_list %}">Cancel add and go to instrument list</a></li>

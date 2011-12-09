@@ -2,6 +2,7 @@ from django.conf.urls.defaults import include, patterns, url
 
 
 urlpatterns = patterns('sambasite.main.views.instruments',
+    url(r'^add/$', 'add_instrument', name='instrument_add'),
 )
 
 urlpatterns += patterns('django.views.generic',
@@ -11,8 +12,8 @@ urlpatterns += patterns('django.views.generic',
                                                                             name='instrument_signin'),
     url(r'^detail/$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_detail.html'},
                                                                             name='instrument_detail'),
-    url(r'^add/$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_add.html'},
-                                                                            name='instrument_add'),
+    # url(r'^add/$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_add.html'},
+    #                                                                         name='instrument_add'),
     url(r'^delete/$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_delete.html'},
                                                                             name='instrument_delete'),
     url(r'^edit/$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_edit.html'},

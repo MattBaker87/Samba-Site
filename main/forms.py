@@ -8,7 +8,7 @@ from django.forms.widgets import TextInput, PasswordInput
 from main import fields
 
 from django.contrib.auth.models import User
-from main.models import UserProfile
+from main.models import UserProfile, Instrument
 
 class UserSignupForm(forms.ModelForm):
     username = forms.EmailField(label=_("Email"), max_length=30,
@@ -88,6 +88,19 @@ class LoginForm(AuthenticationForm):
             if self.user_cache is None:
                 raise forms.ValidationError(_("Password didn't match username"))
             elif not self.user_cache.is_active:
-                raise forms.ValidationError(_("This account is inactive."))
+                raise forms.ValidationError(_("This account is inactive"))
         self.check_for_test_cookie()
         return self.cleaned_data
+
+class InstrumentForm(forms.ModelForm):
+    class Meta:
+        model = Instrument
+        widgets = {'name': TextInput(attrs={'placeholder':'Agogo 1 (example)'}),}
+    
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        try:
+            Instrument.objects.get(name=name)
+        except Instrument.DoesNotExist:
+            return name
+        raise forms.ValidationError(_("An instrument with that name address already exists"))
