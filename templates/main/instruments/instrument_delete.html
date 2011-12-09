@@ -1,19 +1,15 @@
-{% extends "main/base.html" %}
+{% extends "main/instruments/instrument_detail.html" %}
 
 {% block title %}Delete instrument{% endblock %}
-{% block header %}Delete instrument{% endblock %}
 
-{% block content %}
-    <ul>
-        <li><span class="label notice">Admin</span> Whole page is admin only</li>
-        <li>Ask for confirmation that you want to delete an instrument</li>
-    </ul>
-{% endblock %}
-
-{% block links %}
-    <ul>
-        <li><a href="{% url instrument_list %}">Back to instrument list</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
-    </ul>
+{% block top %}
+    <div class="alert-message block-message error">
+        <div style="position:absolute; right:10px; top:4px;">
+            <form action="" method="post">
+                {% csrf_token %}
+                <button class="btn" type="submit">Yes, delete this instrument</button> <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">No, I've changed my mind</a>
+            </form>
+        </div>
+        <p>Are you sure you want to <strong>delete this instrument?</strong></p>
+    </div>
 {% endblock %}

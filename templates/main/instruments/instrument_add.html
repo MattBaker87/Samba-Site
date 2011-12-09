@@ -1,10 +1,30 @@
 {% extends "main/base_new.html" %}
 
 {% block title %}Add instrument{% endblock %}
-{% block header %}Add instrument{% endblock %}
+
+{% block heading %}Add an instrument{% endblock %}
+
+{% block sub-nav %}
+    {% load get_instruments %}
+    {% get_instruments as instrument_list %}
+    <table class="condensed-table dimmed">
+        <thead>
+            <tr>
+                <th colspan="2">Current instruments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instrument in instrument_list %}
+                <tr>
+                    <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
+                    <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
 
 {% block content %}
-    <h1>Add an instrument</h1>
     <form action="" method="post">
         {% csrf_token %}
         <fieldset>
@@ -37,6 +57,7 @@
     	</fieldset>
         <div class="input">
             <button class="btn success" type="submit">Add instrument</button>
+            <a href="{% url instrument_list %}" class="btn danger">Cancel</a>
         </div>
     </form>
 {% endblock %}

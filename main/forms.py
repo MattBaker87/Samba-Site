@@ -2,6 +2,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import authenticate
+from django.template.defaultfilters import slugify
 
 from django.forms.widgets import TextInput, PasswordInput
 
@@ -96,11 +97,12 @@ class InstrumentForm(forms.ModelForm):
     class Meta:
         model = Instrument
         widgets = {'name': TextInput(attrs={'placeholder':'Agogo 1 (example)'}),}
+        exclude = ['slug']
     
     def clean_name(self):
         name = self.cleaned_data["name"]
         try:
-            Instrument.objects.get(name=name)
+            Instrument.objects.get(slug=slugify(name))
         except Instrument.DoesNotExist:
             return name
         raise forms.ValidationError(_("An instrument with that name address already exists"))

@@ -1,4 +1,4 @@
-{% extends "main/base.html" %}
+{% extends "main/base_new.html" %}
 
 {% block title %}Instrument list{% endblock %}
 {% block header %}Instrument list{% endblock %}
@@ -9,7 +9,37 @@
     {% endwith %}
 {% endblock %}
 
-{% block content %}
+{% block top %}
+    <h1>Instrument list</h1>
+    {% load get_instruments %}
+    {% get_instruments as instrument_list %}
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Instrument</th>
+                <th>Location</th>
+                <th>Last user</th>
+                <th>Next booked for</th>
+                <th>Note</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instrument in instrument_list %}
+                <tr>
+                    <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
+                    <td>{{ instrument.location }}</td>
+                    <td>{% if instrument.last_booking %}{{ instrument.last_booking.user.get_profile.name }}{% else %}Brand new!{% endif %}</td>
+                    <td>{% if instrument.next_booking %}{{ instrument.next_booking.event.when }}{% else %}No future bookings{% endif %}</td>
+                    <td>TODO: attach latest comments here</td>
+                    <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block wireframe_content %}
     <ul>
         <li>Table of instruments currently owned by the band, and where they are
             <ul>
@@ -35,12 +65,12 @@
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_links %}
     <ul>
         <li><a href="{% url instrument_detail %}">Instrument detailed view</a></li>
         <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
         <li><span class="label notice">Admin</span> <a href="{% url instrument_add %}">Add instrument</a></li>
-        <li><span class="label notice">Admin</span> <a href="{% url instrument_delete %}">Delete instrument</a></li>
+        <li><span class="label notice">Admin</span> <a href="#">Delete instrument</a></li>
         <li><span class="label notice">Admin</span> <a href="{% url instrument_edit %}">Edit instrument flag and details</a></li>
         <li><a href="{% url home %}">Back to homepage</a></li>
         <li><a href="{% url logout %}">Logout</a></li>

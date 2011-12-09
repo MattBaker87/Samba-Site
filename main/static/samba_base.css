@@ -13,17 +13,21 @@ body {
   padding-left: 0px;
 }
 
-form .help {
-  padding-top: 6px;
-  font-size: 13px;
-  line-height: 18px;
-  float: right;
-  text-align: left;
-  width: 220px;
-}
-
 .help .help-inline {
   padding-left: 0px;
+}
+
+.dimmed td {
+  color: #aaa;
+}
+
+.dimmed a {
+  color: #aaa;
+}
+
+tbody tr.highlighted td, tbody tr.highlighted td a, .zebra-striped tbody tr.highlighted td {
+  color: #000;
+  background-color: #CEF
 }
 
 /* Used only on signup page*/

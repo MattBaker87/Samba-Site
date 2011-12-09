@@ -1,9 +1,70 @@
-{% extends "main/base.html" %}
+{% extends "main/base_new.html" %}
 
 {% block title %}Instrument detail{% endblock %}
-{% block header %}Instrument detail{% endblock %}
+
+{% block heading %}Instrument details for '{{ instrument.name }}'{% endblock %}
+
+{% block sub-nav %}
+    {% load get_instruments %}
+    {% get_instruments as instrument_list %}
+    <table class="condensed-table dimmed">
+        <thead>
+            <tr>
+                <th colspan="2">All instruments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in instrument_list %}
+                <tr {% if item == instrument %}class="highlighted"{% endif %}>
+                    <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+                    <td>{% if item.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
 
 {% block content %}
+    <p><b>Name:</b> {{ instrument.name }}</p>
+    {% if instrument.damaged %}
+        <p><b>Damage:</b> This instrument is flagged as damaged</p>
+    {% endif %}
+    <p><b>Location:</b> {{ instrument.location }}</p>
+    <p><b>Last user:</b> {% if instrument.last_booking %}{{ instrument.last_booking.user.get_profile.name }}{% else %}Brand new!{% endif %}</p>
+    <p><b>Next booking:</b> {% if instrument.next_booking %}{{ instrument.next_booking.event.when }}{% else %}No future bookings{% endif %}</p>
+    <p><b>Notes:</b> TODO - add most recent note here</p>
+    {% if instrument.past_bookings %}
+        <p><b>Instrument history:</b></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Player</th>
+                    <th>Notes when returned</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in instrument.past_bookings %}
+                    <tr>
+                        <td>{{ booking.event.name }}</td>
+                        <td>{{ booking.event.when }}</td>
+                        <td>{{ booking.user.get_profile.name }}</td>
+                        <td>TODO: add notes</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
+
+{% block options %}
+    <p><a href="{{ instrument.get_delete_url }}" class="btn danger">Delete instrument</a></p>
+    <p><a href="{{ instrument.get_delete_url }}" class="btn info">Edit instrument</a></p>
+    <p><a href="{{ instrument.get_delete_url }}" class="btn success">Sign instrument in</a></p>
+{% endblock %}
+
+{% block wireframe_content %}
     <ul>
         <li>Instrument status and notes
             <ul>
@@ -36,9 +97,9 @@
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_links %}
     <ul>
-        <li><span class="label notice">Admin</span> <a href="{% url instrument_delete %}">Delete instrument</a></li>
+        <li><span class="label notice">Admin</span> <a href="#">Delete instrument</a></li>
         <li><span class="label notice">Admin</span> <a href="{% url instrument_edit %}">Edit instrument flag and details</a></li>
         <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
         <li><a href="{% url instrument_list %}">Back to list of instruments</a></li>
