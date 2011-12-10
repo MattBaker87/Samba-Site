@@ -37,6 +37,11 @@
                     <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                 </tr>
             {% endfor %}
+            <tr>
+                <td colspan="7">
+                    <a href="{% url instrument_add %}" class="btn success">Add instrument</a>
+                </td>
+            </tr>
         </tbody>
     </table>
 {% endblock %}
