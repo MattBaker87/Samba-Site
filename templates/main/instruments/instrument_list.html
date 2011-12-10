@@ -46,6 +46,20 @@
     </table>
 {% endblock %}
 
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">Instruments</a>
+    	    <span class="divider">/</span>
+    	</li>
+    </ul>
+{% endblock %}
+
 {% block wireframe_content %}
     <ul>
         <li>Table of instruments currently owned by the band, and where they are

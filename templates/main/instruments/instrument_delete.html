@@ -14,6 +14,27 @@
     </div>
 {% endblock %}
 
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url instrument_list %}">Instruments</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li>
+    		<a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Delete instrument</a>
+    	</li>
+    </ul>
+{% endblock %}
+
 {% block wireframe_content %}
     <ul>
         <li>TODO: Fix CSS for buttons so it's not embedded in HTML</li>

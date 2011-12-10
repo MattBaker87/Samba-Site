@@ -75,6 +75,23 @@
     </form>
 {% endblock %}
 
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url instrument_list %}">Instruments</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Add instrument</a>
+    	</li>
+    </ul>
+{% endblock %}
+
 {% block wireframe_content %}
     <ul>
         <li>TODO: Fix CSS so this isn't really ugly. May want to make the content part of this span13 if there are no options/links we want to put on the right</li>

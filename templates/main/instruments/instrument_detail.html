@@ -65,6 +65,23 @@
     <p><a href="{{ instrument.get_delete_url }}" class="btn success">Sign instrument in</a></p>
 {% endblock %}
 
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url instrument_list %}">Instruments</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">{{ instrument.name }}</a>
+    	</li>
+    </ul>
+{% endblock %}
+
 {% block wireframe_content %}
     <ul>
         <li>TODO at next opportunity:
