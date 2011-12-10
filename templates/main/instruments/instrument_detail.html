@@ -63,6 +63,7 @@
     <p><a href="{{ instrument.get_delete_url }}" class="btn danger">Delete instrument</a></p>
     <p><a href="{{ instrument.get_delete_url }}" class="btn info">Edit instrument</a></p>
     <p><a href="{{ instrument.get_delete_url }}" class="btn success">Sign instrument in</a></p>
+    <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
 {% endblock %}
 
 {% block bottom %}
@@ -84,13 +85,6 @@
 
 {% block wireframe_content %}
     <ul>
-        <li>TODO at next opportunity:
-            <ul>
-                <li>Add breadcrumbs to bottom of page to make it easier to navigate</li>
-                <li>Add link back to instrument list to the options bar on the right</li>
-                <li>Fix CSS of buttons on the right so that they're all the same size, and so that tops of columns align nicely</li>
-            </ul>
-        </li>
         <li>TODO after adding event functionality:
             <ul>
                 <li>Check the display table of past events the instrument has been to is working (currently not showing as there are no events in the system!)</li>
