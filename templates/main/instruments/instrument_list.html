@@ -1,7 +1,6 @@
 {% extends "main/base_new.html" %}
 
 {% block title %}Instrument list{% endblock %}
-{% block header %}Instrument list{% endblock %}
 
 {% block nav %}
     {% with "instruments" as active %}
@@ -20,8 +19,8 @@
                 <th>Type</th>
                 <th>Location</th>
                 <th>Last user</th>
-                <th>Next booked for</th>
-                <th>Note</th>
+                <th>Last used</th>
+                <th>Next booking</th>
                 <th></th>
             </tr>
         </thead>
@@ -32,13 +31,13 @@
                     <td>{{ instrument.get_instrument_type_display }}</td>
                     <td>{{ instrument.location }}</td>
                     <td>{% if instrument.last_booking %}{{ instrument.last_booking.user.get_profile.name }}{% else %}Brand new!{% endif %}</td>
-                    <td>{% if instrument.next_booking %}{{ instrument.next_booking.event.when }}{% else %}No future bookings{% endif %}</td>
-                    <td>TODO: attach latest comments here</td>
+                    <td>{% if instrument.last_booking %}<a href="{{ instrument.last_booking.event.get_absolute_url }}">{{ instrument.last_booking.event.name }}</a>{% else %}Brand new!{% endif %}</td>
+                    <td>{% if instrument.next_booking %}<a href="{{ instrument.next_booking.event.get_absolute_url }}">{{ instrument.next_booking.event.name }}</a>{% else %}No future bookings{% endif %}</td>
                     <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                 </tr>
             {% endfor %}
             <tr>
-                <td colspan="7">
+                <td colspan="8">
                     <a href="{% url instrument_add %}" class="btn success">Add instrument</a>
                 </td>
             </tr>
@@ -61,38 +60,24 @@
 
 {% block wireframe_content %}
     <ul>
-        <li>Table of instruments currently owned by the band, and where they are
+        <li>TODO after adding ability to sign instruments back int
             <ul>
-                <li>Name of instrument</li>
-                <li>Location
-                    <ul>
-                        <li>Either in kit room or give details of who currently has it signed out (and when they signed it out)</li>
-                    </ul>
-                </li>
-                <li>Damaged?
-                    <ul>
-                        <li>A flag for damaged instruments</li>
-                    </ul>
-                </li>
-                <li>Most recent note - e.g., a damage report or an admin writing that they've fixed it</li>
-                <li>Next user</li>
-                <li>...for (event and date)</li>
+                <li>Put sign-in link on this page</li>
             </ul>
         </li>
-        <li>Option to sign instrument back in if it's you that has it</li>
-        <li><span class="label notice">Admin</span> Option to add/remove instruments from the database (this really is an admin-only privilege)</li>
-        <li><span class="label notice">Admin</span> Option to edit location (sign back in), damaged flag, and write a note on each instrument</li>
+        <li>TODO low priority
+            <ul>
+                <li>Add buttons for admins to delete and edit instruments from here</li>
+                <li>Should we display notes about instruments here? Consider after adding facility to write notes</li>
+            </ul>
+        </li>
     </ul>
 {% endblock %}
 
 {% block wireframe_links %}
     <ul>
-        <li><a href="{% url instrument_detail %}">Instrument detailed view</a></li>
         <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
-        <li><span class="label notice">Admin</span> <a href="{% url instrument_add %}">Add instrument</a></li>
         <li><span class="label notice">Admin</span> <a href="#">Delete instrument</a></li>
         <li><span class="label notice">Admin</span> <a href="{% url instrument_edit %}">Edit instrument flag and details</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
     </ul>
 {% endblock %}

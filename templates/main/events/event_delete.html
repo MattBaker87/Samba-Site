@@ -1,19 +1,50 @@
-{% extends "main/base.html" %}
+{% extends "main/events/event_detail.html" %}
 
 {% block title %}Delete event{% endblock %}
-{% block header %}Delete event{% endblock %}
 
-{% block content %}
-    <ul>
-        <li><span class="label notice">Admin</span> Whole page is admin only</li>
-        <li>Ask for confirmation that you want to delete an event. Send an email to all those who have signed up for it saying that it's cancelled (should give a box allowing admin to type a message to them)</li>
+{% block top %}
+    <div class="alert-message block-message error">
+        <div style="position:absolute; right:10px; top:4px;">
+            <form action="" method="post">
+                {% csrf_token %}
+                <button class="btn" type="submit">Yes, delete this event</button> <a class="btn" href="{{ event.get_absolute_url }}" style="font-weight:normal;">No, I've changed my mind</a>
+            </form>
+        </div>
+        <p>Are you sure you want to <strong>delete this event?</strong></p>
+    </div>
+{% endblock %}
+
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url events_upcoming %}">Events</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li>
+    		<a href="{{ event.get_absolute_url }}">{{ event.name }}</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Delete event</a>
+    	</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_content %}
     <ul>
-        <li><a href="{% url events_upcoming %}">Back to event list</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
+        <li>TODO lower priority:
+            <ul>
+                <li>Make this page admin only</li>
+                <li>Setup emails to all event participants that the event has been cancelled</li>
+            </ul>
+        </li>
     </ul>
+{% endblock %}
+
+{% block wireframe_links %}
 {% endblock %}

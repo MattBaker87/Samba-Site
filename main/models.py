@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
+from main.managers import BookingManager
 
 from datetime import datetime
 
@@ -11,8 +12,8 @@ SHORT = 100
 class Event(models.Model):
     name = models.CharField(max_length=LONG)
     slug = models.SlugField(primary_key=True)
-    location = models.CharField(max_length=LONG)
     when = models.DateTimeField()
+    location = models.CharField(max_length=LONG)
     notes = models.CharField(max_length=LONG)
     
     class Meta:
@@ -21,6 +22,10 @@ class Event(models.Model):
     def get_absolute_url(self):
         return ('event_detail', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
+    
+    def get_delete_url(self):
+        return ('event_delete', (), {'slug': self.slug})
+    get_delete_url = models.permalink(get_delete_url)
     
     def save(self, *args, **kwargs):
 		self.slug = slugify(self.name)
@@ -42,7 +47,7 @@ class Instrument(models.Model):
     damaged = models.BooleanField(default=False, verbose_name="This instrument is damaged")
     
     class Meta:
-        ordering = ['name']
+        ordering = ['instrument_type', 'name']
     
     def __unicode__(self):
         return self.name
@@ -70,7 +75,7 @@ class Instrument(models.Model):
     def location(self):
         x = self.last_booking()
         if x and x.signed_in == False:
-            return mark_safe(x.user.name+" has not yet signed this back in (signed out "+x.event.when+")")
+            return "Not yet signed back in"
         else:
             return "Store room"
     
@@ -93,10 +98,20 @@ class UserProfile(models.Model):
     telephone = models.CharField(max_length=15, blank=True)
 
 class Booking(models.Model):
-    user = models.ForeignKey(User, related_name='bookings', blank=True)
+    user = models.ForeignKey(User, related_name='bookings', blank=True, null=True, default=None)
     instrument = models.ForeignKey('Instrument', related_name='bookings')
     event = models.ForeignKey('Event', related_name='bookings')
     signed_in = models.BooleanField(default=False, verbose_name="This instrument is back in the store room")
     
+    objects = BookingManager()
+    
     class Meta:
         ordering = ['instrument']
+    
+    def make_booking_url(self):
+        return ('instrument_sign_out', (), {'booking_id': self.id})
+    make_booking_url = models.permalink(make_booking_url)
+    
+    def cancel_booking_url(self):
+        return ('cancel_sign_out', (), {'booking_id': self.id})
+    cancel_booking_url = models.permalink(cancel_booking_url)

@@ -10,7 +10,7 @@
     <table class="condensed-table dimmed">
         <thead>
             <tr>
-                <th colspan="2">Future events</th>
+                <th colspan="2">Upcoming events</th>
             </tr>
         </thead>
         <tbody>
@@ -28,7 +28,7 @@
     <form action="" method="post">
         {% csrf_token %}
         <fieldset>
-            {% for boundfield in form %}
+            {% for boundfield in form.non_instrument_fields %}
                 <div class="clearfix {% if boundfield.errors %}error{% endif %}">
                     {{ boundfield.label_tag }}
                     <div class="input">
@@ -43,6 +43,21 @@
     				</div>
     			</div>
     		{% endfor %}
+			<div class="clearfix">
+			    <label id="optionsCheckboxes"><p>Instruments</p><p>(These are the instruments which can be sign-ed out for this event. You may wish to exclude currently damaged instruments)</p></label>
+			    <div class="input">
+			        <ul class="inputs-list">
+			            {% for boundfield in form.instrument_fields %}
+			                <li>
+    			                <label>
+    			                    {{ boundfield }}
+    			                    <span>{{ boundfield.label }}</span>
+    			                </label>
+    			            </li>
+    			        {% endfor %}
+			        </ul>
+			    </div>
+			</div>
     	</fieldset>
         <div class="input">
             <button class="btn success" type="submit">Add event</button>
@@ -59,11 +74,11 @@
     		<span class="divider">/</span>
     	</li>
     	<li>
-    	    <a href="{% url instrument_list %}">Instruments</a>
+    	    <a href="{% url events_upcoming %}">Events</a>
     	    <span class="divider">/</span>
     	</li>
     	<li class="active">
-    		<a href="#">Add instrument</a>
+    		<a href="#">Add event</a>
     	</li>
     </ul>
 {% endblock %}

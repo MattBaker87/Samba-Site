@@ -32,7 +32,7 @@
     {% endif %}
     <p><b>Location:</b> {{ instrument.location }}</p>
     <p><b>Last user:</b> {% if instrument.last_booking %}{{ instrument.last_booking.user.get_profile.name }}{% else %}Brand new!{% endif %}</p>
-    <p><b>Next booking:</b> {% if instrument.next_booking %}{{ instrument.next_booking.event.when }}{% else %}No future bookings{% endif %}</p>
+    <p><b>Next booking:</b> {% if instrument.next_booking %}<a href="{{ instrument.next_booking.event.get_absolute_url }}">{{ instrument.next_booking.event.name }}</a> on {{ instrument.next_booking.event.when|date:"jS F, Y" }}{% else %}No future bookings{% endif %}</p>
     <p><b>Notes:</b> TODO - add most recent note here</p>
     {% if instrument.past_bookings %}
         <p><b>Instrument history:</b></p>
@@ -48,8 +48,8 @@
             <tbody>
                 {% for booking in instrument.past_bookings %}
                     <tr>
-                        <td>{{ booking.event.name }}</td>
-                        <td>{{ booking.event.when }}</td>
+                        <td><a href="{{ booking.event.get_absolute_url }}">{{ booking.event.name }}</a></td>
+                        <td>{{ booking.event.when|date:"jS F, Y"  }}</td>
                         <td>{{ booking.user.get_profile.name }}</td>
                         <td>TODO: add notes</td>
                     </tr>
@@ -61,8 +61,8 @@
 
 {% block options %}
     <p><a href="{{ instrument.get_delete_url }}" class="btn danger">Delete instrument</a></p>
-    <p><a href="{{ instrument.get_delete_url }}" class="btn info">Edit instrument</a></p>
-    <p><a href="{{ instrument.get_delete_url }}" class="btn success">Sign instrument in</a></p>
+    <p><a href="#" class="btn info">Edit instrument</a></p>
+    <p><a href="#" class="btn success">Sign instrument in</a></p>
     <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
 {% endblock %}
 
@@ -87,7 +87,6 @@
     <ul>
         <li>TODO after adding event functionality:
             <ul>
-                <li>Check the display table of past events the instrument has been to is working (currently not showing as there are no events in the system!)</li>
                 <li>Add pagination to the above list of past events, or limit them to the last 10</li>
                 <li>Add sign instrument in functionality</li>
                 <li>Add edit instrument functionality (for admin)</li>
@@ -97,6 +96,7 @@
         <li>TODO lower priority:
             <ul>
                 <li>Build admin distinction, so buttons aren't shown to everyone</li>
+                <li>Make table CSS prettier (flush with rest of content?)</li>
             </ul>
         </li>
     </ul>

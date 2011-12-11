@@ -118,3 +118,15 @@ form .clearfix.error > label, form .clearfix.error .help-block, form .clearfix.e
 .sub-nav table thead tr th {
   padding-top: 0px;
 }
+
+input[type="submit"].btn-inline {
+  padding: 1px 7px 2px;
+  font-size: 9.75px;
+  font-weight: bold;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  line-height: normal;
+}

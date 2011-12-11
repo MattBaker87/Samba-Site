@@ -1,15 +1,18 @@
+from datetime import datetime
+
 from django.contrib.auth.forms import AuthenticationForm
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import authenticate
 from django.template.defaultfilters import slugify
+from django.utils.safestring import mark_safe
 
 from django.forms.widgets import TextInput, PasswordInput
 
 from main import fields
 
 from django.contrib.auth.models import User
-from main.models import UserProfile, Instrument, Event
+from main.models import UserProfile, Instrument, Event, Booking
 
 class UserSignupForm(forms.ModelForm):
     username = forms.EmailField(label=_("Email"), max_length=30,
@@ -69,6 +72,7 @@ class UserSignupForm(forms.ModelForm):
             profile.save()
         return user
 
+
 class LoginForm(AuthenticationForm):
     username = forms.CharField(label=_("Username"), max_length=30,
                                 widget=TextInput(attrs={'placeholder':'Email', 'label':'email'}))
@@ -93,6 +97,7 @@ class LoginForm(AuthenticationForm):
         self.check_for_test_cookie()
         return self.cleaned_data
 
+
 class InstrumentForm(forms.ModelForm):
     class Meta:
         model = Instrument
@@ -107,12 +112,28 @@ class InstrumentForm(forms.ModelForm):
             return name
         raise forms.ValidationError(_("An instrument with that name address already exists"))
 
+
 class EventForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(EventForm, self).__init__(*args, **kwargs)
+        for instrument in Instrument.objects.all():
+            self.fields[instrument.name] = forms.BooleanField(
+                            label=mark_safe(instrument.name +
+                                ' <span class="label important">Damaged</span>' if instrument.damaged else instrument.name ),
+                            required=False
+                            )
+    
     class Meta:
         model = Event
         widgets = {'name': TextInput(attrs={'placeholder':'UNISON and UNITE Strike Day (example)'}),}
         exclude = ['slug']
-
+    
+    def instrument_fields(self):
+        return [field for field in self if field.field.__class__ == forms.BooleanField]
+    
+    def non_instrument_fields(self):
+        return [field for field in self if field.field.__class__ != forms.BooleanField]
+    
     def clean_name(self):
         name = self.cleaned_data["name"]
         try:
@@ -120,3 +141,19 @@ class EventForm(forms.ModelForm):
         except Event.DoesNotExist:
             return name
         raise forms.ValidationError(_("An event with that name address already exists"))
+    
+    def clean_when(self):
+        when = self.cleaned_data["when"]
+        if when <= datetime.now():
+            raise forms.ValidationError(_("Please enter a date in the future"))
+        return when
+        
+    
+    def save(self, commit=True):
+        event = super(EventForm, self).save(commit=False)
+        if commit:
+            event.save()
+            for field in self.instrument_fields():
+                if self.cleaned_data[field.name]:
+                    Booking.objects.create(instrument=Instrument.objects.get(name=field.name), event=event)
+        return event

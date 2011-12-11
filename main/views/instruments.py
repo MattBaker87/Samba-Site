@@ -9,13 +9,11 @@ from main.models import Instrument
 
 @login_required
 def add_instrument(request):
-    if request.method == "POST":
-        form = InstrumentForm(data = request.POST)
-        if form.is_valid():
-            instrument = form.save(commit=True)
-            return HttpResponseRedirect(reverse('instrument_list'))
-    else:
-        form = InstrumentForm()
+    form = InstrumentForm(data = request.POST or None)
+    if form.is_valid():
+        instrument = form.save(commit=True)
+        return HttpResponseRedirect(reverse('instrument_list'))
+
     return render_to_response('main/instruments/instrument_add.html', {'form':form}, context_instance=RequestContext(request))
 
 @login_required

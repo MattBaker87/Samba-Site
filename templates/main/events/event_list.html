@@ -1,7 +1,6 @@
-{% extends "main/base.html" %}
+{% extends "main/base_new.html" %}
 
 {% block title %}Event list{% endblock %}
-{% block header %}Event list{% endblock %}
 
 {% block nav %}
     {% with "events" as active %}
@@ -9,7 +8,55 @@
     {% endwith %}
 {% endblock %}
 
-{% block content %}
+{% block top %}
+    <h1>Event list</h1>
+    {% load get_events %}
+    {% get_future_events as event_list %}
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>When</th>
+                <th>Location</th>
+                <th>Notes</th>
+                <th>Instruments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_list %}
+                <tr>
+                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
+                    <td>{{ event.when }}</td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.notes }}</td>
+                    {% with event.bookings.signed_up.count as x %}
+                        <td>{{ x }} instrument{{ x|pluralize }} signed up</td>
+                    {% endwith %}
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="7">
+                    <a href="{% url event_add %}" class="btn success">Add event</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block bottom %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">Events</a>
+    	    <span class="divider">/</span>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe_content %}
     <ul>
         <li>List of events (may be future events, past events, etc. Same format.)
             <ul>
@@ -25,7 +72,7 @@
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_links %}
     <ul>
         <li><a href="{% url event_detail %}">View specific event</a></li>
         <li><span class="label notice">Admin</span> <a href="{% url event_add %}">Add an event</a></li>
