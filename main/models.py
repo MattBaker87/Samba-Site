@@ -10,12 +10,21 @@ SHORT = 100
 
 class Event(models.Model):
     name = models.CharField(max_length=LONG)
+    slug = models.SlugField(primary_key=True)
     location = models.CharField(max_length=LONG)
     when = models.DateTimeField()
     notes = models.CharField(max_length=LONG)
     
     class Meta:
         ordering = ['when']
+    
+    def get_absolute_url(self):
+        return ('event_detail', (), {'slug': self.slug})
+    get_absolute_url = models.permalink(get_absolute_url)
+    
+    def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super(Event, self).save(*args, **kwargs)
 
 class Instrument(models.Model):
     INSTRUMENT_CHOICES = (
@@ -27,7 +36,7 @@ class Instrument(models.Model):
         ('shak', 'Shaker'),
         )
     
-    slug = models.SlugField(unique=True, primary_key=True)
+    slug = models.SlugField(primary_key=True)
     instrument_type = models.CharField(max_length=4, choices=INSTRUMENT_CHOICES, verbose_name="Instrument type")
     name = models.CharField(max_length=SHORT, verbose_name="Instrument name")
     damaged = models.BooleanField(default=False, verbose_name="This instrument is damaged")
@@ -39,10 +48,10 @@ class Instrument(models.Model):
         return self.name
         
     def past_bookings(self):
-        return self.bookings.exclude(user__isnull=True).filter(event__when__gte=datetime.now()).order_by('-event__when')
+        return self.bookings.exclude(user__isnull=True).filter(event__when__lte=datetime.now()).order_by('-event__when')
     
     def future_bookings(self):
-        return self.bookings.exclude(user__isnull=True).filter(event__when__lte=datetime.now()).order_by('event__when')
+        return self.bookings.exclude(user__isnull=True).filter(event__when__gte=datetime.now()).order_by('event__when')
     
     def last_booking(self):
         x = self.past_bookings()

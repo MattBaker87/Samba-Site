@@ -9,7 +9,7 @@ from django.forms.widgets import TextInput, PasswordInput
 from main import fields
 
 from django.contrib.auth.models import User
-from main.models import UserProfile, Instrument
+from main.models import UserProfile, Instrument, Event
 
 class UserSignupForm(forms.ModelForm):
     username = forms.EmailField(label=_("Email"), max_length=30,
@@ -106,3 +106,17 @@ class InstrumentForm(forms.ModelForm):
         except Instrument.DoesNotExist:
             return name
         raise forms.ValidationError(_("An instrument with that name address already exists"))
+
+class EventForm(forms.ModelForm):
+    class Meta:
+        model = Event
+        widgets = {'name': TextInput(attrs={'placeholder':'UNISON and UNITE Strike Day (example)'}),}
+        exclude = ['slug']
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        try:
+            Event.objects.get(slug=slugify(name))
+        except Event.DoesNotExist:
+            return name
+        raise forms.ValidationError(_("An event with that name address already exists"))

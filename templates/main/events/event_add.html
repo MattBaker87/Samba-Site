@@ -1,16 +1,81 @@
-{% extends "main/base.html" %}
+{% extends "main/base_new.html" %}
 
 {% block title %}Add event{% endblock %}
-{% block header %}Add event{% endblock %}
+
+{% block heading %}Add an event{% endblock %}
+
+{% block sub-nav %}
+    {% load get_events %}
+    {% get_future_events as event_list %}
+    <table class="condensed-table dimmed">
+        <thead>
+            <tr>
+                <th colspan="2">Future events</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_list %}
+                <tr>
+                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
+                    <td>{{ event.when }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
 
 {% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            {% for boundfield in form %}
+                <div class="clearfix {% if boundfield.errors %}error{% endif %}">
+                    {{ boundfield.label_tag }}
+                    <div class="input">
+                        {{ boundfield }}
+                        {% if boundfield.errors %}
+                            {% for error in boundfield.errors %}
+                                <span class="help-inline">{{ error }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="help-inline">{{ boundfield.help_text }}</span>
+                        {% endif %}
+    				</div>
+    			</div>
+    		{% endfor %}
+    	</fieldset>
+        <div class="input">
+            <button class="btn success" type="submit">Add event</button>
+            <a href="{% url events_upcoming %}" class="btn danger">Cancel</a>
+        </div>
+    </form>
+{% endblock %}
+
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url instrument_list %}">Instruments</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Add instrument</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe_content %}
     <ul>
         <li><span class="label notice">Admin</span> Whole page is admin only</li>
         <li>Basic form to add events. Asks you which instruments you want to add (and an option to add all of them so it's not a total pain in the arse)</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_links %}
     <ul>
         <li><a href="{% url event_detail %}">Add event and view details</a></li>
         <li><a href="{% url events_upcoming %}">Back to event list</a></li>

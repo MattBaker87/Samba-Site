@@ -2,6 +2,8 @@ from django.conf.urls.defaults import include, patterns, url
 
 
 urlpatterns = patterns('sambasite.main.views.events',
+    url(r'^add/$', 'add_event', name='event_add'),
+    url(r'^detail/(?P<slug>[-\w]+)/$', 'detail_event', name='event_detail'),
 )
 
 urlpatterns += patterns('django.views.generic',
@@ -13,8 +15,8 @@ urlpatterns += patterns('django.views.generic',
                                                                             name='events_yours'),
     url(r'^detail/$', 'simple.direct_to_template', {'template': 'main/events/event_detail.html'},
                                                                             name='event_detail'),
-    url(r'^add/$', 'simple.direct_to_template', {'template': 'main/events/event_add.html'},
-                                                                            name='event_add'),
+    # url(r'^add/$', 'simple.direct_to_template', {'template': 'main/events/event_add.html'},
+    #                                                                         name='event_add'),
     url(r'^edit/$', 'simple.direct_to_template', {'template': 'main/events/event_edit.html'},
                                                                             name='event_edit'),
     url(r'^delete/$', 'simple.direct_to_template', {'template': 'main/events/event_delete.html'},
