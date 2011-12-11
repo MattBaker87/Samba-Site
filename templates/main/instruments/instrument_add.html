@@ -25,6 +25,7 @@
 {% endblock %}
 
 {% block content %}
+    <p>From here you can add an instrument to the list of instruments the band owns.</p>
     <form action="" method="post">
         {% csrf_token %}
         <fieldset>
@@ -75,6 +76,10 @@
     </form>
 {% endblock %}
 
+{% block options %}
+    <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
+{% endblock %}
+
 {% block bottom %}
     <br>
     <ul class="breadcrumb">
@@ -93,16 +98,7 @@
 {% endblock %}
 
 {% block wireframe_content %}
-    <ul>
-        <li>TODO: Fix CSS so this isn't really ugly. May want to make the content part of this span13 if there are no options/links we want to put on the right</li>
-    </ul>
 {% endblock %}
 
 {% block wireframe_links %}
-    <ul>
-        <li><a href="{% url instrument_list %}">Add instrument and go to instrument list</a></li>
-        <li><a href="{% url instrument_list %}">Cancel add and go to instrument list</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
-    </ul>
 {% endblock %}

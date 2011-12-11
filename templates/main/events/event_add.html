@@ -25,6 +25,7 @@
 {% endblock %}
 
 {% block content %}
+    <p>Please use the location box for the meeting point, and the time box for the meeting time. You can then add any further details in the notes box.</p>
     <form action="" method="post">
         {% csrf_token %}
         <fieldset>
@@ -35,7 +36,7 @@
                         {{ boundfield }}
                         {% if boundfield.errors %}
                             {% for error in boundfield.errors %}
-                                <span class="help-inline">{{ error }}</span>
+                                <span class="{% if boundfield.name == "name" or boundfield.name == "notes"  %}help-block{% else %}help-inline{% endif %}">{{ error }}</span>
                             {% endfor %}
                         {% else %}
                             <span class="help-inline">{{ boundfield.help_text }}</span>
@@ -44,9 +45,10 @@
     			</div>
     		{% endfor %}
 			<div class="clearfix">
-			    <label id="optionsCheckboxes"><p>Instruments</p><p>(These are the instruments which can be sign-ed out for this event. You may wish to exclude currently damaged instruments)</p></label>
-			    <div class="input">
+			    <label id="optionsCheckboxes">Instruments</label>
+			    <div class="input with-help">
 			        <ul class="inputs-list">
+                        <div class="optionsCheckboxes-help help-inline">These are the instruments which can be sign-ed out for this event</div>
 			            {% for boundfield in form.instrument_fields %}
 			                <li>
     			                <label>
@@ -64,6 +66,10 @@
             <a href="{% url events_upcoming %}" class="btn danger">Cancel</a>
         </div>
     </form>
+{% endblock %}
+
+{% block options %}
+    <p><a href="{% url events_upcoming %}">Back to events list</a></p>
 {% endblock %}
 
 {% block bottom %}
@@ -85,16 +91,20 @@
 
 {% block wireframe_content %}
     <ul>
-        <li><span class="label notice">Admin</span> Whole page is admin only</li>
-        <li>Basic form to add events. Asks you which instruments you want to add (and an option to add all of them so it's not a total pain in the arse)</li>
+        <li>TODO asap:
+            <ul>
+                <li>Clean up CSS so this isn't really ugly</li>
+                <li>Add a decent date-time widget, so it's not a nightmare entering when the event is</li>
+            </ul>
+        </li>
+        <li>TODO lower priority:
+            <ul>
+                <li>Make this page admin-only</li>
+            </ul>
+        </li>
     </ul>
 {% endblock %}
 
 {% block wireframe_links %}
-    <ul>
-        <li><a href="{% url event_detail %}">Add event and view details</a></li>
-        <li><a href="{% url events_upcoming %}">Back to event list</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
-    </ul>
+
 {% endblock %}

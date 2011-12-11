@@ -130,3 +130,29 @@ input[type="submit"].btn-inline {
   border-radius: 3px;
   line-height: normal;
 }
+
+input.datetimefield {
+  width: 125px;
+}
+
+input.datetimefield + input.datetimefield {
+  margin-left: 5px;
+  width: 70px;
+}
+
+
+/*Used to format the instrument lists when we add events*/
+.optionsCheckboxes-help {
+  position:absolute;
+  text-align:left;
+  left:220px;
+  width:180px;
+}
+
+#optionsCheckboxes + .input.with-help {
+  width:220px
+}
+
+#optionsCheckboxes + .input.with-help ul {
+  position:relative;
+}

@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
 
-from django.forms.widgets import TextInput, PasswordInput
+from django.forms.widgets import TextInput, PasswordInput, Textarea
+from main.widgets import MySplitDateTimeWidget
 
 from main import fields
 
@@ -110,7 +111,7 @@ class InstrumentForm(forms.ModelForm):
             Instrument.objects.get(slug=slugify(name))
         except Instrument.DoesNotExist:
             return name
-        raise forms.ValidationError(_("An instrument with that name address already exists"))
+        raise forms.ValidationError(_("Instrument already exists"))
 
 
 class EventForm(forms.ModelForm):
@@ -125,8 +126,15 @@ class EventForm(forms.ModelForm):
     
     class Meta:
         model = Event
-        widgets = {'name': TextInput(attrs={'placeholder':'UNISON and UNITE Strike Day (example)'}),}
+        widgets = {
+                    'name': TextInput(attrs={'placeholder':'e.g., UNISON and UNITE Strike Day', 'class':'span7'}),
+                    'notes': Textarea(attrs={'class':'span7', 'rows':'4'}),
+                    }
         exclude = ['slug']
+     
+    when = forms.DateTimeField(label=_("When"),
+        help_text = _("Use dd/mm/yyyy, hh:mm format"),
+        widget = MySplitDateTimeWidget(attrs={'class':'datetimefield'}, date_placeholder="31/12/2011", time_placeholder="12:00"))
     
     def instrument_fields(self):
         return [field for field in self if field.field.__class__ == forms.BooleanField]
@@ -140,7 +148,7 @@ class EventForm(forms.ModelForm):
             Event.objects.get(slug=slugify(name))
         except Event.DoesNotExist:
             return name
-        raise forms.ValidationError(_("An event with that name address already exists"))
+        raise forms.ValidationError(_("An event with that name already exists"))
     
     def clean_when(self):
         when = self.cleaned_data["when"]
