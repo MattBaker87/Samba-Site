@@ -8,9 +8,15 @@ body {
   background-color: #fff;
   padding-top: 60px;
 }
-/* Content settings */
+
 .form-stacked {
   padding-left: 0px;
+}
+.form-stacked div.clearfix.error {
+  padding:0px;
+  margin-top:5px;
+  margin-bottom:9px;
+  margin-left:0px;
 }
 
 .help .help-inline {

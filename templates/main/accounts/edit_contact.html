@@ -9,26 +9,35 @@
             {% csrf_token %}
             <div class="row">
                 <div class="span4">
-                    <div class="clearfix">
+                    <div class="clearfix {% if form.name.errors %}error{% endif %}">
                         {{ form.name.label_tag }}
                         <div class="input">
                             {{ form.name }}
+                            {% for error in form.name.errors %}
+                                <span class="help-block">{{ error }}</span>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
                 <div class="span4">
-                    <div class="clearfix">
+                    <div class="clearfix {% if form.username.errors %}error{% endif %}">
                         {{ form.username.label_tag }}
                         <div class="input">
                             {{ form.username }}
+                            {% for error in form.username.errors %}
+                                <span class="help-block">{{ error }}</span>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
                 <div class="span4">
-                    <div class="clearfix">
+                    <div class="clearfix {% if form.telephone.errors %}error{% endif %}">
                         {{ form.telephone.label_tag }}
                         <div class="input">
                             {{ form.telephone }}
+                            {% for error in form.telephone.errors %}
+                                <span class="help-block">{{ error }}</span>
+                            {% endfor %}
                         </div>
                     </div>
                 </div>
