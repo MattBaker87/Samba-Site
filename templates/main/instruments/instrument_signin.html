@@ -1,17 +1,46 @@
-{% extends "main/base.html" %}
+{% extends "main/instruments/instrument_detail.html" %}
 
 {% block title %}Instrument sign-in{% endblock %}
-{% block header %}Instrument sign-in{% endblock %}
 
-{% block content %}
-    <ul>
-        <li>Simple form to sign your instrument back in. Gives a free text box for notes on the state of the instrument when you signed it back in, and the option to flag the instrument as damaged. When all instruments for an event are signed back in it would be nice to email the event organiser.</li>
+{% block top %}
+    <div class="alert-message block-message success">
+        <div style="position:absolute; right:10px; top:4px;">
+            <form action="" method="post">
+                {% csrf_token %}
+                <button class="btn" type="submit">Sign instrument in</button> <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">I still need to take it to the storeroom</a>
+            </form>
+        </div>
+        <p>If the instrument's now in the storeroom you're ready to <strong>sign this instrument in</strong></p>
+    </div>
+{% endblock %}
+
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url instrument_list %}">Instruments</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li>
+    		<a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Sign in instrument</a>
+    	</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_content %}
     <ul>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
+        <li>TODO: Add notes</li>
+        <li>TODO: Add facility for admin to sign instruments back in (at the moment only the person who booked them out can)</li>
     </ul>
+{% endblock %}
+
+{% block wireframe_links %}
 {% endblock %}

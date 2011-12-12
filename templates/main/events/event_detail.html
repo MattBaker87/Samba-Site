@@ -54,7 +54,7 @@
                             {% else %}
                                 <td>Not yet returned
                                     {% if booking.user == user %}
-                                        <span class="success btn-inline btn pull-right">Sign in</span>
+                                        <a href="{{ booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
                                     {% endif %}
                                 </td>
                             {% endif %}

@@ -5,7 +5,7 @@ from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 
 from main.forms import InstrumentForm
-from main.models import Instrument
+from main.models import Instrument, Booking
 
 @login_required
 def add_instrument(request):
@@ -40,4 +40,14 @@ def delete_instrument(request, slug):
 def detail_instrument(request, slug):
     target_object = get_object_or_404(Instrument, slug=slug)
     return render_to_response('main/instruments/instrument_detail.html', {'instrument': target_object},
+                                                                context_instance=RequestContext(request))
+
+@login_required
+def sign_in_instrument(request, booking_id):
+    target_booking = get_object_or_404(Booking, id=booking_id)
+    if request.method == "POST" and target_booking.user == request.user:
+        target_booking.signed_in = True
+        target_booking.save()
+        return HttpResponseRedirect(target_booking.event.get_absolute_url())
+    return render_to_response('main/instruments/instrument_signin.html', {'instrument': target_booking.instrument},
                                                                 context_instance=RequestContext(request))

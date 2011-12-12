@@ -51,8 +51,8 @@
                     <td>{{ event.notes }}</td>
                     <td>
                         <ul class="unstyled">
-                        {% for instrument in event.user_instruments %}
-                            <li><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></li>
+                        {% for booking in event.user_bookings %}
+                            <li><a href="{{ booking.instrument.get_absolute_url }}">{{ booking.instrument.name }}</a></li>
                         {% endfor %}
                         </ul>
                     </td>
@@ -84,8 +84,12 @@
                     <td>{{ event.notes }}</td>
                     <td>
                         <ul class="unstyled">
-                        {% for instrument in event.user_instruments %}
-                            <li><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a>&nbsp;&nbsp;<span class="success btn-inline btn pull-right">Sign in</span></li>
+                        {% for booking in event.user_bookings %}
+                            <li><a href="{{ booking.instrument.get_absolute_url }}">{{ booking.instrument.name }}</a>
+                                {% if not booking.signed_in %}
+                                    &nbsp;&nbsp;<a href="{{ booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                {% endif %}
+                            </li>
                         {% endfor %}
                         </ul>
                     </td>

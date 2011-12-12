@@ -41,7 +41,6 @@ def sign_out_instrument(request, booking_id):
         target_booking.save()
     return HttpResponseRedirect(target_booking.event.get_absolute_url())
 
-
 @login_required
 def cancel_sign_out(request, booking_id):
     target_booking = get_object_or_404(Booking, id=booking_id)
@@ -49,7 +48,6 @@ def cancel_sign_out(request, booking_id):
         target_booking.user = None
         target_booking.save()
     return HttpResponseRedirect(target_booking.event.get_absolute_url())
-
 
 @login_required
 def delete_event(request, slug):

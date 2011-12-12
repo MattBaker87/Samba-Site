@@ -11,7 +11,7 @@ urlpatterns = patterns('sambasite.main.views.events',
     url(r'^upcoming/$', 'list_events', {'queryset_filter': lambda x:x.future_events(),
                                         'template_name': 'main/events/event_list_upcoming.html'}, name='events_upcoming'),
     url(r'^past/$', 'list_events', {'queryset_filter': lambda x:x.past_events(),
-                                        'template_name': 'main/events/event_list_past.html'}, name='events_past')
+                                        'template_name': 'main/events/event_list_past.html'}, name='events_past'),
 )
 
 urlpatterns += patterns('django.views.generic',

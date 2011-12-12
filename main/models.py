@@ -112,10 +112,10 @@ class UserProfile(models.Model):
         t = []
         for x in self.user.bookings.future_bookings():
             if not x.event in seen:
-                x.event.user_instruments = []
+                x.event.user_bookings = []
                 t.append(x.event)
                 seen.add(x.event)
-            t[t.index(x.event)].user_instruments.append(x.instrument)
+            t[t.index(x.event)].user_bookings.append(x)
         return t
     
     def get_past_events(self):
@@ -123,10 +123,10 @@ class UserProfile(models.Model):
         t = []
         for x in self.user.bookings.past_bookings():
             if not x.event in seen:
-                x.event.user_instruments = []
+                x.event.user_bookings = []
                 t.append(x.event)
                 seen.add(x.event)
-            t[t.index(x.event)].user_instruments.append(x.instrument)
+            t[t.index(x.event)].user_bookings.append(x)
         return t
 
 class Booking(models.Model):
@@ -147,3 +147,7 @@ class Booking(models.Model):
     def cancel_booking_url(self):
         return ('cancel_sign_out', (), {'booking_id': self.id})
     cancel_booking_url = models.permalink(cancel_booking_url)
+    
+    def get_signin_url(self):
+        return ('instrument_signin', (), {'booking_id': self.id})
+    get_signin_url = models.permalink(get_signin_url)

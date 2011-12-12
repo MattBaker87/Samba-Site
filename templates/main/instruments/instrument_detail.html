@@ -25,17 +25,86 @@
 {% endblock %}
 
 {% block content %}
-    <p><b>Name:</b> {{ instrument.name }}</p>
-    <p><b>Type:</b> {{ instrument.get_instrument_type_display }}</p>
+    <div class="row">
+        <div class="span2">
+            <p><b>Name:</b></p>
+        </div>
+        <div class="span8">
+            <p>{{ instrument.name }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2">
+            <p><b>Type:</b></p>
+        </div>
+        <div class="span8">
+            <p>{{ instrument.get_instrument_type_display }}</p>
+        </div>
+    </div>
     {% if instrument.damaged %}
-        <p><b>Damage:</b> This instrument is flagged as damaged</p>
+        <div class="row">
+            <div class="span2">
+                <p><b>Damage:</b></p>
+            </div>
+            <div class="span8">
+                <p>This instrument is flagged as damaged</p>
+            </div>
+        </div>
     {% endif %}
-    <p><b>Location:</b> {{ instrument.location }}</p>
-    <p><b>Last user:</b> {% if instrument.last_booking %}{{ instrument.last_booking.user.get_profile.name }}{% else %}Brand new!{% endif %}</p>
-    <p><b>Next booking:</b> {% if instrument.next_booking %}<a href="{{ instrument.next_booking.event.get_absolute_url }}">{{ instrument.next_booking.event.name }}</a> on {{ instrument.next_booking.event.when|date:"jS F, Y" }}{% else %}No future bookings{% endif %}</p>
-    <p><b>Notes:</b> TODO - add most recent note here</p>
+    <div class="row">
+        <div class="span2">
+            <p><b>Location:</b></p>
+        </div>
+        <div class="span8">
+            <p>{{ instrument.location }}
+                {% if instrument.last_booking.user == user and not instrument.last_booking.signed_in %}
+                    <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn">Sign in</a>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2">
+            <p><b>Last user:</b></p>
+        </div>
+        <div class="span8">
+            <p>
+                {% with instrument.last_booking as b %}
+                    {% if b %}
+                        {{ b.user.get_profile.name }} played {{ instrument.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>, {{ b.event.when|timesince }} ago
+                    {% else %}
+                        Brand new!
+                    {% endif %}
+                {% endwith %}
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2">
+            <p><b>Next booking:</b></p>
+        </div>
+        <div class="span8">
+            <p>
+                {% with instrument.next_booking as b %}
+                    {% if b %}
+                        {{ b.user.get_profile.name }} is playing {{ instrument.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a> in {{ b.event.when|timeuntil }} time
+                    {% else %}
+                        No future bookings
+                    {% endif %}
+                {% endwith %}
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2">
+            <p><b>Notes:</b></p>
+        </div>
+        <div class="span8">
+            <p>TODO - add most recent note here</p>
+        </div>
+    </div>
     {% if instrument.past_bookings %}
-        <p><b>Instrument history:</b></p>
+        <p><b>History:</b></p>
         <table>
             <thead>
                 <tr>
@@ -62,7 +131,7 @@
 {% block options %}
     <p><a href="{{ instrument.get_delete_url }}" class="btn danger">Delete instrument</a></p>
     <p><a href="{{ instrument.get_edit_url }}" class="btn info">Edit instrument</a></p>
-    <p><a href="#" class="btn success">Sign instrument in</a></p>
+    <p><a href="{{ instrument.last_booking.get_signin_url }}" class="btn success">Sign instrument in</a></p>
     <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
 {% endblock %}
 

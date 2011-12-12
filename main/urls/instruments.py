@@ -5,7 +5,8 @@ urlpatterns = patterns('sambasite.main.views.instruments',
     url(r'^add/$', 'add_instrument', name='instrument_add'),
     url(r'^delete/(?P<slug>[-\w]+)/$', 'delete_instrument', name='instrument_delete'),
     url(r'^detail/(?P<slug>[-\w]+)/$', 'detail_instrument', name='instrument_detail'),
-    url(r'^edit/(?P<slug>[-\w]+)/$', 'edit_instrument', name='instrument_edit')
+    url(r'^edit/(?P<slug>[-\w]+)/$', 'edit_instrument', name='instrument_edit'),
+    url(r'^sign_in/(?P<booking_id>\d+)/$', 'sign_in_instrument', name='instrument_signin'),
 )
 
 urlpatterns += patterns('django.views.generic',

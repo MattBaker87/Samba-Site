@@ -16,24 +16,26 @@
         <thead>
             <tr>
                 <th>Instrument</th>
+                <th></th>
                 <th>Type</th>
                 <th>Location</th>
                 <th>Last user</th>
-                <th>Last used</th>
-                <th>Next booking</th>
-                <th></th>
+                <th>Next user</th>
             </tr>
         </thead>
         <tbody>
             {% for instrument in instrument_list %}
                 <tr>
                     <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
+                    <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                     <td>{{ instrument.get_instrument_type_display }}</td>
                     <td>{{ instrument.location }}</td>
-                    <td>{% if instrument.last_booking %}{{ instrument.last_booking.user.get_profile.name }}{% else %}Brand new!{% endif %}</td>
-                    <td>{% if instrument.last_booking %}<a href="{{ instrument.last_booking.event.get_absolute_url }}">{{ instrument.last_booking.event.name }}</a>{% else %}Brand new!{% endif %}</td>
-                    <td>{% if instrument.next_booking %}<a href="{{ instrument.next_booking.event.get_absolute_url }}">{{ instrument.next_booking.event.name }}</a>{% else %}No future bookings{% endif %}</td>
-                    <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
+                    {% with instrument.last_booking as b %}
+                        <td>{% if b %}{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>{% else %}Brand new!{% endif %}</td>
+                    {% endwith %}
+                    {% with instrument.next_booking as b %}
+                        <td>{% if b %}{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>{% else %}No future bookings{% endif %}</td>
+                    {% endwith %}
                 </tr>
             {% endfor %}
             <tr>
