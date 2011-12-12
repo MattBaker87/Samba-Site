@@ -1,0 +1,15 @@
+{% extends "main/events/event_list.html" %}
+
+{% block title %}Past events{% endblock %}
+
+{% block top %}
+    <h1>Past events</h1>
+{% endblock %}
+
+{% block table_buttons %}
+    <tr>
+        <td colspan="7">
+            <a href="{% url events_upcoming %}" class="btn info">View upcoming events</a>
+        </td>
+    </tr>
+{% endblock %}

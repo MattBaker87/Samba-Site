@@ -1,0 +1,22 @@
+{% extends "main/events/event_list.html" %}
+
+{% block title %}Upcoming events{% endblock %}
+
+{% block nav %}
+    {% with "events" as active %}
+        {% include 'main/nav.html' %}
+    {% endwith %}
+{% endblock %}
+
+{% block top %}
+    <h1>Upcoming events</h1>
+{% endblock %}
+
+{% block table_buttons %}
+    <tr>
+        <td colspan="7">
+            <a href="{% url events_past %}" class="btn info">View past events</a>
+            <a href="{% url event_add %}" class="btn success">Add event</a>
+        </td>
+    </tr>
+{% endblock %}

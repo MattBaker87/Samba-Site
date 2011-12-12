@@ -11,6 +11,7 @@
 <div class="container">
     {% block top %}
     {% endblock %}
+    {% block body %}
     <div class="row">
         <div class="span10 offset3">
             <h1>{% block heading %}{% endblock %}</h1>
@@ -30,6 +31,7 @@
             {% endblock %}
         </div>
     </div>
+    {% endblock %}
     {% block bottom %}
     {% endblock %}
     <div class="content">

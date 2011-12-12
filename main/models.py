@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
-from main.managers import BookingManager
+from main.managers import BookingManager, EventManager
 
 from datetime import datetime
 
@@ -15,6 +15,8 @@ class Event(models.Model):
     when = models.DateTimeField()
     location = models.CharField(max_length=LONG)
     notes = models.CharField(max_length=LONG)
+    
+    objects = EventManager()
     
     class Meta:
         ordering = ['when']

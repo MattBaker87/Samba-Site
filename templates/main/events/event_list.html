@@ -1,17 +1,16 @@
 {% extends "main/base_new.html" %}
 
-{% block title %}Event list{% endblock %}
+{% block title %}Upcoming events{% endblock %}
 
 {% block nav %}
-    {% with "events" as active %}
-        {% include 'main/nav.html' %}
-    {% endwith %}
+    {% include 'main/nav.html' %}
 {% endblock %}
 
 {% block top %}
-    <h1>Event list</h1>
-    {% load get_events %}
-    {% get_future_events as event_list %}
+    <h1>Upcoming events</h1>
+    <a href="{% url events_past %}">View past events</a>
+{% endblock %}
+{% block body %}
     <table class="zebra-striped">
         <thead>
             <tr>
@@ -34,11 +33,8 @@
                     {% endwith %}
                 </tr>
             {% endfor %}
-            <tr>
-                <td colspan="7">
-                    <a href="{% url event_add %}" class="btn success">Add event</a>
-                </td>
-            </tr>
+            {% block table_buttons %}
+            {% endblock %}
         </tbody>
     </table>
 {% endblock %}
@@ -56,28 +52,7 @@
 {% endblock %}
 
 {% block wireframe_content %}
-    <ul>
-        <li>List of events (may be future events, past events, etc. Same format.)
-            <ul>
-                <li>Name of the event</li>
-                <li>When is it?</li>
-                <li>Where</li>
-                <li>Organiser (with contact details)</li>
-                <li>Who's going (simple list)</li>
-                <li>Label on each event for whether current number of sign-ups is enough (0-10, 10-15, 15+)</li>
-            </ul>
-        </li>
-        <li><span class="label notice">Admin</span> Option to edit, delete and add events</li>
-    </ul>
 {% endblock %}
 
 {% block wireframe_links %}
-    <ul>
-        <li><a href="{% url event_detail %}">View specific event</a></li>
-        <li><span class="label notice">Admin</span> <a href="{% url event_add %}">Add an event</a></li>
-        <li><span class="label notice">Admin</span> <a href="{% url event_edit %}">Edit an event</a></li>
-        <li><span class="label notice">Admin</span> <a href="{% url event_delete %}">Delete an event</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
-    </ul>
 {% endblock %}
