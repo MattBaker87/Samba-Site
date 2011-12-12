@@ -96,6 +96,28 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
     name = models.CharField(max_length=SHORT, unique=True)
     telephone = models.CharField(max_length=15, blank=True)
+    
+    def get_upcoming_events(self):
+        seen = set()
+        t = []
+        for x in self.user.bookings.future_bookings():
+            if not x.event in seen:
+                x.event.user_instruments = []
+                t.append(x.event)
+                seen.add(x.event)
+            t[t.index(x.event)].user_instruments.append(x.instrument)
+        return t
+    
+    def get_past_events(self):
+        seen = set()
+        t = []
+        for x in self.user.bookings.past_bookings():
+            if not x.event in seen:
+                x.event.user_instruments = []
+                t.append(x.event)
+                seen.add(x.event)
+            t[t.index(x.event)].user_instruments.append(x.instrument)
+        return t
 
 class Booking(models.Model):
     user = models.ForeignKey(User, related_name='bookings', blank=True, null=True, default=None)

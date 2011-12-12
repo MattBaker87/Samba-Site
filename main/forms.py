@@ -165,3 +165,59 @@ class EventForm(forms.ModelForm):
                 if self.cleaned_data[field.name]:
                     Booking.objects.create(instrument=Instrument.objects.get(name=field.name), event=event)
         return event
+
+class ContactForm(forms.ModelForm):
+    username = forms.EmailField(label=_("Email"), max_length=30,
+        help_text = _("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),
+        error_messages = {'invalid': _("Please enter a valid email address. It should be 30 characters or fewer."),
+                            'required': _("You didn't enter an email address. We need that!")},
+        widget = TextInput(attrs={'placeholder':'Email', 'label':'email'}))
+    name = forms.CharField(label=_("Name"), max_length=30,
+        help_text = _("This is the name you'll be known as on the site."),
+        error_messages = {'required': _("You didn't enter a display name. We need that!")},
+        widget = TextInput(attrs={'placeholder':'Display name', 'label':'name'}))
+    telephone = fields.UKPhoneNumberField(reject=(None, 'premium', 'service'),
+        help_text = _("Required. We use this to help organise, and to chase down drums."),
+        error_messages = {'required': _("You didn't enter a phone number. We need that!")},
+        widget = TextInput(attrs={'placeholder':'Mobile phone number', 'label':'telephone'}))
+    
+    def __init__(self, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.fields['username'].initial = kwargs['instance'].username
+        self.fields['name'].initial = kwargs['instance'].get_profile().name
+        self.fields['telephone'].initial = kwargs['instance'].get_profile().telephone
+    
+    class Meta:
+        model = User
+        fields = ("username",)
+    
+    def clean_username(self):
+        username = self.cleaned_data["username"]
+        if username == self.instance.username:
+            return username
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            return username
+        raise forms.ValidationError(_("A user with that email address already exists."))
+    
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if name == self.instance.get_profile().name:
+            return name
+        try:
+            UserProfile.objects.get(name=name)
+        except UserProfile.DoesNotExist:
+            return name
+        raise forms.ValidationError(_("A user with that display name address already exists."))
+    
+    def save(self, commit=True):
+        user = self.instance
+        profile = self.instance.get_profile()
+        profile.name = self.cleaned_data["name"]
+        profile.telephone = self.cleaned_data["telephone"]
+        user.email = user.username = self.cleaned_data["username"]
+        if commit:
+            user.save()
+            profile.save()
+        return user

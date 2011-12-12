@@ -1,15 +1,68 @@
-{% extends "main/base.html" %}
+{% extends "main/accounts/profile.html" %}
 
 {% block title %}Edit contact details{% endblock %}
-{% block header %}Edit contact details{% endblock %}
 
-{% block content %}
-    <ul>
-        <li>Simple form to edit contact details. Allows user to update their email address and phone number. Only accept one of each.</li>
+{% block details %}
+    <h2>Your details</h2>
+    <form action="" method="post" class="form-stacked">
+        <div class="alert-message block-message info">
+            {% csrf_token %}
+            <div class="row">
+                <div class="span4">
+                    <div class="clearfix">
+                        {{ form.name.label_tag }}
+                        <div class="input">
+                            {{ form.name }}
+                        </div>
+                    </div>
+                </div>
+                <div class="span4">
+                    <div class="clearfix">
+                        {{ form.username.label_tag }}
+                        <div class="input">
+                            {{ form.username }}
+                        </div>
+                    </div>
+                </div>
+                <div class="span4">
+                    <div class="clearfix">
+                        {{ form.telephone.label_tag }}
+                        <div class="input">
+                            {{ form.telephone }}
+                        </div>
+                    </div>
+                </div>
+                <div style="position:absolute; right:10px; top:49px;">
+                    <button class="btn" type="submit">Update profile</button> <a class="btn" href="{% url profile %}" style="font-weight:normal;">Cancel</a>
+                </div>
+            </div> 
+        </div>   
+    </form>
+{% endblock %}
+
+{% block bottom %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    		<a href="{% url profile %}">Your profile</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">Edit profile</a>
+    	</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_content %}
+    <ul>
+        <li>TODO: Take CSS out of HTML</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe_links %}
     <ul>
         <li><a href="{% url profile %}">Back to profile</a></li>
         <li><a href="{% url home %}">Back to homepage</a></li>

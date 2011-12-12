@@ -1,7 +1,6 @@
-{% extends "main/base.html" %}
+{% extends "main/base_new.html" %}
 
 {% block title %}User profile{% endblock %}
-{% block header %}User profile{% endblock %}
 
 {% block nav %}
     {% with "profile" as active %}
@@ -9,25 +8,118 @@
     {% endwith %}
 {% endblock %}
 
-{% block content %}
-    <ul>
-        <li>Full user profile page, including
-            <ul>
-                <li>Contact details and option to change them</li>
-                <li>Option to change password</li>
-                <li>Previous events</li>
-                <li><span class="label important">Question</span> Should we have a free text box description for people here?</li>
-            </ul>
-        </li>
-        <li>Ideally this will be built so it also forms the 'view someone else's profile page (but other users won't see the change options, unless they're an admin)</li>
+{% block top %}
+    {% block details %}
+        <h2>Your details</h2>
+        <div class="row">
+            <div class="span4">
+                <p><b>Name:</b> {{ user.get_profile.name }}</p>
+            </div>
+            <div class="span4">
+                <p><b>Email:</b> {{ user.email }}</p>
+            </div>
+            <div class="span4">
+                <p><b>Phone number:</b> {{ user.get_profile.telephone }}</p>
+            </div>
+            <div class="span4">
+                <p><a class="info btn-inline btn" href="{% url edit_contact %}">Edit details</a> <span class="info btn-inline btn">Change password</span></p>
+            </div>
+        </div>
+    {% endblock %}
+    <hr>
+    <h2>Your upcoming events</h2>
+    {% if not user.bookings %}
+        <p>You don't have any upcoming events!</p>
+    {% else %}
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>When</th>
+                <th>Location</th>
+                <th>Notes</th>
+                <th>Your instruments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in user.get_profile.get_upcoming_events %}
+                <tr>
+                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
+                    <td>{{ event.when }}</td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.notes }}</td>
+                    <td>
+                        {% for instrument in event.user_instruments %}
+                            <a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+    <hr>
+    <h2>Your past events</h2>
+    {% if not user.bookings %}
+        <p>You don't have any past events!</p>
+    {% else %}
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>When</th>
+                <th>Location</th>
+                <th>Notes</th>
+                <th>Your instruments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in user.get_profile.get_past_events %}
+                <tr>
+                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
+                    <td>{{ event.when }}</td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.notes }}</td>
+                    <td>
+                        {% for instrument in event.user_instruments %}
+                            <a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+{% endblock %}
+
+{% block bottom %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">Your profile</a>
+    	</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_content %}
+    <ul>
+        <li>TODO at next opportunity
+            <ul>
+                <li>Make this all look a bit prettier</li>
+                <li>Add edit profile functionality</li>
+                <li>Add change password functionality</li>
+                <li>Adapt template or view so this can be used as the template for viewing other people's profiles</li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block wireframe_links %}
     <ul>
         <li><a href="{% url edit_contact %}">Edit contact details</a></li>
         <li><a href="{% url change_password %}">Change password</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
     </ul>
 {% endblock %}

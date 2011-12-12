@@ -7,14 +7,15 @@ from sambasite.main.forms import LoginForm
 reverse_lazy = lazy(reverse, str)
 
 urlpatterns = patterns('sambasite.main.views.accounts',
-    url(r'^signup$', 'signup', name='signup'),
+    url(r'^signup/$', 'signup', name='signup'),
+    url(r'^edit/$', 'edit_profile', name='edit_contact'),
 )
 
 urlpatterns += patterns('django.views.generic',
     url(r'^profile/$', 'simple.direct_to_template', {'template': 'main/accounts/profile.html'},
                                                                             name='profile'),
-    url(r'^contact/$', 'simple.direct_to_template', {'template': 'main/accounts/edit_contact.html'},
-                                                                            name='edit_contact'),
+    # url(r'^edit/$', 'simple.direct_to_template', {'template': 'main/accounts/edit_contact.html'},
+    #                                                                         name='edit_contact'),
     url(r'^forgotten/$', 'simple.direct_to_template', {'template': 'main/accounts/forgotten.html'},
                                                                             name='forgotten'),
     url(r'^password/$', 'simple.direct_to_template', {'template': 'main/accounts/change_password.html'},

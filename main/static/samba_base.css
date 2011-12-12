@@ -119,7 +119,7 @@ form .clearfix.error > label, form .clearfix.error .help-block, form .clearfix.e
   padding-top: 0px;
 }
 
-input[type="submit"].btn-inline {
+.btn-inline {
   padding: 1px 7px 2px;
   font-size: 9.75px;
   font-weight: bold;
