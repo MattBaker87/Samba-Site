@@ -50,9 +50,11 @@
                     <td>{{ event.location }}</td>
                     <td>{{ event.notes }}</td>
                     <td>
+                        <ul class="unstyled">
                         {% for instrument in event.user_instruments %}
-                            <a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a>{% if not forloop.last %}, {% endif %}
+                            <li><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></li>
                         {% endfor %}
+                        </ul>
                     </td>
                 </tr>
             {% empty %}
@@ -81,9 +83,11 @@
                     <td>{{ event.location }}</td>
                     <td>{{ event.notes }}</td>
                     <td>
+                        <ul class="unstyled">
                         {% for instrument in event.user_instruments %}
-                            <a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a>{% if not forloop.last %}, {% endif %}
+                            <li><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a>&nbsp;&nbsp;<span class="success btn-inline btn pull-right">Sign in</span></li>
                         {% endfor %}
+                        </ul>
                     </td>
                 </tr>
             {% empty %}

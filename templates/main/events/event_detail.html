@@ -28,7 +28,7 @@
 
 {% block content %}
     <p><b>Name:</b> {{ event.name }}</p>
-    <p><b>When:</b> {{ event.when|date:"jS F Y, P" }}</p>
+    <p><b>When:</b> {{ event.when|date:"jS F Y, P" }} {% if event.when|timeuntil == "0 minutes" %}<span class="label notice">This event has already taken place</span>{% endif %}</p>
     <p><b>Location:</b> {{ event.location }}</p>
     <p><b>Notes:</b> {{ event.notes }}</p>
     {% if event.bookings %}
@@ -39,32 +39,44 @@
                     <th>Name</th>
                     <th>Type</th>
                     <th>Player</th>
-                    <th></th>
+                    <th>{% if event.when|timeuntil == "0 minutes" %}Status{% endif %}</th>
                 </tr>
             </thead>
             <tbody>
-                {% for booking in event.bookings.all %}
+                {% for booking in event.bookings.display %}
                     <tr>
                         <td><a href="{{ booking.instrument.get_absolute_url }}">{{ booking.instrument.name }}</a></td>
                         <td>{{ booking.instrument.get_instrument_type_display }}</td>
                         <td>{% if booking.user %}{{ booking.user.get_profile.name }}{% else %}-{% endif %}</td>
-                        {% if booking.user == user %}
-                            <form action="{{ booking.cancel_booking_url}}" method="POST">
-                                {% csrf_token %}
-                                <td>
-                                    <input type="submit" class="btn-inline btn error pull-right" value="Cancel booking" />
+                        {% if event.when|timeuntil == "0 minutes" %}
+                            {% if booking.signed_in %}
+                                <td>Returned</td>
+                            {% else %}
+                                <td>Not yet returned
+                                    {% if booking.user == user %}
+                                        <span class="success btn-inline btn pull-right">Sign in</span>
+                                    {% endif %}
                                 </td>
-                            </form>
+                            {% endif %}
                         {% else %}
-                            {% if not booking.user %}
-                                <form action="{{ booking.make_booking_url}}" method="POST">
+                            {% if booking.user == user %}
+                                <form action="{{ booking.cancel_booking_url}}" method="POST">
                                     {% csrf_token %}
                                     <td>
-                                    <input type="submit" class="btn-inline btn success pull-right" value="Book this instrument" />
+                                        <input type="submit" class="btn-inline btn error pull-right" value="Cancel booking" />
                                     </td>
                                 </form>
                             {% else %}
-                                <td></td>
+                                {% if not booking.user %}
+                                    <form action="{{ booking.make_booking_url}}" method="POST">
+                                        {% csrf_token %}
+                                        <td>
+                                        <input type="submit" class="btn-inline btn success pull-right" value="Book this instrument" />
+                                        </td>
+                                    </form>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
                             {% endif %}
                         {% endif %}
                     </tr>

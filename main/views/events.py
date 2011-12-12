@@ -64,5 +64,4 @@ def delete_event(request, slug):
 @login_required
 def list_events(request, template_name, queryset_filter, paginate_by=None):
     event_list = queryset_filter(Event.objects)
-    return render_to_response(template_name, {'event_list': event_list},
-                                                                                context_instance=RequestContext(request))
+    return render_to_response(template_name, {'event_list': event_list}, context_instance=RequestContext(request))

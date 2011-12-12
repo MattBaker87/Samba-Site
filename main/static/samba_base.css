@@ -162,3 +162,9 @@ input.datetimefield + input.datetimefield {
 #optionsCheckboxes + .input.with-help ul {
   position:relative;
 }
+
+/* Have lists within tables, but don't want bottom margin and don't want wrap*/
+tbody ul.unstyled {
+  margin-bottom:0;
+  white-space: nowrap;
+}

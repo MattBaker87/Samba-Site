@@ -6,6 +6,9 @@ class BookingManager(models.Manager):
 	def signed_up(self):
 		return self.exclude(user=None)
 	
+	def display(self):
+	    return self.exclude(user=None, event__when__lt=datetime.now())
+	
 	def future_bookings(self):
 	    return self.filter(event__when__gte=datetime.now()).order_by('event__when')
 	
