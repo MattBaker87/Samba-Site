@@ -61,7 +61,7 @@
 
 {% block options %}
     <p><a href="{{ instrument.get_delete_url }}" class="btn danger">Delete instrument</a></p>
-    <p><a href="#" class="btn info">Edit instrument</a></p>
+    <p><a href="{{ instrument.get_edit_url }}" class="btn info">Edit instrument</a></p>
     <p><a href="#" class="btn success">Sign instrument in</a></p>
     <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
 {% endblock %}
@@ -104,8 +104,6 @@
 
 {% block wireframe_links %}
     <ul>
-        <li><span class="label notice">Admin</span> <a href="#">Delete instrument</a></li>
-        <li><span class="label notice">Admin</span> <a href="{% url instrument_edit %}">Edit instrument flag and details</a></li>
         <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
         <li><a href="{% url instrument_list %}">Back to list of instruments</a></li>
         <li><a href="{% url home %}">Back to homepage</a></li>

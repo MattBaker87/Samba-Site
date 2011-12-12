@@ -14,10 +14,10 @@
             </tr>
         </thead>
         <tbody>
-            {% for instrument in instrument_list %}
-                <tr>
-                    <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
-                    <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
+            {% for item in instrument_list %}
+                <tr {% if item == instrument %}class="highlighted"{% endif %}>
+                    <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+                    <td>{% if item.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -25,7 +25,9 @@
 {% endblock %}
 
 {% block content %}
-    <p>From here you can add an instrument to the list of instruments the band owns.</p>
+    {% block description %}
+        <p>From here you can add an instrument to the list of instruments the band owns.</p>
+    {% endblock %}
     <form action="" method="post">
         {% csrf_token %}
         <fieldset>
@@ -69,10 +71,12 @@
 			    </div>
 			</div>
     	</fieldset>
+    	{% block buttons %}
         <div class="input">
             <button class="btn success" type="submit">Add instrument</button>
             <a href="{% url instrument_list %}" class="btn danger">Cancel</a>
         </div>
+        {% endblock %}
     </form>
 {% endblock %}
 

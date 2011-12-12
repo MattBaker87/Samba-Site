@@ -11,7 +11,7 @@ SHORT = 100
 
 class Event(models.Model):
     name = models.CharField(max_length=LONG)
-    slug = models.SlugField(primary_key=True)
+    slug = models.SlugField(unique=True)
     when = models.DateTimeField()
     location = models.CharField(max_length=LONG)
     notes = models.CharField(max_length=LONG)
@@ -41,7 +41,7 @@ class Instrument(models.Model):
         ('shak', 'Shaker'),
         )
     
-    slug = models.SlugField(primary_key=True)
+    slug = models.SlugField(unique=True)
     instrument_type = models.CharField(max_length=4, choices=INSTRUMENT_CHOICES, verbose_name="Instrument type")
     name = models.CharField(max_length=SHORT, verbose_name="Instrument name")
     damaged = models.BooleanField(default=False, verbose_name="This instrument is damaged")
@@ -82,6 +82,10 @@ class Instrument(models.Model):
     def get_absolute_url(self):
         return ('instrument_detail', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
+
+    def get_edit_url(self):
+        return ('instrument_edit', (), {'slug': self.slug})
+    get_edit_url = models.permalink(get_edit_url)
     
     def get_delete_url(self):
         return ('instrument_delete', (), {'slug': self.slug})

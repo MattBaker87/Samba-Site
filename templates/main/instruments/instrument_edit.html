@@ -1,20 +1,46 @@
-{% extends "main/base.html" %}
+{% extends "main/instruments/instrument_add.html" %}
 
-{% block title %}Update instrument details{% endblock %}
-{% block header %}Update instrument details{% endblock %}
+{% block title %}Edit instrument - {{ instrument.name }}{% endblock %}
 
-{% block content %}
-    <ul>
-        <li><span class="label notice">Admin</span> Whole page is admin only</li>
-        <li>Basic form to update instrument status for admins. Allows them to change the damage status, sign the instrument back in, and write notes on the instrument.</li>
+{% block heading %}Edit {{ instrument.name }}{% endblock %}
+
+{% block description %}
+    <p>From here you can edit details of the instrument '{{ instrument.name }}'.</p>
+{% endblock %}
+
+{% block buttons %}
+        <div class="input">
+            <button class="btn success" type="submit">Update details</button>
+            <a href="{{ instrument.get_absolute_url }}" class="btn danger">Cancel</a>
+        </div>
+{% endblock %}
+
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url instrument_list %}">Instruments</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{{ instrument.get_absolute_url}}">{{ instrument.name }}</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Edit instrument</a>
+    	</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_content %}
     <ul>
-        <li><a href="{% url instrument_list %}">Update instrument and go to instrument list</a></li>
-        <li><a href="{% url instrument_list %}">Cancel update and go to instrument list</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
+        <li>TODO: make whole page admin only</li>
     </ul>
+{% endblock %}
+
+{% block wireframe_links %}
 {% endblock %}

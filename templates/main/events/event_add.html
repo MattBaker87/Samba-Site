@@ -10,14 +10,16 @@
     <table class="condensed-table dimmed">
         <thead>
             <tr>
-                <th colspan="2">Upcoming events</th>
+                <th>Upcoming events</th>
             </tr>
         </thead>
         <tbody>
-            {% for event in event_list %}
-                <tr>
-                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
-                    <td>{{ event.when }}</td>
+            {% for item in event_list %}
+                <tr {% if item == event %}class="highlighted"{% endif %}>
+                    <td>
+                        <a href="{{ item.get_absolute_url }}"><p><b>{{ item.name }}</b></p>
+                        <p>{{ item.when|date:"jS N Y" }}</p></a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -48,7 +50,7 @@
 			    <label id="optionsCheckboxes">Instruments</label>
 			    <div class="input with-help">
 			        <ul class="inputs-list">
-                        <div class="optionsCheckboxes-help help-inline">These are the instruments which can be sign-ed out for this event</div>
+                        <div class="optionsCheckboxes-help help-inline">These are the instruments which can be signed out for this event</div>
 			            {% for boundfield in form.instrument_fields %}
 			                <li>
     			                <label>

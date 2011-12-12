@@ -107,6 +107,8 @@ class InstrumentForm(forms.ModelForm):
     
     def clean_name(self):
         name = self.cleaned_data["name"]
+        if name == self.instance.name:
+            return name
         try:
             Instrument.objects.get(slug=slugify(name))
         except Instrument.DoesNotExist:
