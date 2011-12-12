@@ -27,7 +27,9 @@
 {% endblock %}
 
 {% block content %}
-    <p>Please use the location box for the meeting point, and the time box for the meeting time. You can then add any further details in the notes box.</p>
+    {% block description %}
+        <p>Please use the location box for the meeting point, and the time box for the meeting time. You can then add any further details in the notes box.</p>
+    {% endblock %}
     <form action="" method="post">
         {% csrf_token %}
         <fieldset>
@@ -63,10 +65,12 @@
 			    </div>
 			</div>
     	</fieldset>
+    	{% block buttons %}
         <div class="input">
             <button class="btn success" type="submit">Add event</button>
             <a href="{% url events_upcoming %}" class="btn danger">Cancel</a>
         </div>
+        {% endblock %}
     </form>
 {% endblock %}
 

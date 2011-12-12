@@ -123,7 +123,8 @@ class EventForm(forms.ModelForm):
             self.fields[instrument.name] = forms.BooleanField(
                             label=mark_safe(instrument.name +
                                 ' <span class="label important">Damaged</span>' if instrument.damaged else instrument.name ),
-                            required=False
+                            required=False,
+                            initial= self.instance.bookings.filter(instrument=instrument).exists() if self.instance else False,
                             )
     
     class Meta:
@@ -146,6 +147,8 @@ class EventForm(forms.ModelForm):
     
     def clean_name(self):
         name = self.cleaned_data["name"]
+        if name == self.instance.name:
+            return name
         try:
             Event.objects.get(slug=slugify(name))
         except Event.DoesNotExist:
@@ -165,7 +168,12 @@ class EventForm(forms.ModelForm):
             event.save()
             for field in self.instrument_fields():
                 if self.cleaned_data[field.name]:
-                    Booking.objects.create(instrument=Instrument.objects.get(name=field.name), event=event)
+                    Booking.objects.get_or_create(instrument=Instrument.objects.get(name=field.name), event=event)
+                else:
+                    try:
+                        Booking.objects.get(instrument=Instrument.objects.get(name=field.name), event=event).delete()
+                    except Booking.DoesNotExist:
+                        continue
         return event
 
 class ContactForm(forms.ModelForm):

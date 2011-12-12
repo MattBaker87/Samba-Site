@@ -76,7 +76,7 @@
 
 {% block options %}
     <p><a href="{{ event.get_delete_url }}" class="btn danger">Delete event</a></p>
-    <p><a href="#" class="btn info">Edit event</a></p>
+    <p><a href="{{ event.get_edit_url }}" class="btn info">Edit event</a></p>
     <p><a href="{% url events_upcoming %}">Back to events list</a></p>
 {% endblock %}
 
@@ -101,7 +101,6 @@
     <ul>
         <li>TODO at next opportunity
             <ul>
-                <li>Add 'edit event' functionality</li>
                 <li>Fix CSS so the table border in the main area lines up with the rest of the content nicely</li>
                 <li>Fix CSS in sub-nav so that it's not really ugly</li>
             </ul>

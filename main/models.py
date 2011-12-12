@@ -27,6 +27,10 @@ class Event(models.Model):
         return ('event_delete', (), {'slug': self.slug})
     get_delete_url = models.permalink(get_delete_url)
     
+    def get_edit_url(self):
+        return ('event_edit', (), {'slug': self.slug})
+    get_edit_url = models.permalink(get_edit_url)
+    
     def save(self, *args, **kwargs):
 		self.slug = slugify(self.name)
 		super(Event, self).save(*args, **kwargs)

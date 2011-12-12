@@ -14,7 +14,7 @@ def add_instrument(request):
         form.save(commit=True)
         return HttpResponseRedirect(reverse('instrument_list'))
 
-    return render_to_response('main/instruments/instrument_add.html', {'form':form}, context_instance=RequestContext(request))
+    return render_to_response('main/instruments/instrument_add.html', {'form': form}, context_instance=RequestContext(request))
 
 @login_required
 def edit_instrument(request, slug):
@@ -24,7 +24,7 @@ def edit_instrument(request, slug):
         form.save(commit=True)
         return HttpResponseRedirect(instrument.get_absolute_url())
 
-    return render_to_response('main/instruments/instrument_edit.html', {'form':form, 'instrument':instrument },
+    return render_to_response('main/instruments/instrument_edit.html', {'form': form, 'instrument': instrument },
                                                                                     context_instance=RequestContext(request))
 
 @login_required

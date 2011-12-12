@@ -1,20 +1,48 @@
-{% extends "main/base.html" %}
+{% extends "main/events/event_add.html" %}
 
-{% block title %}Edit event{% endblock %}
-{% block header %}Edit event{% endblock %}
+{% block title %}Edit event - {{ event.name }}{% endblock %}
 
-{% block content %}
-    <ul>
-        <li><span class="label notice">Admin</span> Whole page is admin only</li>
-        <li>Basic form to edit events.</li>
+{% block heading %}Edit {{ event.name }}{% endblock %}
+
+{% block description %}
+    <p>From here you can edit details of the event '{{ event.name }}'.</p>
+{% endblock %}
+
+{% block buttons %}
+        <div class="input">
+            <button class="btn success" type="submit">Update details</button>
+            <a href="{{ event.get_absolute_url }}" class="btn danger">Cancel</a>
+        </div>
+{% endblock %}
+
+{% block bottom %}
+    <br>
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url events_upcoming %}">Events</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{{ event.get_absolute_url}}">{{ event.name }}</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Edit event</a>
+    	</li>
     </ul>
 {% endblock %}
 
-{% block links %}
+{% block wireframe_content %}
     <ul>
-        <li><a href="{% url event_detail %}">Back to event details</a></li>
-        <li><a href="{% url events_upcoming %}">Back to event list</a></li>
-        <li><a href="{% url home %}">Back to homepage</a></li>
-        <li><a href="{% url logout %}">Logout</a></li>
+        <li>TODO: make whole page admin only</li>
+        <li>TODO: Set up email alerts for people playing instruments that the admin removes</li>
+        <li>TODO: Set up an admin page allowing admins to select players for instruments</li>
     </ul>
+{% endblock %}
+
+{% block wireframe_links %}
 {% endblock %}
