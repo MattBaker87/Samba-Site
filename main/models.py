@@ -12,14 +12,14 @@ SHORT = 100
 class Event(models.Model):
     name = models.CharField(max_length=LONG)
     slug = models.SlugField(unique=True)
-    when = models.DateTimeField()
+    start = models.DateTimeField()
     location = models.CharField(max_length=LONG)
     notes = models.CharField(max_length=LONG)
     
     objects = EventManager()
     
     class Meta:
-        ordering = ['when']
+        ordering = ['start']
     
     def get_absolute_url(self):
         return ('event_detail', (), {'slug': self.slug})
@@ -59,10 +59,10 @@ class Instrument(models.Model):
         return self.name
         
     def past_bookings(self):
-        return self.bookings.exclude(user__isnull=True).filter(event__when__lte=datetime.now()).order_by('-event__when')
+        return self.bookings.exclude(user__isnull=True).filter(event__start__lte=datetime.now()).order_by('-event__start')
     
     def future_bookings(self):
-        return self.bookings.exclude(user__isnull=True).filter(event__when__gte=datetime.now()).order_by('event__when')
+        return self.bookings.exclude(user__isnull=True).filter(event__start__gte=datetime.now()).order_by('event__start')
     
     def last_booking(self):
         x = self.past_bookings()

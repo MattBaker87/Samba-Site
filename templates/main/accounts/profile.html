@@ -46,7 +46,7 @@
             {% for event in user.get_profile.get_upcoming_events %}
                 <tr>
                     <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
-                    <td>{{ event.when }}</td>
+                    <td>{{ event.start }}</td>
                     <td>{{ event.location }}</td>
                     <td>{{ event.notes }}</td>
                     <td>
@@ -79,7 +79,7 @@
             {% for event in user.get_profile.get_past_events %}
                 <tr>
                     <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
-                    <td>{{ event.when }}</td>
+                    <td>{{ event.start }}</td>
                     <td>{{ event.location }}</td>
                     <td>{{ event.notes }}</td>
                     <td>

@@ -72,7 +72,7 @@
             <p>
                 {% with instrument.last_booking as b %}
                     {% if b %}
-                        {{ b.user.get_profile.name }} played {{ instrument.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>, {{ b.event.when|timesince }} ago
+                        {{ b.user.get_profile.name }} played {{ instrument.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>, {{ b.event.start|timesince }} ago
                     {% else %}
                         Brand new!
                     {% endif %}
@@ -88,7 +88,7 @@
             <p>
                 {% with instrument.next_booking as b %}
                     {% if b %}
-                        {{ b.user.get_profile.name }} is playing {{ instrument.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a> in {{ b.event.when|timeuntil }} time
+                        {{ b.user.get_profile.name }} is playing {{ instrument.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a> in {{ b.event.start|timeuntil }} time
                     {% else %}
                         No future bookings
                     {% endif %}
@@ -119,7 +119,7 @@
                 {% for booking in instrument.past_bookings %}
                     <tr>
                         <td><a href="{{ booking.event.get_absolute_url }}">{{ booking.event.name }}</a></td>
-                        <td>{{ booking.event.when|date:"jS F, Y"  }}</td>
+                        <td>{{ booking.event.start|date:"jS F, Y"  }}</td>
                         <td>{{ booking.user.get_profile.name }}</td>
                         <td>TODO: add notes</td>
                     </tr>

@@ -7,17 +7,17 @@ class BookingManager(models.Manager):
 		return self.exclude(user=None)
 	
 	def display(self):
-	    return self.exclude(user=None, event__when__lt=datetime.now())
+	    return self.exclude(user=None, event__start__lt=datetime.now())
 	
 	def future_bookings(self):
-	    return self.filter(event__when__gte=datetime.now()).order_by('event__when')
+	    return self.filter(event__start__gte=datetime.now()).order_by('event__start')
 	
 	def past_bookings(self):
-	    return self.filter(event__when__lt=datetime.now()).order_by('-event__when')
+	    return self.filter(event__start__lt=datetime.now()).order_by('-event__start')
 
 class EventManager(models.Manager):
     def future_events(self):
-        return self.filter(when__gte=datetime.now())
+        return self.filter(start__gte=datetime.now())
 
     def past_events(self):
-        return self.filter(when__lt=datetime.now())
+        return self.filter(start__lt=datetime.now())

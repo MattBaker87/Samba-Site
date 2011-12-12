@@ -20,7 +20,7 @@ class GetFutureEventsNode(template.Node):
         self.var_name = var_name
 
     def render(self, context):
-        events = Event.objects.filter(when__gte=datetime.now()).order_by('when')
+        events = Event.objects.filter(start__gte=datetime.now()).order_by('start')
         context[self.var_name] = events
         return u""
 

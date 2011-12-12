@@ -135,7 +135,7 @@ class EventForm(forms.ModelForm):
                     }
         exclude = ['slug']
      
-    when = forms.DateTimeField(label=_("When"),
+    start = forms.DateTimeField(label=_("When"),
         help_text = _("Use dd/mm/yyyy, hh:mm format"),
         widget = MySplitDateTimeWidget(attrs={'class':'datetimefield'}, date_placeholder="31/12/2011", time_placeholder="12:00"))
     
@@ -155,11 +155,11 @@ class EventForm(forms.ModelForm):
             return name
         raise forms.ValidationError(_("An event with that name already exists"))
     
-    def clean_when(self):
-        when = self.cleaned_data["when"]
-        if when <= datetime.now():
+    def clean_start(self):
+        start = self.cleaned_data["start"]
+        if start <= datetime.now():
             raise forms.ValidationError(_("Please enter a date in the future"))
-        return when
+        return start
         
     
     def save(self, commit=True):
