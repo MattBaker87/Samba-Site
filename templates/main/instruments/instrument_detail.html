@@ -56,7 +56,8 @@
             <p><b>Location:</b></p>
         </div>
         <div class="span8">
-            <p>{{ instrument.location }}
+            <p>
+                {{ instrument.location }}
                 {% if instrument.last_booking.user == user and not instrument.last_booking.signed_in %}
                     <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn">Sign in</a>
                 {% endif %}
@@ -157,7 +158,6 @@
         <li>TODO after adding event functionality:
             <ul>
                 <li>Add pagination to the above list of past events, or limit them to the last 10</li>
-                <li>Add sign instrument in functionality</li>
                 <li>Add ability to make notes, and figure out a sensible way of displaying them alongside events</li>
             </ul>
         </li>
@@ -171,8 +171,4 @@
 {% endblock %}
 
 {% block wireframe_links %}
-    <ul>
-        <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
-        <li><a href="{% url instrument_list %}">Back to list of instruments</a></li>
-    </ul>
 {% endblock %}

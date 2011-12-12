@@ -48,6 +48,6 @@ def sign_in_instrument(request, booking_id):
     if request.method == "POST" and target_booking.user == request.user:
         target_booking.signed_in = True
         target_booking.save()
-        return HttpResponseRedirect(target_booking.event.get_absolute_url())
+        return HttpResponseRedirect(target_booking.instrument.get_absolute_url())
     return render_to_response('main/instruments/instrument_signin.html', {'instrument': target_booking.instrument},
                                                                 context_instance=RequestContext(request))

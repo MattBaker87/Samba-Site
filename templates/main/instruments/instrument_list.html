@@ -21,6 +21,7 @@
                 <th>Location</th>
                 <th>Last user</th>
                 <th>Next user</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -36,6 +37,11 @@
                     {% with instrument.next_booking as b %}
                         <td>{% if b %}{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>{% else %}No future bookings{% endif %}</td>
                     {% endwith %}
+                    <td>
+                        {% if instrument.last_booking.user == user and not instrument.last_booking.signed_in %}
+                            <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn">Sign in</a>
+                        {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             <tr>
@@ -61,11 +67,6 @@
 
 {% block wireframe_content %}
     <ul>
-        <li>TODO after adding ability to sign instruments back int
-            <ul>
-                <li>Put sign-in link on this page</li>
-            </ul>
-        </li>
         <li>TODO low priority
             <ul>
                 <li>Add buttons for admins to delete and edit instruments from here</li>
@@ -76,7 +77,4 @@
 {% endblock %}
 
 {% block wireframe_links %}
-    <ul>
-        <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
-    </ul>
 {% endblock %}
