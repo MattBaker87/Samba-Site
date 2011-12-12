@@ -27,12 +27,13 @@
         </div>
     {% endblock %}
     <hr>
-    <h2>Your upcoming events</h2>
-    {% if not user.bookings %}
-        <p>You don't have any upcoming events!</p>
-    {% else %}
+    {% block events %}
+    <h2>Your events</h2>
     <table class="zebra-striped">
         <thead>
+            <tr>
+                <th colspan="5"><h3>Upcoming events</h3></th>
+            </tr>
             <tr>
                 <th>Event</th>
                 <th>When</th>
@@ -56,15 +57,10 @@
                 </tr>
             {% endfor %}
         </tbody>
-    </table>
-    {% endif %}
-    <hr>
-    <h2>Your past events</h2>
-    {% if not user.bookings %}
-        <p>You don't have any past events!</p>
-    {% else %}
-    <table class="zebra-striped">
         <thead>
+            <tr>
+                <th colspan="5"><h3>Past events</h3></th>
+            </tr>
             <tr>
                 <th>Event</th>
                 <th>When</th>
@@ -89,7 +85,7 @@
             {% endfor %}
         </tbody>
     </table>
-    {% endif %}
+    {% endblock %}
 {% endblock %}
 
 {% block bottom %}
@@ -109,7 +105,6 @@
         <li>TODO at next opportunity
             <ul>
                 <li>Make this all look a bit prettier</li>
-                <li>Add edit profile functionality</li>
                 <li>Add change password functionality</li>
                 <li>Adapt template or view so this can be used as the template for viewing other people's profiles</li>
             </ul>
