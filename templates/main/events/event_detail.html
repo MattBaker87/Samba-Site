@@ -88,7 +88,9 @@
 
 {% block options %}
     <p><a href="{{ event.get_delete_url }}" class="btn danger">Delete event</a></p>
-    <p><a href="{{ event.get_edit_url }}" class="btn info">Edit event</a></p>
+    {% if not event.start|timeuntil == "0 minutes" %}
+        <p><a href="{{ event.get_edit_url }}" class="btn info">Edit event</a></p>
+    {% endif %}
     <p><a href="{% url events_upcoming %}">Back to events list</a></p>
 {% endblock %}
 
@@ -126,7 +128,4 @@
 {% endblock %}
 
 {% block wireframe_links %}
-    <ul>
-        <li><span class="label notice">Admin</span> <a href="{% url event_edit %}">Edit event</a></li>
-    </ul>
 {% endblock %}
