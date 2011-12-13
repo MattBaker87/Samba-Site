@@ -1,4 +1,4 @@
-{% extends "main/events/event_list.html" %}
+{% extends "main/base_new.html" %}
 
 {% block title %}Past events{% endblock %}
 
@@ -6,10 +6,27 @@
     <h1>Past events</h1>
 {% endblock %}
 
-{% block table_buttons %}
-    <tr>
-        <td colspan="7">
-            <a href="{% url events_upcoming %}" class="btn info">View upcoming events</a>
-        </td>
-    </tr>
+{% block body %}
+<table class="zebra-striped">
+    {% include 'main/events/event_table.html' %}
+    <thead>
+        <tr>
+            <td colspan="5">
+                <a href="{% url events_upcoming %}" class="btn info">View upcoming events</a>
+            </td>
+        </tr>
+    </thead>
+</table>
+{% endblock %}
+
+{% block bottom %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">Events</a>
+    	</li>
+    </ul>
 {% endblock %}

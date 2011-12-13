@@ -13,7 +13,7 @@ class BookingManager(models.Manager):
 	    return self.filter(event__start__lt=datetime.now()).order_by('-event__start')
 	
     def not_signed_in(self):
-	    return self.filter(event__start__lt=datetime.now(), signed_in=False).order_by('-event__start')
+	    return self.filter(event__start__lt=datetime.now(), signed_in=False).exclude(user=None).order_by('-event__start')
 
 class EventManager(models.Manager):
     def future_events(self):

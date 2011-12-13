@@ -1,6 +1,4 @@
-{% extends "main/events/event_list.html" %}
-
-{% block title %}Upcoming events{% endblock %}
+{% extends "main/base_new.html" %}
 
 {% block nav %}
     {% with "events" as active %}
@@ -8,15 +6,34 @@
     {% endwith %}
 {% endblock %}
 
+{% block title %}Upcoming events{% endblock %}
+
 {% block top %}
     <h1>Upcoming events</h1>
 {% endblock %}
 
-{% block table_buttons %}
-    <tr>
-        <td colspan="7">
-            <a href="{% url events_past %}" class="btn info">View past events</a>
-            <a href="{% url event_add %}" class="btn success">Add event</a>
-        </td>
-    </tr>
+{% block body %}
+<table class="zebra-striped">
+    {% include 'main/events/event_table.html' %}
+    <thead>
+        <tr>
+            <td colspan="5">
+                <a href="{% url events_past %}" class="btn info">View past events</a>
+                <a href="{% url event_add %}" class="btn success">Add event</a>
+            </td>
+        </tr>
+    </thead>
+</table>
+{% endblock %}
+
+{% block bottom %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">Events</a>
+    	</li>
+    </ul>
 {% endblock %}

@@ -92,6 +92,9 @@ class Instrument(models.Model):
         x = self.get_future_bookings()
         return x[0] if x else None
     
+    def get_signed_in(self):
+        return self.not_signed_in().exists()
+    
     def get_location(self):
         x = self.get_last_booking()
         return "Not yet signed back in" if x and x.signed_in == False else "Store room"

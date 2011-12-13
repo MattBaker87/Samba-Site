@@ -60,46 +60,9 @@
                 {% endif %}
             <div class="span13">
                 <table class="zebra-striped">
-                    <thead>
-                        <tr>
-                            <th>Instrument name</th>
-                            <th>Type</th>
-                            <th>Last user</th>
-                            <th>Next user</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for booking in target_user.bookings.not_signed_in %}
-                            {% with booking.instrument as instrument %}
-                                <tr>
-                                    <td>{{ instrument.get_linked_name }}</td>
-                                    <td>{{ instrument.get_instrument_type_display }}</td>
-                                    {% with instrument.get_last_booking as b %}
-                                        <td>{{ b.user.get_profile.name }} at {{ b.event.get_linked_name }}</td>
-                                    {% endwith %}
-                                    {% with instrument.get_next_booking as b %}
-                                        <td>{% if b %}{{ b.user.get_profile.name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
-                                    {% endwith %}
-                                    <td>
-                                        {% if target_user == user %}
-                                            <a href="{{ instrument.get_last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endwith %}
-                        {% empty %}
-                            <tr>
-                                <td colspan="5">
-                                    {% if target_user == user %}
-                                        You're not currently responsible for any instruments
-                                    {% else %}
-                                        {{ target_user.get_profile.name }} isn't currently responsible for any instruments
-                                    {% endif %}
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
+                    {% load get_instruments %}
+                    {% get_instruments as instrument_list mia target_user %}
+                    {% include 'main/instruments/instrument_mia_table.html' %}
                 </table>
             </div>
         </div>

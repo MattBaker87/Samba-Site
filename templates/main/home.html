@@ -34,88 +34,34 @@
     <h1>Welcome <a href="{% url profile %}">{{ user.get_profile.name }}</a></h1>
     <p>This site will help you keep track of what's going on with the samba band. The links in the black navigation bar above let you quickly get information about upcoming events, where our instruments are, and people's contact details. We'll also display the most relevant information below.</p>
     <h3>Next Sambatage event</h3>
-    {% load get_events %}
-    {% get_future_events as event_list %}
     <table class="zebra-striped">
+        {% load get_events %}
+        {% get_future_events as event_list %}
+        {% with event_list|slice:":1" as event_list %}
+            {% include 'main/events/event_table.html' %}
+        {% endwith %}
         <thead>
             <tr>
-                <th>Event</th>
-                <th>When</th>
-                <th>Location</th>
-                <th>Notes</th>
-                <th>Instruments</th>
+                <td colspan="5">
+                    <a href="{% url events_upcoming %}" class="btn info">View all upcoming events</a>
+                    <a href="{% url events_past %}" class="btn info">View past events</a>
+                    <a href="{% url event_add %}" class="btn success">Add event</a>
+                </td>
             </tr>
         </thead>
-        <tbody>
-            {% for event in event_list|slice:":1" %}
-                <tr>
-                    <td>{{ event.get_linked_name }}</td>
-                    <td>{{ event.start|date:"jS N Y, P" }}</td>
-                    <td>{{ event.location }}</td>
-                    <td>{{ event.notes }}</td>
-                    {% with event.get_sign_ups.count as x %}
-                        <td><span class="label {{ event.get_label }}">{{ x }}</span> instrument{{ x|pluralize }} signed up</td>
-                    {% endwith %}
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5">No upcoming events</td>
-                </tr>
-            {% endfor %}
-                <tr>
-                    <td colspan="5">
-                        <a href="{% url events_upcoming %}" class="btn info">View all upcoming events</a>
-                        <a href="{% url events_past %}" class="btn info">View past events</a>
-                        <a href="{% url event_add %}" class="btn success">Add event</a>
-                    </td>
-                </tr>
-        </tbody>
     </table>
     <h3>Instruments currently missing in action</h3>
-    {% load get_instruments %}
-    {% get_instruments as instrument_list %}
     <table class="zebra-striped">
+        {% load get_instruments %}
+        {% get_instruments as instrument_list mia %}
+        {% include 'main/instruments/instrument_mia_table.html' %}
         <thead>
-            <tr>
-                <th>Instrument name</th>
-                <th>Type</th>
-                <th>Last user</th>
-                <th>Next user</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for instrument in instrument_list %}
-                {% if instrument.get_last_booking and not instrument.get_last_booking.signed_in %}
-                    <tr>
-                        <td>{{ instrument.get_linked_name }}</td>
-                        <td>{{ instrument.get_instrument_type_display }}</td>
-                        {% with instrument.get_last_booking as b %}
-                            <td>{{ b.user.get_profile.name }} at {{ b.event.get_linked_name }}</td>
-                        {% endwith %}
-                        {% with instrument.get_next_booking as b %}
-                            <td>{% if b %}{{ b.user.get_profile.name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
-                        {% endwith %}
-                        <td>
-                            {% if instrument.get_last_booking.user == user %}
-                                <a href="{{ instrument.get_last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endif %}
-            {% empty %}
-                <tr>
-                    <td colspan="5">
-                        All instruments are safely accounted for!
-                    </td>
-                </tr>
-            {% endfor %}
             <tr>
                 <td colspan="5">
                     <a href="{% url instrument_list %}" class="btn info">View all instruments</a>
                 </td>
             </tr>
-        </tbody>
+        </thead>
     </table>
 {% endblock %}
 
