@@ -53,8 +53,8 @@
                     <td>{{ event.start|date:"jS N Y, P" }}</td>
                     <td>{{ event.location }}</td>
                     <td>{{ event.notes }}</td>
-                    {% with event.bookings.signed_up.count as x %}
-                        <td><span class="label {{ event.bookings.label }}">{{ x }}</span> instrument{{ x|pluralize }} signed up</td>
+                    {% with event.get_sign_ups.count as x %}
+                        <td><span class="label {{ event.get_label }}">{{ x }}</span> instrument{{ x|pluralize }} signed up</td>
                     {% endwith %}
                 </tr>
             {% empty %}

@@ -24,6 +24,18 @@ class Event(models.Model):
     def __unicode__(self):
         return self.name
     
+    def get_sign_ups(self):
+        return self.bookings.exclude(user=None)
+    
+    def get_label(self):
+        x = self.get_sign_ups().count()
+        if x < 5:
+            return "important"
+        elif x < 10:
+            return "warning"
+        else:
+            return "success"
+    
     def get_absolute_url(self):
         return ('event_detail', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
@@ -110,7 +122,7 @@ class UserProfile(models.Model):
     telephone = models.CharField(max_length=15, blank=True)
     slug = models.SlugField(unique=True)
     
-    def get_upcoming_events(self):
+    def get_future_events(self):
         seen = set()
         t = []
         for x in self.user.bookings.future_bookings():

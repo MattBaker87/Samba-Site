@@ -128,7 +128,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for event in target_user.get_profile.get_upcoming_events %}
+                        {% for event in target_user.get_profile.get_future_events %}
                             <tr>
                                 <td>{{ event.get_linked_name }}</td>
                                 <td>{{ event.start }}</td>
