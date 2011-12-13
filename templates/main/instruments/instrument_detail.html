@@ -16,7 +16,7 @@
         <tbody>
             {% for item in instrument_list %}
                 <tr {% if item == instrument %}class="highlighted"{% endif %}>
-                    <td><a href="{{ item.get_absolute_url }}">{{ item.name }}</a></td>
+                    <td>{{ item.get_linked_name }}</td>
                     <td>{% if item.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                 </tr>
             {% endfor %}
@@ -57,9 +57,9 @@
         </div>
         <div class="span8">
             <p>
-                {{ instrument.location }}
-                {% if instrument.last_booking.user == user and not instrument.last_booking.signed_in %}
-                    <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn">Sign in</a>
+                {{ instrument.get_location }}
+                {% if instrument.get_last_booking.user == user and not instrument.get_last_booking.signed_in %}
+                    <a href="{{ instrument.get_last_booking.get_signin_url }}" class="success btn-inline btn">Sign in</a>
                 {% endif %}
             </p>
         </div>
@@ -70,9 +70,9 @@
         </div>
         <div class="span8">
             <p>
-                {% with instrument.last_booking as b %}
+                {% with instrument.get_last_booking as b %}
                     {% if b %}
-                        {{ b.user.get_profile.name }} played {{ instrument.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>, {{ b.event.start|timesince }} ago
+                        {{ b.user.get_profile.get_linked_name }} played {{ instrument.name }} at {{ b.event.get_linked_name }}, {{ b.event.start|timesince }} ago
                     {% else %}
                         Brand new!
                     {% endif %}
@@ -86,9 +86,9 @@
         </div>
         <div class="span8">
             <p>
-                {% with instrument.next_booking as b %}
+                {% with instrument.get_next_booking as b %}
                     {% if b %}
-                        {{ b.user.get_profile.name }} is playing {{ instrument.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a> in {{ b.event.start|timeuntil }} time
+                        {{ b.user.get_profile.get_linked_name }} is playing {{ instrument.name }} at {{ b.event.get_linked_name }} in {{ b.event.start|timeuntil }} time
                     {% else %}
                         No future bookings
                     {% endif %}
@@ -104,7 +104,7 @@
             <p>TODO - add most recent note here</p>
         </div>
     </div>
-    {% if instrument.past_bookings %}
+    {% if instrument.get_past_bookings %}
         <h3>Instrument history</h3>
         <table>
             <thead>
@@ -116,11 +116,11 @@
                 </tr>
             </thead>
             <tbody>
-                {% for booking in instrument.past_bookings %}
+                {% for booking in instrument.get_past_bookings %}
                     <tr>
-                        <td><a href="{{ booking.event.get_absolute_url }}">{{ booking.event.name }}</a></td>
+                        <td>{{ booking.event.get_linked_name }}</td>
                         <td>{{ booking.event.start|date:"jS F, Y"  }}</td>
-                        <td><a href="{{ booking.user.get_profile.get_absolute_url }}">{{ booking.user.get_profile.name }}</a></td>
+                        <td>{{ booking.user.get_profile.get_linked_name }}</td>
                         <td>TODO: add notes</td>
                     </tr>
                 {% endfor %}
@@ -132,7 +132,7 @@
 {% block options %}
     <p><a href="{{ instrument.get_delete_url }}" class="btn danger">Delete instrument</a></p>
     <p><a href="{{ instrument.get_edit_url }}" class="btn info">Edit instrument</a></p>
-    <p><a href="{{ instrument.last_booking.get_signin_url }}" class="btn success">Sign instrument in</a></p>
+    <p><a href="{{ instrument.get_last_booking.get_signin_url }}" class="btn success">Sign instrument in</a></p>
     <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
 {% endblock %}
 

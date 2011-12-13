@@ -73,17 +73,17 @@
                         {% for booking in target_user.bookings.not_signed_in %}
                             {% with booking.instrument as instrument %}
                                 <tr>
-                                    <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
+                                    <td>{{ instrument.get_linked_name }}</td>
                                     <td>{{ instrument.get_instrument_type_display }}</td>
-                                    {% with instrument.last_booking as b %}
-                                        <td>{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a></td>
+                                    {% with instrument.get_last_booking as b %}
+                                        <td>{{ b.user.get_profile.name }} at {{ b.event.get_linked_name }}</td>
                                     {% endwith %}
-                                    {% with instrument.next_booking as b %}
-                                        <td>{% if b %}{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>{% else %}No future bookings{% endif %}</td>
+                                    {% with instrument.get_next_booking as b %}
+                                        <td>{% if b %}{{ b.user.get_profile.name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
                                     {% endwith %}
                                     <td>
                                         {% if target_user == user %}
-                                            <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                            <a href="{{ instrument.get_last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
                                         {% endif %}
                                     </td>
                                 </tr>
@@ -130,21 +130,27 @@
                     <tbody>
                         {% for event in target_user.get_profile.get_upcoming_events %}
                             <tr>
-                                <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
+                                <td>{{ event.get_linked_name }}</td>
                                 <td>{{ event.start }}</td>
                                 <td>{{ event.location }}</td>
                                 <td>{{ event.notes }}</td>
                                 <td>
                                     <ul class="unstyled">
                                     {% for booking in event.user_bookings %}
-                                        <li><a href="{{ booking.instrument.get_absolute_url }}">{{ booking.instrument.name }}</a></li>
+                                        <li>{{ booking.instrument.get_linked_name }}</li>
                                     {% endfor %}
                                     </ul>
                                 </td>
                             </tr>
                         {% empty %}
                             <tr>
-                                <td colspan="5">You don't have any upcoming events</td>
+                                <td colspan="5">
+                                    {% if target_user == user %}
+                                        You don't have any upcoming events
+                                    {% else %}
+                                        {{ target_user.get_profile.name }} doesn't have any upcoming events
+                                    {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                         <tr>

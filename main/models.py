@@ -21,9 +21,15 @@ class Event(models.Model):
     class Meta:
         ordering = ['start']
     
+    def __unicode__(self):
+        return self.name
+    
     def get_absolute_url(self):
         return ('event_detail', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
+    
+    def get_linked_name(self):
+        return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
     
     def get_delete_url(self):
         return ('event_delete', (), {'slug': self.slug})
@@ -60,36 +66,30 @@ class Instrument(models.Model):
     def __unicode__(self):
         return self.name
         
-    def past_bookings(self):
+    def get_past_bookings(self):
         return self.bookings.exclude(user__isnull=True).filter(event__start__lte=datetime.now()).order_by('-event__start')
     
-    def future_bookings(self):
+    def get_future_bookings(self):
         return self.bookings.exclude(user__isnull=True).filter(event__start__gte=datetime.now()).order_by('event__start')
     
-    def last_booking(self):
-        x = self.past_bookings()
-        if x:
-            return x[0]
-        else:
-            return None
+    def get_last_booking(self):
+        x = self.get_past_bookings()
+        return x[0] if x else None
     
-    def next_booking(self):
-        x = self.future_bookings()
-        if x:
-            return x[0]
-        else:
-            return None
+    def get_next_booking(self):
+        x = self.get_future_bookings()
+        return x[0] if x else None
     
-    def location(self):
-        x = self.last_booking()
-        if x and x.signed_in == False:
-            return "Not yet signed back in"
-        else:
-            return "Store room"
+    def get_location(self):
+        x = self.get_last_booking()
+        return "Not yet signed back in" if x and x.signed_in == False else "Store room"
     
     def get_absolute_url(self):
         return ('instrument_detail', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
+
+    def get_linked_name(self):
+        return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
 
     def get_edit_url(self):
         return ('instrument_edit', (), {'slug': self.slug})
@@ -132,23 +132,20 @@ class UserProfile(models.Model):
             t[t.index(x.event)].user_bookings.append(x)
         return t
     
-    def next_booking(self):
+    def get_next_booking(self):
         x = self.user.bookings.future_bookings()
-        if x:
-            return x[0]
-        else:
-            return None
+        return x[0] if x else None
     
-    def last_booking(self):
+    def get_last_booking(self):
         x = self.user.bookings.past_bookings()
-        if x:
-            return x[0]
-        else:
-            return None
+        return x[0] if x else None
     
     def get_absolute_url(self):
         return ('view_profile', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
+
+    def get_linked_name(self):
+        return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
 
     def save(self, *args, **kwargs):
 		self.slug = slugify(self.name)
@@ -165,13 +162,13 @@ class Booking(models.Model):
     class Meta:
         ordering = ['instrument']
     
-    def make_booking_url(self):
+    def get_book_url(self):
         return ('instrument_sign_out', (), {'booking_id': self.id})
-    make_booking_url = models.permalink(make_booking_url)
+    get_book_url = models.permalink(get_book_url)
     
-    def cancel_booking_url(self):
+    def get_cancel_url(self):
         return ('cancel_sign_out', (), {'booking_id': self.id})
-    cancel_booking_url = models.permalink(cancel_booking_url)
+    get_cancel_url = models.permalink(get_cancel_url)
     
     def get_signin_url(self):
         return ('instrument_signin', (), {'booking_id': self.id})

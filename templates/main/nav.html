@@ -11,9 +11,7 @@
                 </ul>
                 <ul class="nav secondary-nav">
                     <li {% if active == 'profile' %}class="active"{% endif %}>
-                        <a href="{% url profile %}">
-                            {{ user.get_profile.name }}
-                        </a>
+                        {{ user.get_profile.get_linked_name }}
                     </li>
                     <li><a href="{% url logout %}">Logout</a></li>
                 </ul>

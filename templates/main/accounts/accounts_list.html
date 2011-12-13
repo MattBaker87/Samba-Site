@@ -23,11 +23,11 @@
         <tbody>
             {% for user in user_list %}
                 <tr>
-                    <td><a href="{{ user.get_profile.get_absolute_url }}">{{ user.get_profile.name }}</a></td>
+                    <td>{{ user.get_profile.get_linked_name }}</td>
                     <td>{{ user.email }}</td>
                     <td>{{ user.get_profile.telephone }}</td>
-                    <td>{% if user.get_profile.last_booking %}<a href="{{ user.get_profile.last_booking.event.get_absolute_url }}">{{ user.get_profile.last_booking.event.name }}</a>{% else %}No upcoming events{% endif %}</td>
-                    <td>{% if user.get_profile.next_booking %}<a href="{{ user.get_profile.next_booking.event.get_absolute_url }}">{{ user.get_profile.next_booking.event.name }}</a>{% else %}No upcoming events{% endif %}</td>
+                    <td>{% if user.get_profile.get_last_booking %}{{ user.get_profile.get_last_booking.event.get_linked_name }}{% else %}No upcoming events{% endif %}</td>
+                    <td>{% if user.get_profile.get_next_booking %}{{ user.get_profile.get_next_booking.event.get_linked_name }}{% else %}No upcoming events{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>

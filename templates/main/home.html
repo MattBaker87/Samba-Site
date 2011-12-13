@@ -49,7 +49,7 @@
         <tbody>
             {% for event in event_list|slice:":1" %}
                 <tr>
-                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
+                    <td>{{ event.get_linked_name }}</td>
                     <td>{{ event.start|date:"jS N Y, P" }}</td>
                     <td>{{ event.location }}</td>
                     <td>{{ event.notes }}</td>
@@ -71,7 +71,7 @@
                 </tr>
         </tbody>
     </table>
-    <h3>Instruments currently MIA</h3>
+    <h3>Instruments currently missing in action</h3>
     {% load get_instruments %}
     {% get_instruments as instrument_list %}
     <table class="zebra-striped">
@@ -86,19 +86,19 @@
         </thead>
         <tbody>
             {% for instrument in instrument_list %}
-                {% if instrument.last_booking and not instrument.last_booking.signed_in %}
+                {% if instrument.get_last_booking and not instrument.get_last_booking.signed_in %}
                     <tr>
-                        <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
+                        <td>{{ instrument.get_linked_name }}</td>
                         <td>{{ instrument.get_instrument_type_display }}</td>
-                        {% with instrument.last_booking as b %}
-                            <td>{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a></td>
+                        {% with instrument.get_last_booking as b %}
+                            <td>{{ b.user.get_profile.name }} at {{ b.event.get_linked_name }}</td>
                         {% endwith %}
-                        {% with instrument.next_booking as b %}
-                            <td>{% if b %}{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>{% else %}No future bookings{% endif %}</td>
+                        {% with instrument.get_next_booking as b %}
+                            <td>{% if b %}{{ b.user.get_profile.name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
                         {% endwith %}
                         <td>
-                            {% if instrument.last_booking.user == user %}
-                                <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                            {% if instrument.get_last_booking.user == user %}
+                                <a href="{{ instrument.get_last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
                             {% endif %}
                         </td>
                     </tr>

@@ -1,11 +1,11 @@
 {% extends "main/events/event_add.html" %}
 
-{% block title %}Edit event - {{ event.name }}{% endblock %}
+{% block title %}Edit event - {{ event }}{% endblock %}
 
-{% block heading %}Edit {{ event.name }}{% endblock %}
+{% block heading %}Edit {{ event }}{% endblock %}
 
 {% block description %}
-    <p>From here you can edit details of the event '{{ event.name }}'.</p>
+    <p>From here you can edit details of the event '{{ event }}'.</p>
 {% endblock %}
 
 {% block buttons %}
@@ -27,7 +27,7 @@
     	    <span class="divider">/</span>
     	</li>
     	<li>
-    	    <a href="{{ event.get_absolute_url}}">{{ event.name }}</a>
+    	    {{ event.get_linked_name }}
     	    <span class="divider">/</span>
     	</li>
     	<li class="active">
