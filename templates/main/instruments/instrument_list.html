@@ -1,6 +1,6 @@
 {% extends "main/base_new.html" %}
 
-{% block title %}Instrument list{% endblock %}
+{% block title %}Instruments{% endblock %}
 
 {% block nav %}
     {% with "instruments" as active %}
@@ -9,7 +9,7 @@
 {% endblock %}
 
 {% block top %}
-    <h1>Instrument list</h1>
+    <h1>Instruments <small>A list of instruments owned by the band</small></h1>
     {% load get_instruments %}
     {% get_instruments as instrument_list %}
     <table class="zebra-striped">

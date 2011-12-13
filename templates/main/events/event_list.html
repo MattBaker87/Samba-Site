@@ -7,9 +7,8 @@
 {% endblock %}
 
 {% block top %}
-    <h1>Upcoming events</h1>
-    <a href="{% url events_past %}">View past events</a>
 {% endblock %}
+
 {% block body %}
     <table class="zebra-striped">
         <thead>
@@ -29,7 +28,7 @@
                     <td>{{ event.location }}</td>
                     <td>{{ event.notes }}</td>
                     {% with event.bookings.signed_up.count as x %}
-                        <td>{{ x }} instrument{{ x|pluralize }} signed up</td>
+                        <td><span class="label {{ event.bookings.label }}">{{ x }}</span> instrument{{ x|pluralize }} signed up</td>
                     {% endwith %}
                 </tr>
             {% endfor %}
