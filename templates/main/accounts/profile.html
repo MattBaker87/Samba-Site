@@ -1,35 +1,46 @@
 {% extends "main/base_new.html" %}
 
-{% block title %}User profile{% endblock %}
+{% block title %}{% if target_user == user %}Your{% else %}{{ target_user.get_profile.name }}'s{% endif %} profile{% endblock %}
 
 {% block nav %}
-    {% with "profile" as active %}
+    {% if target_user == user %}
+        {% with "profile" as active %}
+            {% include 'main/nav.html' %}
+        {% endwith %}
+    {% else %}
         {% include 'main/nav.html' %}
-    {% endwith %}
+    {% endif %}
 {% endblock %}
 
 {% block top %}
     {% block details %}
         <div class="row">
             <div class="span3">
-                <h2>Your details</h2>
-                <p>NOTE: Your email is also your login for this site</p>
+                {% if target_user == user %}
+                    <h2>Your details</h2>
+                    <p>NOTE: Your email is also your login for this site</p>
+                {% else %}
+                    <h2>Details</h2>
+                    <p>These are the contact details we have for {{ target_user.get_profile.name }}</p>
+                {% endif %}
             </div>
             <div class="span13">
                 <h2>&nbsp;</h2>
                 <div class="row">
                     <div class="span3">
-                        <p><b>Name:</b> {{ user.get_profile.name }}</p>
+                        <p><b>Name:</b> {{ target_user.get_profile.name }}</p>
                     </div>
                     <div class="span4">
-                        <p><b>Email:</b> {{ user.email }}</p>
+                        <p><b>Email:</b> {{ target_user.email }}</p>
                     </div>
                     <div class="span3">
-                        <p><b>Phone:</b> {{ user.get_profile.telephone }}</p>
+                        <p><b>Phone:</b> {{ target_user.get_profile.telephone }}</p>
                     </div>
-                    <div class="span3">
-                        <a class="info btn-inline btn" href="{% url edit_contact %}">Edit</a> <span class="info  btn-inline btn">Change password</span>
-                    </div>
+                    {% if target_user == user %}
+                        <div class="span3">
+                            <a class="info btn-inline btn" href="{% url edit_contact %}">Edit</a> <span class="info  btn-inline btn">Change password</span>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -38,9 +49,15 @@
     {% block instruments %}
         <div class="row">
             <div class="span3">
-            <h2>Instruments</h2>
-                <p>You are responsible for these instruments (until you sign them back in to the storeroom)</p>
-            </div>
+                {% if target_user == user %}
+                    <h2>Instruments</h2>
+                        <p>You are responsible for these instruments (until you sign them back in to the storeroom)</p>
+                    </div>
+                {% else %}
+                    <h2>Instruments</h2>
+                        <p>{{ target_user.get_profile.name }} is responsible for these instruments (until they're signed back in to the storeroom)</p>
+                    </div>
+                {% endif %}
             <div class="span13">
                 <table class="zebra-striped">
                     <thead>
@@ -53,7 +70,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for booking in user.bookings.not_signed_in %}
+                        {% for booking in target_user.bookings.not_signed_in %}
                             {% with booking.instrument as instrument %}
                                 <tr>
                                     <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
@@ -65,13 +82,19 @@
                                         <td>{% if b %}{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>{% else %}No future bookings{% endif %}</td>
                                     {% endwith %}
                                     <td>
+                                        {% if target_user == user %}
                                             <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endwith %}
                         {% empty %}
                             <td colspan="5">
-                                You're not currently responsible for any instruments
+                                {% if target_user == user %}
+                                    You're not currently responsible for any instruments
+                                {% else %}
+                                    Matt isn't currently responsible for any instruments
+                                {% endif %}
                             </td>
                         {% endfor %}
                     </tbody>
@@ -83,8 +106,13 @@
     {% block events %}
         <div class="row">
             <div class="span3">
-                <h2>Events</h2>
-                <p>These are your upcoming events. Click on each one for more details</p>
+                {% if target_user == user %}
+                    <h2>Your events</h2>
+                    <p>These are upcoming events you've booked an instrument for. Click on each one for more details</p>
+                {% else %}
+                    <h2>Events</h2>
+                    <p>These are upcoming events {{ target_user.get_profile.name }} has booked an instrument for. Click on each one for more details</p>
+                {% endif %}
             </div>
             <div class="span13">
                 <table class="zebra-striped">
@@ -94,11 +122,11 @@
                             <th>When</th>
                             <th>Location</th>
                             <th>Notes</th>
-                            <th style="white-space: nowrap;">Your instruments</th>
+                            <th style="white-space: nowrap;">Booking</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for event in user.get_profile.get_upcoming_events %}
+                        {% for event in target_user.get_profile.get_upcoming_events %}
                             <tr>
                                 <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
                                 <td>{{ event.start }}</td>
@@ -136,7 +164,7 @@
     		<span class="divider">/</span>
     	</li>
     	<li class="active">
-    	    <a href="#">Your profile</a>
+    	    <a href="#">{% if target_user == user %}Your{% else %}{{ target_user.get_profile.name }}'s{%endif %} profile</a>
     	</li>
     </ul>
 {% endblock %}

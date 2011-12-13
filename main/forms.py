@@ -216,7 +216,7 @@ class ContactForm(forms.ModelForm):
         if name == self.instance.get_profile().name:
             return name
         try:
-            UserProfile.objects.get(name=name)
+            UserProfile.objects.get(slug=slugify(name))
         except UserProfile.DoesNotExist:
             return name
         raise forms.ValidationError(_("A user with that display name address already exists."))

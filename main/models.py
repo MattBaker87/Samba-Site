@@ -108,6 +108,7 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
     name = models.CharField(max_length=SHORT, unique=True)
     telephone = models.CharField(max_length=15, blank=True)
+    slug = models.SlugField(unique=True)
     
     def get_upcoming_events(self):
         seen = set()
@@ -130,6 +131,14 @@ class UserProfile(models.Model):
                 seen.add(x.event)
             t[t.index(x.event)].user_bookings.append(x)
         return t
+    
+    def get_absolute_url(self):
+        return ('view_profile', (), {'slug': self.slug})
+    get_absolute_url = models.permalink(get_absolute_url)
+
+    def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super(UserProfile, self).save(*args, **kwargs)
 
 class Booking(models.Model):
     user = models.ForeignKey(User, related_name='bookings', blank=True, null=True, default=None)

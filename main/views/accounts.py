@@ -1,11 +1,12 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response
+from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 
 from main.forms import UserSignupForm, ContactForm
+from main.models import UserProfile
 
 def signup(request):
     if request.user.is_authenticated():
@@ -33,3 +34,9 @@ def edit_profile(request):
         return HttpResponseRedirect(reverse('profile'))
 
     return render_to_response('main/accounts/edit_contact.html', {'form':form}, context_instance=RequestContext(request))
+
+@login_required
+def view_profile(request, slug=None):
+    target_userprofile = get_object_or_404(UserProfile, slug=slug) if slug else request.user.get_profile()
+    return render_to_response('main/accounts/profile.html', {'target_user': target_userprofile.user},
+                                                                context_instance=RequestContext(request))

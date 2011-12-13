@@ -120,7 +120,7 @@
                     <tr>
                         <td><a href="{{ booking.event.get_absolute_url }}">{{ booking.event.name }}</a></td>
                         <td>{{ booking.event.start|date:"jS F, Y"  }}</td>
-                        <td>{{ booking.user.get_profile.name }}</td>
+                        <td><a href="{{ booking.user.get_profile.get_absolute_url }}">{{ booking.user.get_profile.name }}</a></td>
                         <td>TODO: add notes</td>
                     </tr>
                 {% endfor %}

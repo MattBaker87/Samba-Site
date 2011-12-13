@@ -9,11 +9,11 @@ reverse_lazy = lazy(reverse, str)
 urlpatterns = patterns('sambasite.main.views.accounts',
     url(r'^signup/$', 'signup', name='signup'),
     url(r'^edit/$', 'edit_profile', name='edit_contact'),
+    url(r'^profile/$', 'view_profile', name='profile'),
+    url(r'^profile/(?P<slug>[-\w]+)/$', 'view_profile', name='view_profile'),
 )
 
 urlpatterns += patterns('django.views.generic',
-    url(r'^profile/$', 'simple.direct_to_template', {'template': 'main/accounts/profile.html'},
-                                                                            name='profile'),
     # url(r'^edit/$', 'simple.direct_to_template', {'template': 'main/accounts/edit_contact.html'},
     #                                                                         name='edit_contact'),
     url(r'^forgotten/$', 'simple.direct_to_template', {'template': 'main/accounts/forgotten.html'},

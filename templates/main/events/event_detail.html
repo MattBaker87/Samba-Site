@@ -79,7 +79,7 @@
                     <tr>
                         <td><a href="{{ booking.instrument.get_absolute_url }}">{{ booking.instrument.name }}</a></td>
                         <td>{{ booking.instrument.get_instrument_type_display }}</td>
-                        <td>{% if booking.user %}{{ booking.user.get_profile.name }}{% else %}-{% endif %}</td>
+                        <td>{% if booking.user %}<a href="{{ booking.user.get_profile.get_absolute_url }}">{{ booking.user.get_profile.name }}</a>{% else %}-{% endif %}</td>
                         {% if event.start|timeuntil == "0 minutes" %}
                             {% if booking.signed_in %}
                                 <td>Returned</td>
