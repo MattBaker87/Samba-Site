@@ -1,7 +1,6 @@
-{% extends "main/base.html" %}
+{% extends "main/base_new.html" %}
 
-{% block title %}User homepage{% endblock %}
-{% block header %}User homepage{% endblock %}
+{% block title %}Homepage{% endblock %}
 
 {% block nav %}
     {% with "home" as active %}
@@ -9,65 +8,121 @@
     {% endwith %}
 {% endblock %}
 
-{% block content %}
-    <ul>
-        <li>Profile
-            <ul>
-                <li>Your phone number and email address to encourage people to keep them up to date (include edit link)</li>
-                <li>Link to your full profile info (will include join date, events you've been on, etc.)</li>
-            </ul>
+{% block top %}
+    <ul class="media-grid">
+        <li>
+            <a href="#">
+                <img class="thumbnail" src="http://placehold.it/210x150" alt="">
+            </a>
         </li>
-        <li>Events
-            <ul>
-                <li>List of upcoming events, with who's coming to each
-                    <ul>
-                        <li>Obvious label on events you're going to</li>
-                        <li>Label on each event for whether current number of sign-ups is enough (0-9, 10-14, 15+)</li>
-                        <li>Click on each event for more info</li>
-                    </ul>
-                </li>
-                <li>Link to list of all upcoming events, all past events, and all events you're signed up for</li>
-                <li><span class="label notice">Admin</span> Option to edit, delete and add events</li>
-            </ul>
+        <li>
+            <a href="#">
+                <img class="thumbnail" src="http://placehold.it/210x150" alt="">
+            </a>
         </li>
-        <li>Instruments / name and shame
-            <ul>
-                <li>List of instruments that are due back, with the name of the person who owes them
-                    <ul>
-                        <li>Link to sign instrument back in if it's you that has it</li>
-                    </ul>
-                </li>
-                <li>Link to see where all of the instruments are (and edit them)</li>
-            </ul>
+        <li>
+            <a href="#">
+                <img class="thumbnail" src="http://placehold.it/210x150" alt="">
+            </a>
+        </li>
+        <li>
+            <a href="#">
+                <img class="thumbnail" src="http://placehold.it/210x150" alt="">
+            </a>
         </li>
     </ul>
+    <h1>Welcome <a href="{% url profile %}">{{ user.get_profile.name }}</a></h1>
+    <p>This site will help you keep track of what's going on with the samba band. The links in the black navigation bar above let you quickly get information about upcoming events, where our instruments are, and people's contact details. We'll also display the most relevant information below.</p>
+    <h3>Next Sambatage event</h3>
+    {% load get_events %}
+    {% get_future_events as event_list %}
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>When</th>
+                <th>Location</th>
+                <th>Notes</th>
+                <th>Instruments</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_list|slice:":1" %}
+                <tr>
+                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
+                    <td>{{ event.start|date:"jS N Y, P" }}</td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.notes }}</td>
+                    {% with event.bookings.signed_up.count as x %}
+                        <td><span class="label {{ event.bookings.label }}">{{ x }}</span> instrument{{ x|pluralize }} signed up</td>
+                    {% endwith %}
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">No upcoming events</td>
+                </tr>
+            {% endfor %}
+                <tr>
+                    <td colspan="5">
+                        <a href="{% url events_upcoming %}" class="btn info">View all upcoming events</a>
+                        <a href="{% url events_past %}" class="btn info">View past events</a>
+                        <a href="{% url event_add %}" class="btn success">Add event</a>
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+    <h3>Instruments currently MIA</h3>
+    {% load get_instruments %}
+    {% get_instruments as instrument_list %}
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Instrument name</th>
+                <th>Type</th>
+                <th>Last user</th>
+                <th>Next user</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instrument in instrument_list %}
+                {% if instrument.last_booking and not instrument.last_booking.signed_in %}
+                    <tr>
+                        <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
+                        <td>{{ instrument.get_instrument_type_display }}</td>
+                        {% with instrument.last_booking as b %}
+                            <td>{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a></td>
+                        {% endwith %}
+                        {% with instrument.next_booking as b %}
+                            <td>{% if b %}{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>{% else %}No future bookings{% endif %}</td>
+                        {% endwith %}
+                        <td>
+                            {% if instrument.last_booking.user == user %}
+                                <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+            {% empty %}
+                <tr>
+                    <td colspan="5">
+                        All instruments are safely accounted for!
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="5">
+                    <a href="{% url instrument_list %}" class="btn info">View all instruments</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 {% endblock %}
 
-{% block links %}
-    <ul>
-        <li>Profile
-            <ul>
-                <li><a href="{% url edit_contact %}">Edit contact details</a></li>
-                <li><a href="{% url profile %}">View full profile info</a></li>
-            </ul>
-        </li>
-        <li>Events
-            <ul>
-                <li><a href="{% url event_detail %}">View specific event</a></li>
-                <li><a href="{% url events_upcoming %}">List of upcoming events</a></li>
-                <li><a href="{% url events_past %}">List of past events</a></li>
-                <li><a href="{% url events_yours %}">List of your (future) events</a></li>
-                <li><span class="label notice">Admin</span> <a href="{% url event_add %}">Add an event</a></li>
-                <li><span class="label notice">Admin</span> <a href="{% url event_edit %}">Edit an event</a></li>
-                <li><span class="label notice">Admin</span> <a href="{% url event_delete %}">Delete an event</a></li>
-            </ul>
-        </li>
-        <li>Instruments
-            <ul>
-                <li><a href="{% url instrument_signin %}">Sign instrument back in</a></li>
-                <li><a href="{% url instrument_list %}">List of all instruments and where they are</a></li>
-            </ul>
-        </li>
-        <li><a href="{% url logout %}">Logout</a></li>
+{% block bottom %}
+    <ul class="breadcrumb">
+    	<li class="active">
+    		<a href="#">Home</a>
+    	</li>
     </ul>
 {% endblock %}

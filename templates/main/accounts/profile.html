@@ -89,13 +89,15 @@
                                 </tr>
                             {% endwith %}
                         {% empty %}
-                            <td colspan="5">
-                                {% if target_user == user %}
-                                    You're not currently responsible for any instruments
-                                {% else %}
-                                    Matt isn't currently responsible for any instruments
-                                {% endif %}
-                            </td>
+                            <tr>
+                                <td colspan="5">
+                                    {% if target_user == user %}
+                                        You're not currently responsible for any instruments
+                                    {% else %}
+                                        {{ target_user.get_profile.name }} isn't currently responsible for any instruments
+                                    {% endif %}
+                                </td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -147,7 +149,7 @@
                         {% endfor %}
                         <tr>
                             <td colspan="7">
-                                <a href="#" class="btn info">View past events</a>
+                                <a href="#" class="btn info">View {% if target_user == user %}your{% else %}{{ target_user.get_profile.name }}'s{% endif %} past events</a>
                             </td>
                         </tr>
                     </tbody>
@@ -161,6 +163,10 @@
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    		<a href="{% url people %}">People</a>
     		<span class="divider">/</span>
     	</li>
     	<li class="active">
