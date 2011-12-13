@@ -5,12 +5,12 @@
             {% if user.is_authenticated %}
                 <ul class="nav">
                     <li {% if active == 'home' %}class="active"{% endif %}><a href="{% url index %}">Home</a></li>
-                    <li {% if active == 'profile' %}class="active"{% endif %}><a href="{% url profile %}">Your Profile</a></li>
+                    <li {% if active == 'people' %}class="active"{% endif %}><a href="{% url people %}">People</a></li>
                     <li {% if active == 'events' %}class="active"{% endif %}><a href="{% url events_upcoming %}">Events</a></li>
                     <li {% if active == 'instruments' %}class="active"{% endif %}><a href="{% url instrument_list %}">Instruments</a></li>
                 </ul>
                 <ul class="nav secondary-nav">
-                    <li>
+                    <li {% if active == 'profile' %}class="active"{% endif %}>
                         <a href="{% url profile %}">
                             {{ user.get_profile.name }}
                         </a>

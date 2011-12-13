@@ -1,0 +1,54 @@
+{% extends "main/base_new.html" %}
+
+{% block title %}People{% endblock %}
+
+{% block nav %}
+    {% with "people" as active %}
+        {% include 'main/nav.html' %}
+    {% endwith %}
+{% endblock %}
+
+{% block top %}
+    <h1>People <small>involved with the Samba band</small></h1>
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Last event</th>
+                <th>Next event</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in user_list %}
+                <tr>
+                    <td><a href="{{ user.get_profile.get_absolute_url }}">{{ user.get_profile.name }}</a></td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.get_profile.telephone }}</td>
+                    <td>{% if user.get_profile.last_booking %}<a href="{{ user.get_profile.last_booking.event.get_absolute_url }}">{{ user.get_profile.last_booking.event.name }}</a>{% else %}No upcoming events{% endif %}</td>
+                    <td>{% if user.get_profile.next_booking %}<a href="{{ user.get_profile.next_booking.event.get_absolute_url }}">{{ user.get_profile.next_booking.event.name }}</a>{% else %}No upcoming events{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <p>Note: Users who have not logged in to this site for over a year do not appear on this list
+{% endblock %}
+
+{% block bottom %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">People</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe_content %}
+{% endblock %}
+
+{% block wireframe_links %}
+{% endblock %}

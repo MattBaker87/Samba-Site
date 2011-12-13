@@ -4,6 +4,8 @@ from django.utils.functional import lazy
 
 from sambasite.main.forms import LoginForm
 
+from datetime import datetime, timedelta
+
 reverse_lazy = lazy(reverse, str)
 
 urlpatterns = patterns('sambasite.main.views.accounts',
@@ -11,6 +13,8 @@ urlpatterns = patterns('sambasite.main.views.accounts',
     url(r'^edit/$', 'edit_profile', name='edit_contact'),
     url(r'^profile/$', 'view_profile', name='profile'),
     url(r'^profile/(?P<slug>[-\w]+)/$', 'view_profile', name='view_profile'),
+    url(r'^list/$', 'list_accounts', {'queryset_filter':lambda x:x.filter(last_login__gte=datetime.now()-timedelta(365), is_staff=False).order_by('userprofile__name'),
+                                        'template_name': 'main/accounts/accounts_list.html'}, name='people'),
 )
 
 urlpatterns += patterns('django.views.generic',

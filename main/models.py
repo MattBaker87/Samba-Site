@@ -132,6 +132,20 @@ class UserProfile(models.Model):
             t[t.index(x.event)].user_bookings.append(x)
         return t
     
+    def next_booking(self):
+        x = self.user.bookings.future_bookings()
+        if x:
+            return x[0]
+        else:
+            return None
+    
+    def last_booking(self):
+        x = self.user.bookings.past_bookings()
+        if x:
+            return x[0]
+        else:
+            return None
+    
     def get_absolute_url(self):
         return ('view_profile', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
