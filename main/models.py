@@ -39,12 +39,14 @@ class Event(models.Model):
 
 class Instrument(models.Model):
     INSTRUMENT_CHOICES = (
-        ('surd', 'Surdo'),
         ('agog', 'Agogo'),
         ('caix', 'Caixa'),
         ('repi', 'Repinique'),
-        ('tamb', 'Tamborim'),
         ('shak', 'Shaker'),
+        ('sur1', 'Surdo 1'),
+        ('sur2', 'Surdo 2'),
+        ('sur3', 'Surdo 3'),
+        ('tamb', 'Tamborim'),
         )
     
     slug = models.SlugField(unique=True)

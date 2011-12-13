@@ -27,12 +27,44 @@
 {% endblock %}
 
 {% block content %}
-    <p><b>Name:</b> {{ event.name }}</p>
-    <p><b>When:</b> {{ event.start|date:"jS F Y, P" }} {% if event.start|timeuntil == "0 minutes" %}<span class="label notice">This event has already taken place</span>{% endif %}</p>
-    <p><b>Location:</b> {{ event.location }}</p>
-    <p><b>Notes:</b> {{ event.notes }}</p>
+    <div class="row">
+        <div class="span2">
+            <p><b>Name:</b></p>
+        </div>
+        <div class="span8">
+            <p>{{ event.name }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2">
+            <p><b>When:</b></p>
+        </div>
+        <div class="span8">
+            <p>{{ event.start|date:"jS F Y, P" }}
+                {% if event.start|timeuntil == "0 minutes" %}
+                    <span class="label notice">This event has already taken place</span>
+                {% endif %}
+            </p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2">
+            <p><b>Location:</b></p>
+        </div>
+        <div class="span8">
+            <p>{{ event.location }}</p>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span2">
+            <p><b>Notes:</b></p>
+        </div>
+        <div class="span8">
+            <p>{{ event.notes }}</p>
+        </div>
+    </div>
     {% if event.bookings %}
-        <p><b>Instruments:</b></p>
+        <h3>Instruments</h3>
         <table>
             <thead>
                 <tr>

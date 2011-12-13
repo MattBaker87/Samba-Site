@@ -10,97 +10,122 @@
 
 {% block top %}
     {% block details %}
-        <h2>Your details</h2>
         <div class="row">
-            <div class="span4">
-                <p><b>Name:</b> {{ user.get_profile.name }}</p>
+            <div class="span3">
+                <h2>Your details</h2>
+                <p>NOTE: Your email is also your login for this site</p>
             </div>
-            <div class="span4">
-                <p><b>Email:</b> {{ user.email }}</p>
+            <div class="span13">
+                <h2>&nbsp;</h2>
+                <div class="row">
+                    <div class="span3">
+                        <p><b>Name:</b> {{ user.get_profile.name }}</p>
+                    </div>
+                    <div class="span4">
+                        <p><b>Email:</b> {{ user.email }}</p>
+                    </div>
+                    <div class="span3">
+                        <p><b>Phone:</b> {{ user.get_profile.telephone }}</p>
+                    </div>
+                    <div class="span3">
+                        <a class="info btn-inline btn" href="{% url edit_contact %}">Edit</a> <span class="info  btn-inline btn">Change password</span>
+                    </div>
+                </div>
             </div>
-            <div class="span4">
-                <p><b>Phone number:</b> {{ user.get_profile.telephone }}</p>
+        </div>
+    {% endblock %}
+    <hr>
+    {% block instruments %}
+        <div class="row">
+            <div class="span3">
+            <h2>Instruments</h2>
+                <p>You are responsible for these instruments (until you sign them back in to the storeroom)</p>
             </div>
-            <div class="span4">
-                <p><a class="info btn-inline btn" href="{% url edit_contact %}">Edit details</a> <span class="info btn-inline btn">Change password</span></p>
+            <div class="span13">
+                <table class="zebra-striped">
+                    <thead>
+                        <tr>
+                            <th>Instrument name</th>
+                            <th>Type</th>
+                            <th>Last user</th>
+                            <th>Next user</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in user.bookings.not_signed_in %}
+                            {% with booking.instrument as instrument %}
+                                <tr>
+                                    <td><a href="{{ instrument.get_absolute_url }}">{{ instrument.name }}</a></td>
+                                    <td>{{ instrument.get_instrument_type_display }}</td>
+                                    {% with instrument.last_booking as b %}
+                                        <td>{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a></td>
+                                    {% endwith %}
+                                    {% with instrument.next_booking as b %}
+                                        <td>{% if b %}{{ b.user.get_profile.name }} at <a href="{{ b.event.get_absolute_url }}">{{ b.event.name }}</a>{% else %}No future bookings{% endif %}</td>
+                                    {% endwith %}
+                                    <td>
+                                            <a href="{{ instrument.last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                    </td>
+                                </tr>
+                            {% endwith %}
+                        {% empty %}
+                            <td colspan="5">
+                                You're not currently responsible for any instruments
+                            </td>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     {% endblock %}
     <hr>
     {% block events %}
-    <h2>Your events</h2>
-    <table class="zebra-striped">
-        <thead>
-            <tr>
-                <th colspan="5"><h3>Upcoming events</h3></th>
-            </tr>
-            <tr>
-                <th>Event</th>
-                <th>When</th>
-                <th>Location</th>
-                <th>Notes</th>
-                <th>Your instruments</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for event in user.get_profile.get_upcoming_events %}
-                <tr>
-                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
-                    <td>{{ event.start }}</td>
-                    <td>{{ event.location }}</td>
-                    <td>{{ event.notes }}</td>
-                    <td>
-                        <ul class="unstyled">
-                        {% for booking in event.user_bookings %}
-                            <li><a href="{{ booking.instrument.get_absolute_url }}">{{ booking.instrument.name }}</a></li>
+        <div class="row">
+            <div class="span3">
+                <h2>Events</h2>
+                <p>These are your upcoming events. Click on each one for more details</p>
+            </div>
+            <div class="span13">
+                <table class="zebra-striped">
+                    <thead>
+                        <tr>
+                            <th>Event</th>
+                            <th>When</th>
+                            <th>Location</th>
+                            <th>Notes</th>
+                            <th style="white-space: nowrap;">Your instruments</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in user.get_profile.get_upcoming_events %}
+                            <tr>
+                                <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
+                                <td>{{ event.start }}</td>
+                                <td>{{ event.location }}</td>
+                                <td>{{ event.notes }}</td>
+                                <td>
+                                    <ul class="unstyled">
+                                    {% for booking in event.user_bookings %}
+                                        <li><a href="{{ booking.instrument.get_absolute_url }}">{{ booking.instrument.name }}</a></li>
+                                    {% endfor %}
+                                    </ul>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">You don't have any upcoming events</td>
+                            </tr>
                         {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5">You don't have any upcoming events</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-        <thead>
-            <tr>
-                <th colspan="5"><h3>Past events</h3></th>
-            </tr>
-            <tr>
-                <th>Event</th>
-                <th>When</th>
-                <th>Location</th>
-                <th>Notes</th>
-                <th>Your instruments</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for event in user.get_profile.get_past_events %}
-                <tr>
-                    <td><a href="{{ event.get_absolute_url }}">{{ event.name }}</a></td>
-                    <td>{{ event.start }}</td>
-                    <td>{{ event.location }}</td>
-                    <td>{{ event.notes }}</td>
-                    <td>
-                        <ul class="unstyled">
-                        {% for booking in event.user_bookings %}
-                            <li><a href="{{ booking.instrument.get_absolute_url }}">{{ booking.instrument.name }}</a>
-                                {% if not booking.signed_in %}
-                                    &nbsp;&nbsp;<a href="{{ booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
-                                {% endif %}
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    </td>
-                </tr>
-            {% empty %}
-                <tr>
-                    <td colspan="5">You don't have any past events</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                        <tr>
+                            <td colspan="7">
+                                <a href="#" class="btn info">View past events</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
     {% endblock %}
 {% endblock %}
 

@@ -18,7 +18,7 @@ class GetInstrumentsNode(template.Node):
         self.var_name = var_name
 
     def render(self, context):
-        instruments = Instrument.objects.all().order_by('name')
+        instruments = Instrument.objects.all()
         context[self.var_name] = instruments
         return u""
 

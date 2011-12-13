@@ -181,15 +181,15 @@ class ContactForm(forms.ModelForm):
         help_text = _("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),
         error_messages = {'invalid': _("Please enter a valid email address. It should be 30 characters or fewer."),
                             'required': _("You didn't enter an email address!")},
-        widget = TextInput(attrs={'placeholder':'Email', 'label':'email'}))
+        widget = TextInput(attrs={'placeholder':'Email', 'label':'email', 'class':"span3"}))
     name = forms.CharField(label=_("Name"), max_length=30,
         help_text = _("This is the name you'll be known as on the site."),
         error_messages = {'required': _("You didn't enter a display name!")},
-        widget = TextInput(attrs={'placeholder':'Display name', 'label':'name'}))
-    telephone = fields.UKPhoneNumberField(reject=(None, 'premium', 'service'),
+        widget = TextInput(attrs={'placeholder':'Display name', 'label':'name', 'class':"span3"}))
+    telephone = fields.UKPhoneNumberField(label=_("Phone"), reject=(None, 'premium', 'service'),
         help_text = _("Required. We use this to help organise, and to chase down drums."),
         error_messages = {'required': _("You didn't enter a phone number!")},
-        widget = TextInput(attrs={'placeholder':'Mobile phone number', 'label':'telephone'}))
+        widget = TextInput(attrs={'placeholder':'Mobile phone number', 'label':'telephone', 'class':"span3"}))
     
     def __init__(self, *args, **kwargs):
         super(ContactForm, self).__init__(*args, **kwargs)

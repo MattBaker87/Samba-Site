@@ -3,50 +3,57 @@
 {% block title %}Edit contact details{% endblock %}
 
 {% block details %}
-    <h2>Your details</h2>
-    <form action="" method="post" class="form-stacked">
-        <div class="alert-message block-message info">
-            {% csrf_token %}
-            <div class="row">
-                <div class="span4">
-                    <div class="clearfix {% if form.name.errors %}error{% endif %}">
-                        {{ form.name.label_tag }}
-                        <div class="input">
-                            {{ form.name }}
-                            {% for error in form.name.errors %}
-                                <span class="help-block">{{ error }}</span>
-                            {% endfor %}
+    <div class="row">
+        <div class="span3">
+            <h2>Your details</h2>
+            <p>NOTE: Your email is also your login for this site</p>
+        </div>
+        <div class="span13">
+            <form action="" method="post" class="form-stacked">
+                <div class="alert-message block-message info">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="span3">
+                            <div class="clearfix {% if form.name.errors %}error{% endif %}">
+                                {{ form.name.label_tag }}
+                                <div class="input">
+                                    {{ form.name }}
+                                    {% for error in form.name.errors %}
+                                        <span class="help-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="span4">
-                    <div class="clearfix {% if form.username.errors %}error{% endif %}">
-                        {{ form.username.label_tag }}
-                        <div class="input">
-                            {{ form.username }}
-                            {% for error in form.username.errors %}
-                                <span class="help-block">{{ error }}</span>
-                            {% endfor %}
+                        <div class="span3">
+                            <div class="clearfix {% if form.username.errors %}error{% endif %}">
+                                {{ form.username.label_tag }}
+                                <div class="input">
+                                    {{ form.username }}
+                                    {% for error in form.username.errors %}
+                                        <span class="help-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div class="span4">
-                    <div class="clearfix {% if form.telephone.errors %}error{% endif %}">
-                        {{ form.telephone.label_tag }}
-                        <div class="input">
-                            {{ form.telephone }}
-                            {% for error in form.telephone.errors %}
-                                <span class="help-block">{{ error }}</span>
-                            {% endfor %}
+                        <div class="span3">
+                            <div class="clearfix {% if form.telephone.errors %}error{% endif %}">
+                                {{ form.telephone.label_tag }}
+                                <div class="input">
+                                    {{ form.telephone }}
+                                    {% for error in form.telephone.errors %}
+                                        <span class="help-block">{{ error }}</span>
+                                    {% endfor %}
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
-                <div style="position:absolute; right:10px; top:49px;">
-                    <button class="btn" type="submit">Update profile</button> <a class="btn" href="{% url profile %}" style="font-weight:normal;">Cancel</a>
-                </div>
-            </div> 
-        </div>   
-    </form>
+                        <div style="position:absolute; right:10px; top:49px;">
+                            <button class="btn" type="submit">Update profile</button> <a class="btn" href="{% url profile %}" style="font-weight:normal;">Cancel</a>
+                        </div>
+                    </div> 
+                </div>   
+            </form>
+        </div>
+    </div>
 {% endblock %}
 
 {% block bottom %}
