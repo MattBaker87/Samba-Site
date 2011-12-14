@@ -34,21 +34,15 @@
     {% endblock %}
     {% block bottom %}
     {% endblock %}
+    
+    {% block wireframe %}
     <div class="content">
         <hr>
-        <div class="row">
-            <div class="span12">
-                <h3>Content</h3>
-                {% block wireframe_content %}
-                {% endblock %}
-            </div>
-            <div class="span4">
-                <h3>Links</h3>
-                {% block wireframe_links %}
-                {% endblock %}
-            </div>
-        </div>
+        <h3>To do</h3>
+        {% block todo %}
+        {% endblock %}
     </div>
+    {% endblock %}
 </div>
 </body>
 </html>
