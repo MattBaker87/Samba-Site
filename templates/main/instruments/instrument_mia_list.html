@@ -1,0 +1,41 @@
+{% extends "main/base_new.html" %}
+
+{% block title %}Instruments missing in action{% endblock %}
+
+{% block top %}
+    <h1>Instruments missing in action <small>signed out but not yet returned</small></h1>
+    {% load get_instruments %}
+    {% get_instruments as instrument_list mia %}
+    <table class="zebra-striped">
+        {% include 'main/instruments/instrument_mia_table.html' %}
+        <thead>
+            <tr>
+                <td colspan="4">
+                    <a href="{% url instrument_list %}" class="btn info">Full instrument list</a>
+                </td>
+            </tr>
+        </thead>
+    </table>
+{% endblock %}
+
+{% block bottom %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    		<a href="{% url instrument_list %}">Instruments</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">Instruments missing in action</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe_content %}
+{% endblock %}
+
+{% block wireframe_links %}
+{% endblock %}

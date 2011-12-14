@@ -176,3 +176,10 @@ ul.unstyled li {
 ul.unstyled {
   margin-bottom:9px;
 }
+
+/* Have labels with links in them */
+a.label.warning:hover {
+    color: #fff;
+    background-color: #f60;
+    text-decoration: none;
+}

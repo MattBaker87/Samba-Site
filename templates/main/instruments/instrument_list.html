@@ -18,7 +18,7 @@
                 <th>Instrument name</th>
                 <th></th>
                 <th>Type</th>
-                <th>Location / whose responsibility</th>
+                <th>Location</th>
                 <th>Last user</th>
                 <th>Next user</th>
             </tr>
@@ -30,17 +30,8 @@
                     <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                     <td>{{ instrument.get_instrument_type_display }}</td>
                     <td>
-                        {% if instrument.bookings.not_signed_in %}
-                            <ul class="unstyled">
-                                {% for b in instrument.bookings.not_signed_in %}
-                                    <li>
-                                        {{ b.user.get_profile.get_linked_name }} didn't sign it in after {{ b.event.get_linked_name }}
-                                        {% if user == b.user %}
-                                            &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                        {% if instrument.bookings.not_signed_in.exists %}
+                            <a href="{% url instrument_mia_list %}" class="label warning">Missing in action</a>
                         {% else %}
                             Store room
                         {% endif %}
