@@ -24,7 +24,12 @@ class Event(models.Model):
     
     def __unicode__(self):
         return self.name
+
+    def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super(Event, self).save(*args, **kwargs)
     
+    ########### Related bookings and info ###########
     def get_sign_ups(self):
         return self.bookings.exclude(user=None)
     
@@ -37,6 +42,7 @@ class Event(models.Model):
         else:
             return "success"
     
+    ############ URLs and links ##############
     def get_absolute_url(self):
         return ('event_detail', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
@@ -51,10 +57,7 @@ class Event(models.Model):
     def get_edit_url(self):
         return ('event_edit', (), {'slug': self.slug})
     get_edit_url = models.permalink(get_edit_url)
-    
-    def save(self, *args, **kwargs):
-		self.slug = slugify(self.name)
-		super(Event, self).save(*args, **kwargs)
+
 
 class Instrument(models.Model):
     INSTRUMENT_CHOICES = (
@@ -78,7 +81,16 @@ class Instrument(models.Model):
     
     def __unicode__(self):
         return self.name
-        
+
+    def save(self, *args, **kwargs):
+		self.slug = slugify(self.name)
+		super(Instrument, self).save(*args, **kwargs)
+    
+    ########## Get status ###########  
+    def get_signed_in(self):
+        return not self.bookings.not_signed_in().exists()
+    
+    ########## Related bookings and users ##########
     def get_past_bookings(self):
         return self.bookings.exclude(user__isnull=True).filter(event__start__lte=datetime.now()).order_by('-event__start')
     
@@ -93,16 +105,10 @@ class Instrument(models.Model):
         x = self.get_future_bookings()
         return x[0] if x else None
     
-    def get_signed_in(self):
-        return not self.bookings.not_signed_in().exists()
-    
     def get_users_since_signed_in(self):
         return User.objects.filter(id__in=[b.user.id for b in self.bookings.not_signed_in()])
-    
-    def get_location(self):
-        b = self.bookings.not_signed_in()[0] if not self.get_signed_in() else None
-        return mark_safe("Not signed in since "+b.user.get_profile().get_linked_name()+" played it at "+b.event.get_linked_name()+", "+timesince(b.event.start)+" ago") if b else "Store room"
-    
+
+    ########## URLS and links ##########
     def get_absolute_url(self):
         return ('instrument_detail', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
@@ -121,10 +127,6 @@ class Instrument(models.Model):
     def get_signin_url(self):
         return ('instrument_booking_signin', (), {'booking_id': self.get_last_booking().id}) if self.get_last_booking() else ('instrument_detail', (), {'slug': self.slug})
     get_signin_url = models.permalink(get_signin_url)
-    
-    def save(self, *args, **kwargs):
-		self.slug = slugify(self.name)
-		super(Instrument, self).save(*args, **kwargs)
         
 
 class UserProfile(models.Model):
@@ -132,7 +134,12 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=SHORT, unique=True)
     telephone = models.CharField(max_length=15, blank=True)
     slug = models.SlugField(unique=True)
+
+    def save(self, *args, **kwargs):
+    	self.slug = slugify(self.name)
+    	super(UserProfile, self).save(*args, **kwargs)
     
+    ############# Related bookings ##############
     def get_future_events(self):
         seen = set()
         t = []
@@ -163,16 +170,13 @@ class UserProfile(models.Model):
         x = self.user.bookings.past_bookings()
         return x[0] if x else None
     
+    ############### URLs and links ###############
     def get_absolute_url(self):
         return ('view_profile', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
 
     def get_linked_name(self):
         return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
-
-    def save(self, *args, **kwargs):
-		self.slug = slugify(self.name)
-		super(UserProfile, self).save(*args, **kwargs)
 
 class Booking(models.Model):
     user = models.ForeignKey(User, related_name='bookings', blank=True, null=True, default=None)
@@ -185,6 +189,7 @@ class Booking(models.Model):
     class Meta:
         ordering = ['instrument']
     
+    ################ URLs and links #################
     def get_book_url(self):
         return ('instrument_sign_out', (), {'booking_id': self.id})
     get_book_url = models.permalink(get_book_url)
