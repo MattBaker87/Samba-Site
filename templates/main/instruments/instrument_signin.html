@@ -3,15 +3,18 @@
 {% block title %}Instrument sign-in{% endblock %}
 
 {% block top %}
-    <div class="alert-message block-message success">
-        <div style="position:absolute; right:10px; top:4px;">
-            <form action="" method="post">
-                {% csrf_token %}
-                <button class="btn" type="submit">Sign instrument in</button> <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">I still need to take it to the storeroom</a>
-            </form>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="alert-message block-message success">
+            <p>If the instrument's now in the store room you're ready to <strong>sign it in</strong></p>
+            <p>If you're not sure of the instrument's current location but want to mark that you returned it after a specific event you can do that too</p>
+            <div class="alert-actions">
+                <button class="btn" type="submit">The instrument is in the store room now</button>
+                <a class="btn" href="#" style="font-weight:normal;">Sign in for specific event</a>
+                <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">I still need to take it to the store room</a>
+            </div>
         </div>
-        <p>If the instrument's now in the storeroom you're ready to <strong>sign this instrument in</strong></p>
-    </div>
+    </form>
 {% endblock %}
 
 {% block bottom %}

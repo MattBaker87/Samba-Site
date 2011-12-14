@@ -2,7 +2,7 @@
         <tr>
             <th>Instrument name</th>
             <th>Type</th>
-            <th>Last user</th>
+            <th>Not signed in since...</th>
             <th>Next user</th>
             <th></th>
         </tr>
@@ -13,14 +13,14 @@
                 <td>{{ instrument.get_linked_name }}</td>
                 <td>{{ instrument.get_instrument_type_display }}</td>
                 {% with instrument.get_last_booking as b %}
-                    <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}Brand new!{% endif %}</td>
+                    <td>{% if b %}{{ b.user.get_profile.get_linked_name }} played it at {{ b.event.get_linked_name }}, {{ b.event.start|timesince }} ago{% else %}Brand new!{% endif %}</td>
                 {% endwith %}
                 {% with instrument.get_next_booking as b %}
                     <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
                 {% endwith %}
                 <td>
-                    {% if instrument.get_last_booking.user == user and not instrument.get_last_booking.signed_in %}
-                        <a href="{{ instrument.get_last_booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                    {% if user in instrument.get_users_since_signed_in %}
+                        <a href="{{ instrument.get_signin_url }}" class="success btn-inline btn">Sign in</a>
                     {% endif %}
                 </td>
             </tr>

@@ -38,18 +38,20 @@
                         <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
                     {% endwith %}
                     <td>
-                        {% if instrument.get_last_booking.user == user and not instrument.get_last_booking.signed_in %}
-                            <a href="{{ instrument.get_last_booking.get_signin_url }}" class="success btn-inline btn">Sign in</a>
+                        {% if user in instrument.get_users_since_signed_in %}
+                            <a href="{{ instrument.get_signin_url }}" class="success btn-inline btn">Sign in</a>
                         {% endif %}
                     </td>
                 </tr>
             {% endfor %}
+        </tbody>
+        <thead>
             <tr>
                 <td colspan="8">
                     <a href="{% url instrument_add %}" class="btn success">Add instrument</a>
                 </td>
             </tr>
-        </tbody>
+        </thead>
     </table>
 {% endblock %}
 

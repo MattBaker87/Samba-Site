@@ -43,7 +43,18 @@ def detail_instrument(request, slug):
                                                                 context_instance=RequestContext(request))
 
 @login_required
-def sign_in_instrument(request, booking_id):
+def sign_in_instrument(request, slug):
+    target_instrument = get_object_or_404(Instrument, slug=slug)
+    if request.method == "POST" and request.user in target_instrument.get_users_since_signed_in():
+        for b in target_instrument.bookings.not_signed_in():
+            b.signed_in = True
+            b.save()
+        return HttpResponseRedirect(instrument.get_absolute_url())
+    return render_to_response('main/instruments/instrument_signin.html', {'instrument': target_instrument},
+                                                                context_instance=RequestContext(request))
+
+@login_required
+def sign_in_booking(request, booking_id):
     target_booking = get_object_or_404(Booking, id=booking_id)
     if request.method == "POST" and target_booking.user == request.user:
         target_booking.signed_in = True

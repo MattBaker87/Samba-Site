@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
+from django.utils.timesince import timesince
 from main.managers import BookingManager, EventManager
 
 from datetime import datetime
@@ -93,11 +94,14 @@ class Instrument(models.Model):
         return x[0] if x else None
     
     def get_signed_in(self):
-        return self.not_signed_in().exists()
+        return self.bookings.not_signed_in().exists()
+    
+    def get_users_since_signed_in(self):
+        return User.objects.filter(id__in=[b.user.id for b in self.bookings.not_signed_in()])
     
     def get_location(self):
-        x = self.get_last_booking()
-        return "Not yet signed back in" if x and x.signed_in == False else "Store room"
+        b = self.bookings.not_signed_in()[0] if self.bookings.not_signed_in().exists() else None
+        return mark_safe("Not signed in since "+b.user.get_profile().get_linked_name()+" played it at "+b.event.get_linked_name()+", "+timesince(b.event.start)+" ago") if b else "Store room"
     
     def get_absolute_url(self):
         return ('instrument_detail', (), {'slug': self.slug})
@@ -113,6 +117,10 @@ class Instrument(models.Model):
     def get_delete_url(self):
         return ('instrument_delete', (), {'slug': self.slug})
     get_delete_url = models.permalink(get_delete_url)
+
+    def get_signin_url(self):
+        return ('instrument_signin', (), {'slug': self.slug})
+    get_signin_url = models.permalink(get_signin_url)
     
     def save(self, *args, **kwargs):
 		self.slug = slugify(self.name)
@@ -186,5 +194,5 @@ class Booking(models.Model):
     get_cancel_url = models.permalink(get_cancel_url)
     
     def get_signin_url(self):
-        return ('instrument_signin', (), {'booking_id': self.id})
+        return ('instrument_booking_signin', (), {'booking_id': self.id})
     get_signin_url = models.permalink(get_signin_url)
