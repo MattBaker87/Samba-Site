@@ -4,10 +4,12 @@ from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from django.views.generic import list_detail
 
 from main.forms import UserSignupForm, ContactForm
 from main.models import UserProfile
 from django.contrib.auth.models import User
+
 
 def signup(request):
     if request.user.is_authenticated():
@@ -46,3 +48,10 @@ def view_profile(request, slug=None):
 def list_accounts(request, template_name, queryset_filter, paginate_by=None):
     user_list = queryset_filter(User.objects)
     return render_to_response(template_name, {'user_list': user_list}, context_instance=RequestContext(request))
+
+@login_required
+def profile_past_events(request, slug):
+    target_userprofile = get_object_or_404(UserProfile, slug=slug)
+    queryset = target_userprofile.get_past_events()
+    return list_detail.object_list(request, queryset=queryset, template_object_name='event', extra_context={'target_user': target_userprofile.user},
+                                    template_name='main/accounts/profile_past_events.html')

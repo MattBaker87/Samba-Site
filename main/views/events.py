@@ -3,6 +3,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
+from django.views.generic import list_detail
 
 from main.forms import EventForm
 from main.models import Event, Booking
@@ -61,5 +62,5 @@ def delete_event(request, slug):
 
 @login_required
 def list_events(request, template_name, queryset_filter, paginate_by=None):
-    event_list = queryset_filter(Event.objects)
-    return render_to_response(template_name, {'event_list': event_list}, context_instance=RequestContext(request))
+    queryset = queryset_filter(Event.objects)
+    return list_detail.object_list(request, queryset=queryset, template_object_name='event', template_name=template_name)

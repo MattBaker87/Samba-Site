@@ -15,7 +15,9 @@ urlpatterns = patterns('sambasite.main.views.accounts',
     url(r'^profile/(?P<slug>[-\w]+)/$', 'view_profile', name='view_profile'),
     url(r'^list/$', 'list_accounts', {'queryset_filter':lambda x:x.filter(last_login__gte=datetime.now()-timedelta(365), is_staff=False).order_by('userprofile__name'),
                                         'template_name': 'main/accounts/accounts_list.html'}, name='people'),
+    url(r'^profile/(?P<slug>[-\w]+)/past_events/$', 'profile_past_events', name='profile_past_events'),
 )
+
 
 urlpatterns += patterns('django.views.generic',
     # url(r'^edit/$', 'simple.direct_to_template', {'template': 'main/accounts/edit_contact.html'},

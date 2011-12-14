@@ -141,26 +141,10 @@ class UserProfile(models.Model):
     
     ############# Related bookings ##############
     def get_future_events(self):
-        seen = set()
-        t = []
-        for x in self.user.bookings.future_bookings():
-            if not x.event in seen:
-                x.event.user_bookings = []
-                t.append(x.event)
-                seen.add(x.event)
-            t[t.index(x.event)].user_bookings.append(x)
-        return t
+        return Event.objects.filter(id__in=[b.event.id for b in self.user.bookings.future_bookings()])
     
     def get_past_events(self):
-        seen = set()
-        t = []
-        for x in self.user.bookings.past_bookings():
-            if not x.event in seen:
-                x.event.user_bookings = []
-                t.append(x.event)
-                seen.add(x.event)
-            t[t.index(x.event)].user_bookings.append(x)
-        return t
+        return Event.objects.filter(id__in=[b.event.id for b in self.user.bookings.past_bookings()])
     
     def get_next_booking(self):
         x = self.user.bookings.future_bookings()
@@ -177,6 +161,10 @@ class UserProfile(models.Model):
 
     def get_linked_name(self):
         return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
+    
+    def get_past_events_url(self):
+        return ('profile_past_events', (), {'slug': self.slug})
+    get_past_events_url = models.permalink(get_past_events_url)
 
 
 class Booking(models.Model):

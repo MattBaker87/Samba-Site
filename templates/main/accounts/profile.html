@@ -99,8 +99,10 @@
                                 <td>{{ event.notes }}</td>
                                 <td>
                                     <ul class="unstyled">
-                                    {% for booking in event.user_bookings %}
+                                    {% for booking in event.bookings.all %}
+                                        {% if booking.user == target_user %}
                                         <li>{{ booking.instrument.get_linked_name }}</li>
+                                        {% endif %}
                                     {% endfor %}
                                     </ul>
                                 </td>
@@ -119,8 +121,8 @@
                     </tbody>
                     <thead>
                         <tr>
-                            <td colspan="7">
-                                <a href="#" class="btn info">View {% if target_user == user %}your{% else %}{{ target_user.get_profile.name }}'s{% endif %} past events</a>
+                            <td colspan="5">
+                                <a href="{{ target_user.get_profile.get_past_events_url }}" class="btn info">View {% if target_user == user %}your{% else %}{{ target_user.get_profile.name }}'s{% endif %} past events</a>
                             </td>
                         </tr>
                     </thead>
@@ -151,7 +153,6 @@
         <li>TODO at next opportunity
             <ul>
                 <li>Add change password functionality</li>
-                <li>Add see user's past events functionality</li>
             </ul>
         </li>
     </ul>
