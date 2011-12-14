@@ -207,6 +207,7 @@ class Booking(models.Model):
 class InstrumentNote(models.Model):
     instrument = models.ForeignKey(Instrument, related_name='notes', blank=False, null=False)
     user = models.ForeignKey(User, related_name='instrument_notes', blank=False, null=False)
+    booking = models.ForeignKey(Booking, related_name='notes', blank=True, null=True, default=None)
     date_made = models.DateTimeField(editable=False)
     note = models.TextField()
     

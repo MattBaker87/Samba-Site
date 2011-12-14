@@ -244,6 +244,14 @@ class BookingSigninForm(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ("signed_in",)
+    
+    def _get_note_header(self, booking):
+        return ("<p>" + booking.user.get_profile().get_linked_name() + " played " + booking.instrument.get_linked_name()
+                + " at " + booking.event.get_linked_name())
+    
+    def _get_note(self):
+        return (" and wrote:</p><blockquote>"+linebreaks(escape(self.cleaned_data['notes']))
+                + "</blockquote>") if self.cleaned_data['notes'] else ""
         
     def save(self, commit=True):
         booking = super(BookingSigninForm, self).save(commit=False)
@@ -252,16 +260,13 @@ class BookingSigninForm(forms.ModelForm):
             booking.save()
             booking.instrument.damaged = self.cleaned_data['damaged']
             booking.instrument.save()
-            base = ("<p>" + booking.user.get_profile().get_linked_name() + " played " + booking.instrument.get_linked_name()
-                    + " at " + booking.event.get_linked_name())
-            user_note = (" and wrote:</p><blockquote>"+linebreaks(escape(self.cleaned_data['notes']))
-                    + "</blockquote>") if self.cleaned_data['notes'] else ""
             note = InstrumentNote(instrument=booking.instrument, user=booking.user, date_made=booking.event.start,
-                                    note=base+user_note)
+                                    note=self._get_note_header(booking) + self._get_note(), booking=booking)
             note.save()
             for b in booking.instrument.bookings.not_signed_in().filter(event__start__lt=booking.event.start):
                 b.signed_in = True
                 b.save()
-                note = InstrumentNote(instrument=b.instrument, user=b.user, date_made=b.event.start, note=base)
+                note = InstrumentNote(instrument=b.instrument, user=b.user, date_made=b.event.start,
+                                        note=self._get_note_header(b), booking=b)
                 note.save()
         return booking
