@@ -18,7 +18,7 @@
                 <tr {% if item == event %}class="highlighted"{% endif %}>
                     <td>
                         <a href="{{ item.get_absolute_url }}"><p><strong>{{ item.name }}</strong></p>
-                        <p>{{ item.start|date:"jS N Y" }}</p></a>
+                        <p>{{ item.start|date:"jS F Y" }}</p></a>
                     </td>
                 </tr>
             {% endfor %}
