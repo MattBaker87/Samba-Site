@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import authenticate
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
+from django.utils.html import escape, linebreaks
 
 from django.forms.widgets import TextInput, PasswordInput, Textarea
 from main.widgets import MySplitDateTimeWidget
@@ -13,7 +14,7 @@ from main.widgets import MySplitDateTimeWidget
 from main import fields
 
 from django.contrib.auth.models import User
-from main.models import UserProfile, Instrument, Event, Booking
+from main.models import UserProfile, Instrument, Event, Booking, InstrumentNote
 
 class UserSignupForm(forms.ModelForm):
     username = forms.EmailField(label=_("Email"), max_length=30,
@@ -247,9 +248,20 @@ class BookingSigninForm(forms.ModelForm):
     def save(self, commit=True):
         booking = super(BookingSigninForm, self).save(commit=False)
         if commit:
-            for b in booking.instrument.bookings.not_signed_in().filter(event__start__lte=booking.event.start):
-                b.signed_in = True
-                b.save()
+            booking.signed_in = True
+            booking.save()
             booking.instrument.damaged = self.cleaned_data['damaged']
             booking.instrument.save()
+            base = ("<p>" + booking.user.get_profile().get_linked_name() + " played " + booking.instrument.get_linked_name()
+                    + " at " + booking.event.get_linked_name())
+            user_note = (" and wrote:</p><blockquote>"+linebreaks(escape(self.cleaned_data['notes']))
+                    + "</blockquote>") if self.cleaned_data['notes'] else ""
+            note = InstrumentNote(instrument=booking.instrument, user=booking.user, date_made=booking.event.start,
+                                    note=base+user_note)
+            note.save()
+            for b in booking.instrument.bookings.not_signed_in().filter(event__start__lt=booking.event.start):
+                b.signed_in = True
+                b.save()
+                note = InstrumentNote(instrument=b.instrument, user=b.user, date_made=b.event.start, note=base)
+                note.save()
         return booking

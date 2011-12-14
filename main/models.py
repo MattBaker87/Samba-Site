@@ -178,6 +178,7 @@ class UserProfile(models.Model):
     def get_linked_name(self):
         return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
 
+
 class Booking(models.Model):
     user = models.ForeignKey(User, related_name='bookings', blank=True, null=True, default=None)
     instrument = models.ForeignKey('Instrument', related_name='bookings')
@@ -201,3 +202,13 @@ class Booking(models.Model):
     def get_signin_url(self):
         return ('instrument_booking_signin', (), {'booking_id': self.id})
     get_signin_url = models.permalink(get_signin_url)
+
+
+class InstrumentNote(models.Model):
+    instrument = models.ForeignKey(Instrument, related_name='notes', blank=False, null=False)
+    user = models.ForeignKey(User, related_name='instrument_notes', blank=False, null=False)
+    date_made = models.DateTimeField(editable=False)
+    note = models.TextField()
+    
+    class Meta:
+        ordering = ['-date_made']

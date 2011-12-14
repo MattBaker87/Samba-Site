@@ -177,6 +177,16 @@ ul.unstyled {
   margin-bottom:9px;
 }
 
+/* Have blockquotes within tables */
+table blockquote {
+  margin-bottom:0px;
+  margin-top:-5px;
+}
+
+table blockquote p {
+  font-size:inherit;
+}
+
 /* Have labels with links in them */
 a.label.warning:hover {
     color: #fff;

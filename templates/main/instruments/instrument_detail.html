@@ -64,7 +64,7 @@
                         <li>
                             {{ b.user.get_profile.get_linked_name }} didn't sign it in after {{ b.event.get_linked_name }}
                             {% if user == b.user %}
-                                &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn">Sign in</a>
+                                &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
                             {% endif %}
                         </li>
                     {% endfor %}
@@ -106,32 +106,20 @@
             </p>
         </div>
     </div>
-    <div class="row">
-        <div class="span2">
-            <p><strong>Notes:</strong></p>
-        </div>
-        <div class="span8">
-            <p>TODO - add most recent note here</p>
-        </div>
-    </div>
-    {% if instrument.get_past_bookings %}
+    {% if instrument.notes.all.exists %}
         <h3>Instrument history</h3>
         <table>
             <thead>
                 <tr>
-                    <th>Event</th>
                     <th>Date</th>
-                    <th>Player</th>
-                    <th>Notes when returned</th>
+                    <th>Note</th>
                 </tr>
             </thead>
             <tbody>
-                {% for booking in instrument.get_past_bookings %}
+                {% for note in instrument.notes.all %}
                     <tr>
-                        <td>{{ booking.event.get_linked_name }}</td>
-                        <td>{{ booking.event.start|date:"jS F, Y"  }}</td>
-                        <td>{{ booking.user.get_profile.get_linked_name }}</td>
-                        <td>TODO: add notes</td>
+                        <td>{{ note.date_made }}</td>
+                        <td>{{ note.note|safe }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -168,7 +156,7 @@
         <li>TODO after adding event functionality:
             <ul>
                 <li>Add pagination to the above list of past events, or limit them to the last 10</li>
-                <li>Add ability to make notes, and figure out a sensible way of displaying them alongside events</li>
+                <li>Add ability to write notes that aren't related to an event</li>
             </ul>
         </li>
         <li>TODO lower priority:
