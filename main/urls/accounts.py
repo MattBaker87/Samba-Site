@@ -2,7 +2,7 @@ from django.conf.urls.defaults import include, patterns, url
 from django.core.urlresolvers import reverse
 from django.utils.functional import lazy
 
-from sambasite.main.forms import LoginForm
+from sambasite.main.forms import LoginForm, MyPasswordChangeForm
 
 from datetime import datetime, timedelta
 
@@ -16,6 +16,8 @@ urlpatterns = patterns('sambasite.main.views.accounts',
     url(r'^list/$', 'list_accounts', {'queryset_filter':lambda x:x.filter(last_login__gte=datetime.now()-timedelta(365), is_staff=False).order_by('userprofile__name'),
                                         'template_name': 'main/accounts/accounts_list.html'}, name='people'),
     url(r'^profile/(?P<slug>[-\w]+)/past_events/$', 'profile_past_events', name='profile_past_events'),
+    url(r'^password/$', 'change_password', name='change_password'),
+    url(r'^password/success/$', 'view_profile', {'password_changed': True}, name='password_changed'),
 )
 
 
@@ -24,12 +26,15 @@ urlpatterns += patterns('django.views.generic',
     #                                                                         name='edit_contact'),
     url(r'^forgotten/$', 'simple.direct_to_template', {'template': 'main/accounts/forgotten.html'},
                                                                             name='forgotten'),
-    url(r'^password/$', 'simple.direct_to_template', {'template': 'main/accounts/change_password.html'},
-                                                                            name='change_password'),
+    # url(r'^password/$', 'simple.direct_to_template', {'template': 'main/accounts/change_password.html'},
+    #                                                                         name='change_password'),
 )
 
 urlpatterns += patterns('django.contrib',
     url(r'^login/$', 'auth.views.login', {'authentication_form': LoginForm, 'template_name': 'main/index.html'},
     													name='login'),
     url(r'^logout/$', 'auth.views.logout', {'next_page': reverse_lazy('index')}, name='logout'),
+    url(r'^password/$', 'auth.views.password_change', {'template_name': 'main/accounts/change_password.html',
+                                                        'post_change_redirect': reverse_lazy('profile'),
+                                                        'password_change_form': MyPasswordChangeForm}, name='change_password')
 )

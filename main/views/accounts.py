@@ -1,12 +1,12 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.views.generic import list_detail
 
-from main.forms import UserSignupForm, ContactForm
+from main.forms import UserSignupForm, ContactForm, MyPasswordChangeForm
 from main.models import UserProfile
 from django.contrib.auth.models import User
 
@@ -35,13 +35,14 @@ def edit_profile(request):
     if form.is_valid():
         form.save(commit=True)
         return HttpResponseRedirect(reverse('profile'))
-
-    return render_to_response('main/accounts/edit_contact.html', {'form':form}, context_instance=RequestContext(request))
+    return render_to_response('main/accounts/edit_contact.html', {'form': form, 'target_user': user},
+                                                                context_instance=RequestContext(request))
 
 @login_required
-def view_profile(request, slug=None):
+def view_profile(request, slug=None, password_changed=False):
     target_userprofile = get_object_or_404(UserProfile, slug=slug) if slug else request.user.get_profile()
-    return render_to_response('main/accounts/profile.html', {'target_user': target_userprofile.user},
+    return render_to_response('main/accounts/profile.html', {'target_user': target_userprofile.user,
+                                                                'password_changed': password_changed},
                                                                 context_instance=RequestContext(request))
 
 @login_required
@@ -53,5 +54,16 @@ def list_accounts(request, template_name, queryset_filter, paginate_by=None):
 def profile_past_events(request, slug):
     target_userprofile = get_object_or_404(UserProfile, slug=slug)
     queryset = target_userprofile.get_past_events()
-    return list_detail.object_list(request, queryset=queryset, template_object_name='event', extra_context={'target_user': target_userprofile.user},
+    return list_detail.object_list(request, queryset=queryset, template_object_name='event',
+                                    extra_context={'target_user': target_userprofile.user},
                                     template_name='main/accounts/profile_past_events.html')
+                                    
+@login_required
+def change_password(request):
+    user = request.user
+    form = MyPasswordChangeForm(data = request.POST or None, user=user)
+    if form.is_valid():
+        form.save(commit=True)
+        return redirect(reverse('password_changed'))
+    return render_to_response('main/accounts/change_password.html', {'form': form, 'target_user': user},
+                                                                    context_instance=RequestContext(request))

@@ -14,6 +14,12 @@
 
 {% block top %}
     {% block details %}
+    {% if password_changed %}
+        <div class="alert-message success">
+            <a class="close" href="{% url profile %}">×</a>
+            <p>Password changed successfully</p>
+        </div>
+    {% endif %}
         <div class="row">
             <div class="span3">
                 {% if target_user == user %}
@@ -38,7 +44,7 @@
                     </div>
                     {% if target_user == user %}
                         <div class="span3">
-                            <a class="info btn-inline btn" href="{% url edit_contact %}">Edit</a> <span class="info  btn-inline btn">Change password</span>
+                            <a class="info btn-inline btn" href="{% url edit_contact %}">Edit</a> <a class="info  btn-inline btn" href="{% url change_password %}">Change password</a>
                         </div>
                     {% endif %}
                 </div>

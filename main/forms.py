@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
 from django import forms
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import authenticate
@@ -270,3 +270,8 @@ class BookingSigninForm(forms.ModelForm):
                                         note=self._get_note_header(b), booking=b)
                 note.save()
         return booking
+
+class MyPasswordChangeForm(PasswordChangeForm):
+    new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput(attrs={'class':'span3'}))
+    new_password2 = forms.CharField(label=_("New password (again)"), widget=forms.PasswordInput(attrs={'class':'span3'}))
+    old_password = forms.CharField(label=_("Old password"), widget=forms.PasswordInput(attrs={'class':'span3'}))
