@@ -119,7 +119,7 @@ class Instrument(models.Model):
     get_delete_url = models.permalink(get_delete_url)
 
     def get_signin_url(self):
-        return ('instrument_signin', (), {'slug': self.slug})
+        return ('instrument_booking_signin', (), {'booking_id': self.get_last_booking().id}) if self.get_last_booking() else ('instrument_detail', (), {'slug': self.slug})
     get_signin_url = models.permalink(get_signin_url)
     
     def save(self, *args, **kwargs):

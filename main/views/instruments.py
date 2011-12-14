@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 
-from main.forms import InstrumentForm
+from main.forms import InstrumentForm, BookingSigninForm
 from main.models import Instrument, Booking
 
 @login_required
@@ -43,22 +43,13 @@ def detail_instrument(request, slug):
                                                                 context_instance=RequestContext(request))
 
 @login_required
-def sign_in_instrument(request, slug):
-    target_instrument = get_object_or_404(Instrument, slug=slug)
-    if request.method == "POST" and request.user in target_instrument.get_users_since_signed_in():
-        for b in target_instrument.bookings.not_signed_in():
-            b.signed_in = True
-            b.save()
-        return HttpResponseRedirect(instrument.get_absolute_url())
-    return render_to_response('main/instruments/instrument_signin.html', {'instrument': target_instrument},
-                                                                context_instance=RequestContext(request))
-
-@login_required
 def sign_in_booking(request, booking_id):
     target_booking = get_object_or_404(Booking, id=booking_id)
-    if request.method == "POST" and target_booking.user == request.user:
-        target_booking.signed_in = True
-        target_booking.save()
+    if not target_booking.user == request.user or target_booking.signed_in:
         return HttpResponseRedirect(target_booking.instrument.get_absolute_url())
-    return render_to_response('main/instruments/instrument_signin.html', {'instrument': target_booking.instrument},
+    form = BookingSigninForm(data = request.POST or None, instance = target_booking)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(target_booking.instrument.get_absolute_url())
+    return render_to_response('main/instruments/instrument_signin.html', {'booking': target_booking, 'form': form, 'instrument': target_booking.instrument},
                                                                 context_instance=RequestContext(request))

@@ -18,10 +18,9 @@
                 <th>Instrument name</th>
                 <th></th>
                 <th>Type</th>
-                <th>Location</th>
+                <th>Location / whose responsibility</th>
                 <th>Last user</th>
                 <th>Next user</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -30,18 +29,28 @@
                     <td>{{ instrument.get_linked_name }}</td>
                     <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                     <td>{{ instrument.get_instrument_type_display }}</td>
-                    <td>{{ instrument.get_location }}</td>
+                    <td>
+                        {% if instrument.bookings.not_signed_in %}
+                            <ul class="unstyled">
+                                {% for b in instrument.bookings.not_signed_in %}
+                                    <li>
+                                        {{ b.user.get_profile.get_linked_name }} didn't sign it in after {{ b.event.get_linked_name }}
+                                        {% if user == b.user %}
+                                            &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            Store room
+                        {% endif %}
+                    </td>
                     {% with instrument.get_last_booking as b %}
                         <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}Brand new!{% endif %}</td>
                     {% endwith %}
                     {% with instrument.get_next_booking as b %}
                         <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
                     {% endwith %}
-                    <td>
-                        {% if user in instrument.get_users_since_signed_in %}
-                            <a href="{{ instrument.get_signin_url }}" class="success btn-inline btn">Sign in</a>
-                        {% endif %}
-                    </td>
                 </tr>
             {% endfor %}
         </tbody>

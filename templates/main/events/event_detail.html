@@ -85,8 +85,8 @@
                                 <td>Returned</td>
                             {% else %}
                                 <td>Not yet returned
-                                    {% if user in booking.instrument.get_users_since_signed_in %}
-                                        <a href="{{ instrument.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                    {% if user == booking.user %}
+                                        <a href="{{ booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
                                     {% endif %}
                                 </td>
                             {% endif %}

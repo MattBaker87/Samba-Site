@@ -168,3 +168,11 @@ tbody ul.unstyled {
   margin-bottom:0;
   white-space: nowrap;
 }
+
+ul.unstyled li {
+  color: #000;
+}
+
+ul.unstyled {
+  margin-bottom:9px;
+}

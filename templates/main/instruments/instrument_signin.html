@@ -3,15 +3,47 @@
 {% block title %}Instrument sign-in{% endblock %}
 
 {% block top %}
-    <form action="" method="post">
+    <form action="" method="post" class="form-stacked">
         {% csrf_token %}
         <div class="alert-message block-message success">
-            <p>If the instrument's now in the store room you're ready to <strong>sign it in</strong></p>
-            <p>If you're not sure of the instrument's current location but want to mark that you returned it after a specific event you can do that too</p>
-            <div class="alert-actions">
-                <button class="btn" type="submit">The instrument is in the store room now</button>
-                <a class="btn" href="#" style="font-weight:normal;">Sign in for specific event</a>
-                <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">I still need to take it to the store room</a>
+            <div class="row">
+                <div class="span5">
+                    <p>If you've ensured this instrument was returned to the store room after it was played at {{ booking.event.get_linked_name }} you're ready to sign it in.</p>
+                    <p>Please take a moment to write some notes and help us keep the instruments in good condition.</p>
+                </div>
+                <div class="span10">
+                    <fieldset style="padding-top:0; margin-bottom:0;">
+                        <div class="clearfix {% if form.notes.errors %}error{% endif %}" style="margin-top:0; margin-bottom:0;">
+                            {{ form.notes.label_tag }}
+                            <div class="input">
+                                {{ form.notes }}
+                                {% if form.notes.errors %}
+                                    {% for error in form.notes.errors %}
+                                        <span class="help-block">{{ error }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="help-block">{{ form.notes.help_text }}</span>
+                                {% endif %}
+            				</div>
+            			</div>
+                        <div class="clearfix">
+            			    <div class="input">
+            			        <ul class="inputs-list" style="padding-top:0px;">
+        			                <li>
+            			                <label>
+            			                    {{ form.damaged }}
+            			                    <span>{{ form.damaged.label }}</span>
+            			                </label>
+            			            </li>
+            			        </ul>
+            			    </div>
+            			</div>
+                	</fieldset>
+                    <div class="alert-actions">
+                        <button class="btn" type="submit">Sign instrument in</button>
+                        <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">Cancel - I haven't returned the instrument yet</a>
+                    </div>
+                </div>
             </div>
         </div>
     </form>

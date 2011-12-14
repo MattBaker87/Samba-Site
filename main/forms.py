@@ -231,3 +231,25 @@ class ContactForm(forms.ModelForm):
             user.save()
             profile.save()
         return user
+        
+class BookingSigninForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(BookingSigninForm, self).__init__(*args, **kwargs)
+        self.fields['damaged'] = InstrumentForm(instance=self.instance.instrument).fields['damaged']
+        
+    notes = forms.CharField(label=_("Notes on instrument condition"), max_length=500, required=False,
+        widget = Textarea(attrs={'class':'span9', 'rows':'4'}))
+                                    
+    class Meta:
+        model = Booking
+        fields = ("signed_in",)
+        
+    def save(self, commit=True):
+        booking = super(BookingSigninForm, self).save(commit=False)
+        if commit:
+            for b in booking.instrument.bookings.not_signed_in().filter(event__start__lte=booking.event.start):
+                b.signed_in = True
+                b.save()
+            booking.instrument.damaged = self.cleaned_data['damaged']
+            booking.instrument.save()
+        return booking

@@ -2,9 +2,8 @@
         <tr>
             <th>Instrument name</th>
             <th>Type</th>
-            <th>Not signed in since...</th>
+            <th>Not signed in after...</th>
             <th>Next user</th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -12,21 +11,25 @@
             <tr>
                 <td>{{ instrument.get_linked_name }}</td>
                 <td>{{ instrument.get_instrument_type_display }}</td>
-                {% with instrument.get_last_booking as b %}
-                    <td>{% if b %}{{ b.user.get_profile.get_linked_name }} played it at {{ b.event.get_linked_name }}, {{ b.event.start|timesince }} ago{% else %}Brand new!{% endif %}</td>
-                {% endwith %}
+                    <td>
+                        <ul class="unstyled">
+                            {% for b in instrument.bookings.not_signed_in %}
+                                <li>
+                                    {{ b.user.get_profile.get_linked_name }} played it at {{ b.event.get_linked_name }}, {{ b.event.start|timesince }} ago
+                                    {% if user == b.user %}
+                                        &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </td>
                 {% with instrument.get_next_booking as b %}
                     <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
                 {% endwith %}
-                <td>
-                    {% if user in instrument.get_users_since_signed_in %}
-                        <a href="{{ instrument.get_signin_url }}" class="success btn-inline btn">Sign in</a>
-                    {% endif %}
-                </td>
             </tr>
         {% empty %}  
             <tr>
-                <td colspan="5">
+                <td colspan="4">
                     {% if not target_user %}
                         All instruments are safely accounted for!
                     {% else %}

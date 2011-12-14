@@ -53,10 +53,23 @@
     {% endif %}
     <div class="row">
         <div class="span2">
-            <p><strong>Location:</strong></p>
+            <p><strong>Status:</strong></p>
         </div>
         <div class="span8">
-            <p>{{ instrument.get_location }}</p>
+            {% if instrument.bookings.not_signed_in %}
+                <ul class="unstyled">
+                    {% for b in instrument.bookings.not_signed_in %}
+                        <li>
+                            {{ b.user.get_profile.get_linked_name }} didn't sign it in after {{ b.event.get_linked_name }}
+                            {% if user == b.user %}
+                                &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn">Sign in</a>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>In the store room</p>
+            {% endif %}
         </div>
     </div>
     <div class="row">
