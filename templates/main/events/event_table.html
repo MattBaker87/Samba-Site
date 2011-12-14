@@ -11,7 +11,7 @@
     {% for event in event_list %}
         <tr>
             <td>{{ event.get_linked_name }}</td>
-            <td>{{ event.start|date:"j M Y, P" }}</td>
+            <td>{{ event.start|date:"j M Y,"}}<br>{{ event.start|date:"P" }}</td>
             <td>{{ event.location }}</td>
             <td>{{ event.notes }}</td>
             <td style="white-space: nowrap;"><span class="label {{ event.get_label }}">{{ event.get_sign_ups.count }}</span> signed up</td>

@@ -111,14 +111,14 @@
         <table>
             <thead>
                 <tr>
-                    <th>Date</th>
+                    <th width="85px">Date</th>
                     <th>Note</th>
                 </tr>
             </thead>
             <tbody>
                 {% for note in instrument.notes.all %}
                     <tr>
-                        <td>{{ note.date_made }}</td>
+                        <td>{{ note.date_made|date:"j M Y" }}</td>
                         <td>{{ note.note|safe }}</td>
                     </tr>
                 {% endfor %}
