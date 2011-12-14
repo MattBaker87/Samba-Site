@@ -30,7 +30,7 @@
                     <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                     <td>{{ instrument.get_instrument_type_display }}</td>
                     <td>
-                        {% if instrument.bookings.not_signed_in.exists %}
+                        {% if not instrument.get_signed_in %}
                             <a href="{% url instrument_mia_list %}" class="label warning">Missing in action</a>
                         {% else %}
                             Store room

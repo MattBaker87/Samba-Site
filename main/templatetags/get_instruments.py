@@ -30,7 +30,7 @@ class GetInstrumentsNode(template.Node):
         if self.mia and self.user:
             instruments = instruments.filter(id__in=[i.id for i in instruments if i.bookings.not_signed_in().filter(user=user).exists()])
         elif self.mia:
-            instruments = instruments.filter(id__in=[i.id for i in instruments if i.bookings.not_signed_in().exists()])
+            instruments = instruments.filter(id__in=[i.id for i in instruments if not i.get_signed_in()])
         context[self.var_name] = instruments
         return u""
 

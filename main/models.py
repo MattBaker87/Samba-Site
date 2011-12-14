@@ -94,13 +94,13 @@ class Instrument(models.Model):
         return x[0] if x else None
     
     def get_signed_in(self):
-        return self.bookings.not_signed_in().exists()
+        return not self.bookings.not_signed_in().exists()
     
     def get_users_since_signed_in(self):
         return User.objects.filter(id__in=[b.user.id for b in self.bookings.not_signed_in()])
     
     def get_location(self):
-        b = self.bookings.not_signed_in()[0] if self.bookings.not_signed_in().exists() else None
+        b = self.bookings.not_signed_in()[0] if not self.get_signed_in() else None
         return mark_safe("Not signed in since "+b.user.get_profile().get_linked_name()+" played it at "+b.event.get_linked_name()+", "+timesince(b.event.start)+" ago") if b else "Store room"
     
     def get_absolute_url(self):

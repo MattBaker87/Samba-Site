@@ -18,7 +18,7 @@
                 <tr {% if item == instrument %}class="highlighted"{% endif %}>
                     <td>{{ item.get_linked_name }}</td>
                     <td style="text-align:right;">{% if item.damaged %}<span class="label important">Dmg</span>{% endif %}
-                        {% if item.bookings.not_signed_in.exists %}<span class="label warning">MIA</span>{% endif %}</td>
+                        {% if not item.get_signed_in %}<span class="label warning">MIA</span>{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -57,7 +57,7 @@
             <p><strong>Location:</strong></p>
         </div>
         <div class="span8">
-            {% if instrument.bookings.not_signed_in.exists %}
+            {% if not instrument.get_signed_in %}
                 <p><span class="label warning">Missing in action</span></p>
                 <ul class="unstyled">
                     {% for b in instrument.bookings.not_signed_in %}
