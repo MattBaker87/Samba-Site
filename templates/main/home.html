@@ -46,11 +46,9 @@
         </div>
     </div>
     <h3>Instruments currently missing in action</h3>
-    <table class="zebra-striped">
-        {% load get_instruments %}
-        {% get_instruments as instrument_list mia %}
-        {% include 'main/instruments/instrument_mia_table.html' %}
-    </table>
+    {% load get_instruments %}
+    {% get_instruments as instrument_list mia %}
+    {% include 'main/instruments/instrument_mia_table.html' %}
     <div class="row table-options">
         <div class="pull-right">
             <a href="{% url instrument_list %}" class="btn info">View all instruments</a>

@@ -6,16 +6,12 @@
     <h1>Instruments missing in action <small>signed out but not yet returned</small></h1>
     {% load get_instruments %}
     {% get_instruments as instrument_list mia %}
-    <table class="zebra-striped">
-        {% include 'main/instruments/instrument_mia_table.html' %}
-        <thead>
-            <tr>
-                <td colspan="4">
-                    <a href="{% url instrument_list %}" class="btn info">Full instrument list</a>
-                </td>
-            </tr>
-        </thead>
-    </table>
+    {% include 'main/instruments/instrument_mia_table.html' %}
+    <div class="row table-options">
+        <div class="pull-right">
+            <a href="{% url instrument_list %}" class="btn info">Full instrument list</a>
+        </div>
+    </div>
 {% endblock %}
 
 {% block breadcrumb %}

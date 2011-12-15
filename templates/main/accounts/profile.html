@@ -65,11 +65,9 @@
                     </div>
                 {% endif %}
             <div class="span13">
-                <table class="zebra-striped">
-                    {% load get_instruments %}
-                    {% get_instruments as instrument_list mia target_user %}
-                    {% include 'main/instruments/instrument_mia_table.html' %}
-                </table>
+                {% load get_instruments %}
+                {% get_instruments as instrument_list mia target_user %}
+                {% include 'main/instruments/instrument_mia_table.html' %}
             </div>
         </div>
     {% endblock %}
