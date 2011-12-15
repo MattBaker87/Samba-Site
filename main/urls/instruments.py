@@ -9,12 +9,9 @@ urlpatterns = patterns('sambasite.main.views.instruments',
     url(r'^sign_in/booking/(?P<booking_id>\d+)/$', 'sign_in_booking', name='instrument_booking_signin'),
 )
 
-urlpatterns += patterns('django.views.generic',
-    url(r'^list/$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_list.html'},
+urlpatterns += patterns('sambasite.main.views',
+    url(r'^list/$', 'login_direct_to_template', {'template': 'main/instruments/instrument_list.html'},
                                                                             name='instrument_list'),
-    url(r'^list/mia/$', 'simple.direct_to_template', {'template': 'main/instruments/instrument_mia_list.html'},
+    url(r'^list/mia/$', 'login_direct_to_template', {'template': 'main/instruments/instrument_mia_list.html'},
                                                                             name='instrument_mia_list'),
-)
-
-urlpatterns += patterns('django.contrib',
 )

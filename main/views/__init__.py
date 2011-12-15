@@ -1,14 +1,8 @@
 from functools import wraps
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-
-
-def index(request):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('home'))
-    else:
-        return HttpResponseRedirect(reverse('login'))
+from django.views.generic import simple
 
 def admin_required(fn):
     @wraps(fn)
@@ -17,3 +11,13 @@ def admin_required(fn):
             return HttpResponse("Sorry, you do not have admin privileges.")
         return fn(request, *args, **kwargs)
     return login_required(wrapper)
+
+def index(request):
+    if request.user.is_authenticated():
+        return HttpResponseRedirect(reverse('home'))
+    else:
+        return HttpResponseRedirect(reverse('login'))
+
+@login_required
+def login_direct_to_template(request, template):
+    return simple.direct_to_template(request, template=template)
