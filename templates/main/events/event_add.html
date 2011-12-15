@@ -1,81 +1,22 @@
-{% extends "main/base.html" %}
+{% extends "main/events/event_edit.html" %}
 
 {% block title %}Add event{% endblock %}
 
 {% block heading %}Add an event{% endblock %}
 
-{% block sub-nav %}
-    {% load get_events %}
-    {% get_future_events as event_list %}
-    <table class="condensed-table dimmed">
-        <thead>
-            <tr>
-                <th>Upcoming events</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in event_list %}
-                <tr {% if item == event %}class="highlighted"{% endif %}>
-                    <td>
-                        <a href="{{ item.get_absolute_url }}"><p><strong>{{ item.name }}</strong></p>
-                        <p>{{ item.start|date:"jS N Y" }}</p></a>
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% block description %}
+    <p>Please use the location box for the meeting point, and the time box for the meeting time. You can then add any further details in the notes box.</p>
+{% endblock %}
+    
+{% block buttons %}
+    <div class="input">
+        <button class="btn success" type="submit">Add event</button>
+        <a href="{% url events_upcoming %}" class="btn danger">Cancel</a>
+    </div>
 {% endblock %}
 
-{% block content %}
-    {% block description %}
-        <p>Please use the location box for the meeting point, and the time box for the meeting time. You can then add any further details in the notes box.</p>
-    {% endblock %}
-    <form action="" method="post">
-        {% csrf_token %}
-        <fieldset>
-            {% for boundfield in form.non_instrument_fields %}
-                <div class="clearfix {% if boundfield.errors %}error{% endif %}">
-                    {{ boundfield.label_tag }}
-                    <div class="input">
-                        {{ boundfield }}
-                        {% if boundfield.errors %}
-                            {% for error in boundfield.errors %}
-                                <span class="{% if boundfield.name == "name" or boundfield.name == "notes"  %}help-block{% else %}help-inline{% endif %}">{{ error }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <span class="help-inline">{{ boundfield.help_text }}</span>
-                        {% endif %}
-    				</div>
-    			</div>
-    		{% endfor %}
-			<div class="clearfix">
-			    <label id="optionsCheckboxes">Instruments</label>
-			    <div class="input with-help">
-			        <ul class="inputs-list">
-                        <div class="optionsCheckboxes-help help-inline">These are the instruments which can be signed out for this event</div>
-			            {% for boundfield in form.instrument_fields %}
-			                <li>
-    			                <label>
-    			                    {{ boundfield }}
-    			                    <span>{{ boundfield.label }}</span>
-    			                </label>
-    			            </li>
-    			        {% endfor %}
-			        </ul>
-			    </div>
-			</div>
-    	</fieldset>
-    	{% block buttons %}
-        <div class="input">
-            <button class="btn success" type="submit">Add event</button>
-            <a href="{% url events_upcoming %}" class="btn danger">Cancel</a>
-        </div>
-        {% endblock %}
-    </form>
-{% endblock %}
 
-{% block options %}
-    <p><a href="{% url events_upcoming %}">Back to events list</a></p>
+{% block admin_options %}
 {% endblock %}
 
 {% block bottom %}

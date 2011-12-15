@@ -119,11 +119,15 @@
 {% endblock %}
 
 {% block options %}
-    <p><a href="{{ event.get_delete_url }}" class="btn danger">Delete event</a></p>
-    {% if not event.start|timeuntil == "0 minutes" %}
-        <p><a href="{{ event.get_edit_url }}" class="btn info">Edit event</a></p>
-    {% endif %}
     <p><a href="{% url events_upcoming %}">Back to events list</a></p>
+{% endblock %}
+
+{% block admin_options %}
+    <li><a href="{{ event.get_delete_url }}" class="btn danger btn-nav">Delete</a></li>
+    {% if not event.start|timeuntil == "0 minutes" %}
+        <li><a href="{{ event.get_edit_url }}" class="btn info btn-nav">Edit details</a></li>
+        <li><a href="#" class="btn info btn-nav">Edit players</a></li>
+    {% endif %}
 {% endblock %}
 
 {% block bottom %}
@@ -149,6 +153,7 @@
             <ul>
                 <li>Fix CSS so the table border in the main area lines up with the rest of the content nicely</li>
                 <li>Fix CSS in sub-nav so that it's not really ugly</li>
+                <li>Build admin option to edit players</li>
             </ul>
         </li>
         <li>TODO lower priority

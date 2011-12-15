@@ -1,18 +1,55 @@
-{% extends "main/events/event_add.html" %}
+{% extends "main/events/event_detail.html" %}
 
 {% block title %}Edit event - {{ event }}{% endblock %}
 
 {% block heading %}Edit {{ event }}{% endblock %}
 
-{% block description %}
-    <p>From here you can edit details of the event '{{ event }}'.</p>
-{% endblock %}
-
-{% block buttons %}
-        <div class="input">
-            <button class="btn success" type="submit">Update details</button>
-            <a href="{{ event.get_absolute_url }}" class="btn danger">Cancel</a>
-        </div>
+{% block content %}
+    {% block description %}
+        <p>From here you can edit details of the event '{{ event }}'.</p>
+    {% endblock %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <fieldset>
+            {% for boundfield in form.non_instrument_fields %}
+                <div class="clearfix {% if boundfield.errors %}error{% endif %}">
+                    {{ boundfield.label_tag }}
+                    <div class="input">
+                        {{ boundfield }}
+                        {% if boundfield.errors %}
+                            {% for error in boundfield.errors %}
+                                <span class="{% if boundfield.name == "name" or boundfield.name == "notes"  %}help-block{% else %}help-inline{% endif %}">{{ error }}</span>
+                            {% endfor %}
+                        {% else %}
+                            <span class="help-inline">{{ boundfield.help_text }}</span>
+                        {% endif %}
+    				</div>
+    			</div>
+    		{% endfor %}
+			<div class="clearfix">
+			    <label id="optionsCheckboxes">Instruments</label>
+			    <div class="input with-help">
+			        <ul class="inputs-list">
+                        <div class="optionsCheckboxes-help help-inline">These are the instruments which can be signed out for this event</div>
+			            {% for boundfield in form.instrument_fields %}
+			                <li>
+    			                <label>
+    			                    {{ boundfield }}
+    			                    <span>{{ boundfield.label }}</span>
+    			                </label>
+    			            </li>
+    			        {% endfor %}
+			        </ul>
+			    </div>
+			</div>
+    	</fieldset>
+    	{% block buttons %}
+                <div class="input">
+                    <button class="btn success" type="submit">Update details</button>
+                    <a href="{{ event.get_absolute_url }}" class="btn danger">Cancel</a>
+                </div>
+        {% endblock %}
+    </form>
 {% endblock %}
 
 {% block bottom %}

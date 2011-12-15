@@ -8,6 +8,10 @@
     {% endwith %}
 {% endblock %}
 
+{% block admin_options %}
+    <li><a href="{% url instrument_add %}" class="btn success btn-nav">Add instrument</a></li>
+{% endblock %}
+
 {% block top %}
     <h1>Instruments <small>owned by the band</small></h1>
     {% load get_instruments %}
@@ -45,13 +49,6 @@
                 </tr>
             {% endfor %}
         </tbody>
-        <thead>
-            <tr>
-                <td colspan="8">
-                    <a href="{% url instrument_add %}" class="btn success">Add instrument</a>
-                </td>
-            </tr>
-        </thead>
     </table>
 {% endblock %}
 

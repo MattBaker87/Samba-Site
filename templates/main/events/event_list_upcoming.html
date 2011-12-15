@@ -6,6 +6,10 @@
     {% endwith %}
 {% endblock %}
 
+{% block admin_options %}
+    <li><a href="{% url event_add %}" class="btn success btn-nav">Add event</a></li>
+{% endblock %}
+
 {% block title %}Upcoming events{% endblock %}
 
 {% block top %}
@@ -19,7 +23,6 @@
         <tr>
             <td colspan="5">
                 <a href="{% url events_past %}" class="btn info">View past events</a>
-                <a href="{% url event_add %}" class="btn success">Add event</a>
             </td>
         </tr>
     </thead>

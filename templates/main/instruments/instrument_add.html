@@ -1,88 +1,25 @@
-{% extends "main/base.html" %}
+{% extends "main/instruments/instrument_edit.html" %}
 
 {% block title %}Add instrument{% endblock %}
 
 {% block heading %}Add an instrument{% endblock %}
 
-{% block sub-nav %}
-    {% load get_instruments %}
-    {% get_instruments as instrument_list %}
-    <table class="condensed-table dimmed">
-        <thead>
-            <tr>
-                <th colspan="2">All instruments</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in instrument_list %}
-                <tr {% if item == instrument %}class="highlighted"{% endif %}>
-                    <td>{{ item.get_linked_name }}</td>
-                    <td style="text-align:right;">{% if item.damaged %}<span class="label important">Dmg</span>{% endif %}
-                        {% if not item.get_signed_in %}<span class="label warning">MIA</span>{% endif %}</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+{% block description %}
+    <p>From here you can add an instrument to the list of instruments the band owns.</p>
 {% endblock %}
 
-{% block content %}
-    {% block description %}
-        <p>From here you can add an instrument to the list of instruments the band owns.</p>
-    {% endblock %}
-    <form action="" method="post">
-        {% csrf_token %}
-        <fieldset>
-            <div class="clearfix {% if form.name.errors %}error{% endif %}">
-                {{ form.name.label_tag }}
-                <div class="input">
-                    {{ form.name }}
-                    {% if form.name.errors %}
-                        {% for error in form.name.errors %}
-                            <span class="help-inline">{{ error }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <span class="help-inline">{{ form.name.help_text }}</span>
-                    {% endif %}
-				</div>
-			</div>
-            <div class="clearfix {% if form.instrument_type.errors %}error{% endif %}">
-                {{ form.instrument_type.label_tag }}
-                <div class="input">
-                    {{ form.instrument_type }}
-                    {% if form.instrument_type.errors %}
-                        {% for error in form.instrument_type.errors %}
-                            <span class="help-inline">{{ error }}</span>
-                        {% endfor %}
-                    {% else %}
-                        <span class="help-inline">{{ form.instrument_type.help_text }}</span>
-                    {% endif %}
-				</div>
-			</div>
-			<div class="clearfix">
-			    <label id="optionsCheckboxes">Flags</label>
-			    <div class="input">
-			        <ul class="inputs-list">
-			            <li>
-			                <label>
-			                    {{ form.damaged }}
-			                    <span>{{ form.damaged.label }}</span>
-			                </label>
-			            </li>
-			        </ul>
-			    </div>
-			</div>
-    	</fieldset>
-    	{% block buttons %}
-        <div class="input">
-            <button class="btn success" type="submit">Add instrument</button>
-            <a href="{% url instrument_list %}" class="btn danger">Cancel</a>
-        </div>
-        {% endblock %}
-    </form>
+{% block buttons %}
+<div class="input">
+    <button class="btn success" type="submit">Add instrument</button>
+    <a href="{% url instrument_list %}" class="btn danger">Cancel</a>
+</div>
 {% endblock %}
 
 {% block options %}
     <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
+{% endblock %}
+
+{% block admin_options %}
 {% endblock %}
 
 {% block bottom %}
