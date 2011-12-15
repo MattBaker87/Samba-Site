@@ -1,4 +1,5 @@
 # Django settings for sambasite project.
+from p_obfiscate import accounts
 
 import socket
 if socket.gethostname() == 'grey-bakers-macbook-pro.local':
@@ -34,8 +35,8 @@ else:
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'greysteil_samba',                      # Or path to database file if using sqlite3.
-        'USER': 'greysteil',                      # Not used with sqlite3.
-        'PASSWORD': 'ABCD1234',                  # Not used with sqlite3.
+        'USER': accounts['database']['USER'],                      # Not used with sqlite3.
+        'PASSWORD': accounts['database']['PASSWORD'],                  # Not used with sqlite3.
         'HOST': 'mysql.alwaysdata.com',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
@@ -182,3 +183,28 @@ LOGGING = {
         },
     }
 }
+
+# The email backend to use. For possible shortcuts see django.core.mail.
+# The default is to use the SMTP backend.
+# Third-party backends can be specified by providing a Python path
+# to a module that defines an EmailBackend class.
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
+# Host for sending e-mail.
+EMAIL_HOST = 'smtp.alwaysdata.com'
+
+# Port for sending e-mail.
+EMAIL_PORT = 25
+
+# Optional SMTP authentication information for EMAIL_HOST.
+EMAIL_HOST_USER = accounts['email']['USER']
+EMAIL_HOST_PASSWORD = accounts['email']['PASSWORD']
+EMAIL_USE_TLS = True
+
+# Default e-mail address to use for various automated correspondence from
+# the site managers.
+DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+
+# Subject-line prefix for email messages send with django.core.mail.mail_admins
+# or ...mail_managers.  Make sure to include the trailing space.
+EMAIL_SUBJECT_PREFIX = '[Sambatage] '

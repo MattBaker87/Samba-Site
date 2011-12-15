@@ -1,3 +1,4 @@
 *.pyc
 database
 .DS_Store
+p_obfiscate*

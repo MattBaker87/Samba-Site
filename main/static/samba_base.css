@@ -36,7 +36,8 @@ tbody tr.highlighted td, tbody tr.highlighted td a, .zebra-striped tbody tr.high
 /* Used only on signup page*/
 .signup-header {
   position: absolute;
-  width: 250px;
+  width: 190px;
+  margin-left: 60px;
   margin-top: 10px;
 }
 

@@ -2,7 +2,7 @@ from django.conf.urls.defaults import include, patterns, url
 from django.core.urlresolvers import reverse
 from django.utils.functional import lazy
 
-from sambasite.main.forms import LoginForm, MyPasswordChangeForm
+from sambasite.main.forms import LoginForm, MyPasswordChangeForm, MyPasswordResetForm, MySetPasswordForm
 
 from datetime import datetime, timedelta
 
@@ -26,6 +26,10 @@ urlpatterns += patterns('django.views.generic',
     #                                                                         name='edit_contact'),
     url(r'^forgotten/$', 'simple.direct_to_template', {'template': 'main/accounts/forgotten.html'},
                                                                             name='forgotten'),
+    url(r'^password/reset/sent/$', 'simple.direct_to_template', {'template': 'main/accounts/password_reset_form.html'},
+                                                                            name='password_reset_sent'),
+    url(r'^password/reset/done/$', 'simple.direct_to_template', {'template': 'main/accounts/password_reset_confirm.html'},
+                                                                            name='password_reset_done'),
     # url(r'^password/$', 'simple.direct_to_template', {'template': 'main/accounts/change_password.html'},
     #                                                                         name='change_password'),
 )
@@ -34,7 +38,14 @@ urlpatterns += patterns('django.contrib',
     url(r'^login/$', 'auth.views.login', {'authentication_form': LoginForm, 'template_name': 'main/index.html'},
     													name='login'),
     url(r'^logout/$', 'auth.views.logout', {'next_page': reverse_lazy('index')}, name='logout'),
-    url(r'^password/$', 'auth.views.password_change', {'template_name': 'main/accounts/change_password.html',
-                                                        'post_change_redirect': reverse_lazy('profile'),
-                                                        'password_change_form': MyPasswordChangeForm}, name='change_password')
+    url(r'^password/reset/$', 'auth.views.password_reset', {'template_name': 'main/accounts/password_reset_form.html',
+                                                        'email_template_name': 'main/accounts/password_reset_email.html',
+                                                        'post_reset_redirect': reverse_lazy('password_reset_sent'),
+                                                        'password_reset_form': MyPasswordResetForm},
+                                                        name="forgotten"),
+    url(r'^password/reset/(?P<uidb36>[-\w]+)/(?P<token>[-\w]+)/$', 'auth.views.password_reset_confirm',
+                                                        {'template_name': 'main/accounts/password_reset_confirm.html',
+                                                        'post_reset_redirect': reverse_lazy('password_reset_done'),
+                                                        'set_password_form': MySetPasswordForm},
+                                                        name="password_reset_confirm"),
 )

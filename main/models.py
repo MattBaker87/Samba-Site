@@ -5,6 +5,8 @@ from django.utils.safestring import mark_safe
 from django.utils.timesince import timesince
 from main.managers import BookingManager, EventManager
 
+from django.contrib.sites.models import Site
+
 from datetime import datetime
 
 LONG = 500
