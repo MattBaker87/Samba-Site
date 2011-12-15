@@ -4,6 +4,7 @@ from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
+from main.views import admin_required
 from django.views.generic import list_detail
 
 from main.forms import UserSignupForm, ContactForm, MyPasswordChangeForm

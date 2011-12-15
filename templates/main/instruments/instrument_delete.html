@@ -10,7 +10,7 @@
                 <button class="btn" type="submit">Yes, delete this instrument</button> <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">No, I've changed my mind</a>
             </form>
         </div>
-        <p>Are you sure you want to <strong>delete this instrument?</strong></p>
+        <p>Are you sure you want to <strong>delete the instrument '{{ instrument.name }}'?</strong></p>
     </div>
 {% endblock %}
 
@@ -43,7 +43,6 @@
             </ul>
         <li>TODO lower priority:
             <ul>
-                <li>Make this page admin only</li>
                 <li>Make decision on whether this should really delete an instrument (would affect old records)</li>
             </ul>
         </li>

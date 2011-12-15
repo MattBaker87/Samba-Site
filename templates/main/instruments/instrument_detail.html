@@ -38,7 +38,7 @@
         <div class="span2">
             <p><strong>Name:</strong></p>
         </div>
-        <div class="span8">
+        <div class="span10">
             <p>{{ instrument.name }}</p>
         </div>
     </div>
@@ -46,7 +46,7 @@
         <div class="span2">
             <p><strong>Type:</strong></p>
         </div>
-        <div class="span8">
+        <div class="span10">
             <p>{{ instrument.get_instrument_type_display }}</p>
         </div>
     </div>
@@ -55,7 +55,7 @@
             <div class="span2">
                 <p><strong>Damage:</strong></p>
             </div>
-            <div class="span8">
+            <div class="span10">
                 <p><span class="label important">This instrument is flagged as damaged</span></p>
             </div>
         </div>
@@ -64,7 +64,7 @@
         <div class="span2">
             <p><strong>Location:</strong></p>
         </div>
-        <div class="span8">
+        <div class="span10">
             {% if not instrument.get_signed_in %}
                 <p><span class="label warning">Missing in action</span></p>
                 <ul class="unstyled">
@@ -86,7 +86,7 @@
         <div class="span2">
             <p><strong>Last user:</strong></p>
         </div>
-        <div class="span8">
+        <div class="span10">
             <p>
                 {% with instrument.get_last_booking as b %}
                     {% if b %}
@@ -102,7 +102,7 @@
         <div class="span2">
             <p><strong>Next booking:</strong></p>
         </div>
-        <div class="span8">
+        <div class="span10">
             <p>
                 {% with instrument.get_next_booking as b %}
                     {% if b %}
@@ -135,10 +135,6 @@
     {% endif %}
 {% endblock %}
 
-{% block options %}
-    <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
-{% endblock %}
-
 {% block bottom %}
     <br>
     <ul class="breadcrumb">
@@ -166,7 +162,6 @@
         </li>
         <li>TODO lower priority:
             <ul>
-                <li>Build admin distinction, so buttons aren't shown to everyone</li>
                 <li>Make table CSS prettier (flush with rest of content?)</li>
             </ul>
         </li>

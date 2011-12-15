@@ -10,7 +10,7 @@
                 <button class="btn" type="submit">Yes, delete this event</button> <a class="btn" href="{{ event.get_absolute_url }}" style="font-weight:normal;">No, I've changed my mind</a>
             </form>
         </div>
-        <p>Are you sure you want to <strong>delete this event?</strong></p>
+        <p>Are you sure you want to <strong>delete the event '{{ event.name }}'?</strong></p>
     </div>
 {% endblock %}
 
@@ -35,13 +35,5 @@
     </ul>
 {% endblock %}
 
-{% block todo %}
-    <ul>
-        <li>TODO lower priority:
-            <ul>
-                <li>Make this page admin only</li>
-                <li>Setup emails to all event participants that the event has been cancelled</li>
-            </ul>
-        </li>
-    </ul>
+{% block wireframe %}
 {% endblock %}
