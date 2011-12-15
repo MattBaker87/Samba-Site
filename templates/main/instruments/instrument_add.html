@@ -1,4 +1,4 @@
-{% extends "main/base_new.html" %}
+{% extends "main/base.html" %}
 
 {% block title %}Add instrument{% endblock %}
 
@@ -17,7 +17,8 @@
             {% for item in instrument_list %}
                 <tr {% if item == instrument %}class="highlighted"{% endif %}>
                     <td>{{ item.get_linked_name }}</td>
-                    <td>{% if item.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
+                    <td style="text-align:right;">{% if item.damaged %}<span class="label important">Dmg</span>{% endif %}
+                        {% if not item.get_signed_in %}<span class="label warning">MIA</span>{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>

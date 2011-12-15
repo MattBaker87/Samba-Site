@@ -1,14 +1,14 @@
-{% extends "main/base_new.html" %}
+{% extends "main/base.html" %}
 
 {% block title %}{% if target_user == user %}Your{% else %}{{ target_user.get_profile.name }}'s{% endif %} profile{% endblock %}
 
 {% block nav %}
     {% if target_user == user %}
         {% with "profile" as active %}
-            {% include 'main/nav.html' %}
+            {{ block.super }}
         {% endwith %}
     {% else %}
-        {% include 'main/nav.html' %}
+        {{ block.super }}
     {% endif %}
 {% endblock %}
 

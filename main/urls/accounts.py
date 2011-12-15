@@ -22,16 +22,10 @@ urlpatterns = patterns('sambasite.main.views.accounts',
 
 
 urlpatterns += patterns('django.views.generic',
-    # url(r'^edit/$', 'simple.direct_to_template', {'template': 'main/accounts/edit_contact.html'},
-    #                                                                         name='edit_contact'),
-    url(r'^forgotten/$', 'simple.direct_to_template', {'template': 'main/accounts/forgotten.html'},
-                                                                            name='forgotten'),
     url(r'^password/reset/sent/$', 'simple.direct_to_template', {'template': 'main/accounts/password_reset_form.html'},
                                                                             name='password_reset_sent'),
     url(r'^password/reset/done/$', 'simple.direct_to_template', {'template': 'main/accounts/password_reset_confirm.html'},
                                                                             name='password_reset_done'),
-    # url(r'^password/$', 'simple.direct_to_template', {'template': 'main/accounts/change_password.html'},
-    #                                                                         name='change_password'),
 )
 
 urlpatterns += patterns('django.contrib',

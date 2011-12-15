@@ -2,36 +2,72 @@
 <html>
 <head>
     <title>Samba Site - {% block title %}Default{% endblock %}</title>
-    <link rel="stylesheet" href="{{ STATIC_URL }}bootstrap.css">
-    <link rel="stylesheet" href="{{ STATIC_URL }}wireframe.css">
+    <link rel="stylesheet" href="{{ STATIC_URL }}samba_base.css">
 </head>
 <body>
 {% block nav %}
-    {% include 'main/nav.html' %}
-{% endblock %}
-<div class="container">
-    <div class="content">
-        <div class="page-header">
-            <h1>{% block header %}Default{% endblock %}</h1>
-        </div>
-        <div class="row">
-            <div class="span12">
-                <h3>Content</h3>
-                {% block content %}
-                {% endblock %}
-            </div>
-            <div class="span4">
-                <h3>Links</h3>
-                {% block links %}
-                {% endblock %}
+    <div class="topbar">
+        <div class="fill">
+            <div class="container">
+                <a class="brand" href="{% url index %}">Samba Site</a>
+                {% if user.is_authenticated %}
+                    <ul class="nav">
+                        <li {% if active == 'home' %}class="active"{% endif %}><a href="{% url index %}">Home</a></li>
+                        <li {% if active == 'people' %}class="active"{% endif %}><a href="{% url people %}">People</a></li>
+                        <li {% if active == 'events' %}class="active"{% endif %}><a href="{% url events_upcoming %}">Events</a></li>
+                        <li {% if active == 'instruments' %}class="active"{% endif %}><a href="{% url instrument_list %}">Instruments</a></li>
+                    </ul>
+                    <ul class="nav secondary-nav">
+                        {% if user.is_staff %}
+                            <li {% if active == 'admin' %}class="active"{% endif %}>
+                                <a href="{% url admin_home %}">Admin</a>
+                            </li>
+                        {% endif %}
+                        <li {% if active == 'profile' %}class="active"{% endif %}>
+                            {{ user.get_profile.get_linked_name }}
+                        </li>
+                        <li><a href="{% url logout %}">Logout</a></li>
+                    </ul>
+                {% endif %}
             </div>
         </div>
     </div>
-
-    <footer>
-        <p>&copy; 2011</p>
-    </footer>
-
+{% endblock %}
+<div class="container">
+    {% block top %}
+    {% endblock %}
+    {% block body %}
+    <div class="row">
+        <div class="span10 offset3">
+            <h1>{% block heading %}{% endblock %}</h1>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span3 sub-nav">
+            {% block sub-nav %}
+            {% endblock %}
+        </div>
+        <div class="span10">
+            {% block content %}
+            {% endblock %}
+        </div>
+        <div class="span3 options">
+            {% block options %}
+            {% endblock %}
+        </div>
+    </div>
+    {% endblock %}
+    {% block bottom %}
+    {% endblock %}
+    
+    {% block wireframe %}
+    <div class="content">
+        <hr>
+        <h3>To do</h3>
+        {% block todo %}
+        {% endblock %}
+    </div>
+    {% endblock %}
 </div>
 </body>
 </html>

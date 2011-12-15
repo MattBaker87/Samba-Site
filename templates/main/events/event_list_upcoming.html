@@ -1,8 +1,8 @@
-{% extends "main/base_new.html" %}
+{% extends "main/base.html" %}
 
 {% block nav %}
     {% with "events" as active %}
-        {% include 'main/nav.html' %}
+        {{ block.super }}
     {% endwith %}
 {% endblock %}
 

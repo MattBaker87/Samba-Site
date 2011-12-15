@@ -1,4 +1,4 @@
-{% extends "main/base_new.html" %}
+{% extends "main/base.html" %}
 
 {% block title %}Instrument detail{% endblock %}
 
@@ -128,10 +128,13 @@
 {% endblock %}
 
 {% block options %}
-    <p><a href="{{ instrument.get_delete_url }}" class="btn danger">Delete instrument</a></p>
-    <p><a href="{{ instrument.get_edit_url }}" class="btn info">Edit instrument</a></p>
-    <p><a href="{{ instrument.get_signin_url }}" class="btn success">Sign instrument in</a></p>
     <p><a href="{% url instrument_list %}">Back to instruments list</a></p>
+    <dl>
+        <dt>Admin options</dt>
+        <dd><a href="{{ instrument.get_delete_url }}" class="btn danger">Delete instrument</a></dd>
+        <dd><a href="{{ instrument.get_edit_url }}" class="btn info">Edit instrument</a></dd>
+        <dd><a href="{{ instrument.get_signin_url }}" class="btn success">Sign in instrument</a></dd>
+    </dl>
 {% endblock %}
 
 {% block bottom %}

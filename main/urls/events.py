@@ -15,14 +15,6 @@ urlpatterns = patterns('sambasite.main.views.events',
 )
 
 urlpatterns += patterns('django.views.generic',
-    url(r'^yours/$', 'simple.direct_to_template', {'template': 'main/events/event_list.html'},
-                                                                            name='events_yours'),
-    url(r'^detail/$', 'simple.direct_to_template', {'template': 'main/events/event_detail.html'},
-                                                                            name='event_detail'),
-    url(r'^edit/$', 'simple.direct_to_template', {'template': 'main/events/event_edit.html'},
-                                                                            name='event_edit'),
-    url(r'^delete/$', 'simple.direct_to_template', {'template': 'main/events/event_delete.html'},
-                                                                            name='event_delete'),
 )
 
 urlpatterns += patterns('django.contrib',

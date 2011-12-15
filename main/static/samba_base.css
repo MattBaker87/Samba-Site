@@ -191,3 +191,9 @@ a.label.warning:hover {
     background-color: #f60;
     text-decoration: none;
 }
+
+/* Admin buttons (mini) */
+.admin.btn-inline {
+  width: 48px;
+  text-align: center;
+}

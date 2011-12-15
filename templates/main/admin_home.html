@@ -1,0 +1,117 @@
+{% extends "main/base.html" %}
+
+{% block title %}Admin homepage{% endblock %}
+
+{% block nav %}
+    {% with "admin" as active %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}
+
+{% block top %}
+    <h1>Admin homepage</h1>
+    <p>As an admin you can alter information about events and instruments, as well as editing who's signed up for what. This page is an index for the most common admin tasks.</p>
+    <p>We know that the people who administer this site are likely to also be those who are keenest on playing samba, so we've set up the admin site to get out of your when you don't need it. You can use the rest of the website just like anyone else would but when you come across something you need to change look for the 'Edit details' link in the nav bar. Your admin privileges are always just a click away, but they're not in your face all the time.</p>
+    <h3>Upcoming Sambatage events list</h3>
+    <table class="zebra-striped">
+        {% load get_events %}
+        {% get_future_events as event_list %}
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th width="85px">When</th>
+                <th>Location</th>
+                <th>Notes</th>
+                <th>Instruments</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_list %}
+                <tr>
+                    <td>{{ event.get_linked_name }}</td>
+                    <td>{{ event.start|date:"j M Y,"}}<br>{{ event.start|date:"P" }}</td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.notes }}</td>
+                    <td style="white-space: nowrap;"><span class="label {{ event.get_label }}">{{ event.get_sign_ups.count }}</span> signed up</td>
+                    <td>
+                        <a class="info btn-inline btn admin" href="{{ event.get_edit_url }}">Edit</a><br>
+                        <a class="info btn-inline btn admin" href="{{ event.get_edit_url }}">Players</a><br>
+                        <a class="info btn-inline btn admin" href="{{ event.get_delete_url }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <thead>
+            <tr>
+                <td colspan="6">
+                    <a href="{% url event_add %}" class="btn success">Add event</a>
+                </td>
+            </tr>
+        </thead>
+    </table>
+    <h3>Instruments</h3>
+    {% load get_instruments %}
+    {% get_instruments as instrument_list %}
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Instrument name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Last user</th>
+                <th>Next user</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instrument in instrument_list %}
+                <tr>
+                    <td>{{ instrument.get_linked_name }}</td>
+                    <td>{{ instrument.get_instrument_type_display }}</td>
+                    <td>
+                        {% if instrument.damaged %}<span class="label important">Damaged</span><br>{% endif %}
+                        {% if not instrument.get_signed_in %}
+                            <span class="label warning">Missing in action</span>
+                        {% endif %}
+                        {% if instrument.get_signed_in and not instrument.damaged %}
+                            Safely in the store room
+                        {% endif %}
+                    </td>
+                    {% with instrument.get_last_booking as b %}
+                        <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}Brand new!{% endif %}</td>
+                    {% endwith %}
+                    {% with instrument.get_next_booking as b %}
+                        <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
+                    {% endwith %}
+                    <td>
+                        <a class="info btn-inline btn admin" href="{{ instrument.get_edit_url }}">Edit</a><br>
+                        <a class="info btn-inline btn admin" href="{{ instrument.get_delete_url }}">Delete</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+        <thead>
+            <tr>
+                <td colspan="8">
+                    <a href="{% url instrument_add %}" class="btn success">Add instrument</a>
+                </td>
+            </tr>
+        </thead>
+    </table>
+{% endblock %}
+
+{% block bottom %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url home %}">Home</a>
+            <span class="divider">/</span>
+        </li>
+    	<li class="active">
+    		<a href="#">Admin home</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe %}
+{% endblock %}

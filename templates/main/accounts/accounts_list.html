@@ -1,10 +1,10 @@
-{% extends "main/base_new.html" %}
+{% extends "main/base.html" %}
 
 {% block title %}People{% endblock %}
 
 {% block nav %}
     {% with "people" as active %}
-        {% include 'main/nav.html' %}
+        {{ block.super }}
     {% endwith %}
 {% endblock %}
 

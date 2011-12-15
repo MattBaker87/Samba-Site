@@ -1,10 +1,10 @@
-{% extends "main/base_new.html" %}
+{% extends "main/base.html" %}
 
 {% block title %}Homepage{% endblock %}
 
 {% block nav %}
     {% with "home" as active %}
-        {% include 'main/nav.html' %}
+        {{ block.super }}
     {% endwith %}
 {% endblock %}
 
@@ -31,7 +31,7 @@
             </a>
         </li>
     </ul>
-    <h1>Welcome <a href="{% url profile %}">{{ user.get_profile.name }}</a></h1>
+    <h1>Hello <a href="{% url profile %}">{{ user.get_profile.name }}</a>!</h1>
     <p>This site will help you keep track of what's going on with the samba band. The links in the black navigation bar above let you quickly get information about upcoming events, where our instruments are, and people's contact details. We'll also display the most relevant information below.</p>
     <h3>Next Sambatage event</h3>
     <table class="zebra-striped">
@@ -45,7 +45,6 @@
                 <td colspan="5">
                     <a href="{% url events_upcoming %}" class="btn info">View all upcoming events</a>
                     <a href="{% url events_past %}" class="btn info">View past events</a>
-                    <a href="{% url event_add %}" class="btn success">Add event</a>
                 </td>
             </tr>
         </thead>

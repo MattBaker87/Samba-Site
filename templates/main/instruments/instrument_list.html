@@ -1,10 +1,10 @@
-{% extends "main/base_new.html" %}
+{% extends "main/base.html" %}
 
 {% block title %}Instruments{% endblock %}
 
 {% block nav %}
     {% with "instruments" as active %}
-        {% include 'main/nav.html' %}
+        {{ block.super }}
     {% endwith %}
 {% endblock %}
 
