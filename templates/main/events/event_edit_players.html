@@ -1,0 +1,64 @@
+{% extends "main/events/event_detail.html" %}
+
+{% block title %}Edit event - {{ event }}{% endblock %}
+
+{% block heading %}Edit details of {{ event }}{% endblock %}
+
+{% block instruments %}
+    {% if event.bookings %}
+        <h3>Instruments</h3>
+        <form action="" method="post">
+            {% csrf_token %}
+            <table class="zebra-striped">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Player</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in event.bookings.display %}
+                        <tr>
+                            <td>{{ booking.instrument.get_linked_name }}</td>
+                            <td>{{ booking.instrument.get_instrument_type_display }}</td>
+                            <td>{% for item in form %}{% if item.label == booking.instrument.name %}{{ item }}{% endif %}{% endfor %}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="row table-options">
+                <div class="pull-right">
+                    <button class="btn success" type="submit">Update details</button>
+                    <a href="{{ event.get_absolute_url }}" class="btn danger">Cancel</a>
+                </div>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url events_upcoming %}">Events</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li>
+    	    {{ event.get_linked_name }}
+    	    <span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Edit players at event</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block todo %}
+    <ul>
+        <li>TODO: Set up email alerts for people playing that the admin removes</li>
+    </ul>
+{% endblock %}

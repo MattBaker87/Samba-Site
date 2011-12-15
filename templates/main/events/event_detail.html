@@ -30,7 +30,7 @@
     <li><a href="{{ event.get_delete_url }}" class="btn danger btn-nav">Delete</a></li>
     {% if not event.start|timeuntil == "0 minutes" %}
         <li><a href="{{ event.get_edit_url }}" class="btn info btn-nav">Edit details</a></li>
-        <li><a href="#" class="btn info btn-nav">Edit players</a></li>
+        <li><a href="{{ event.get_edit_players_url }}" class="btn info btn-nav">Edit players</a></li>
     {% endif %}
 {% endblock %}
 
@@ -71,59 +71,61 @@
             <p>{{ event.notes }}</p>
         </div>
     </div>
-    {% if event.bookings %}
-        <h3>Instruments</h3>
-        <table class="zebra-striped">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Type</th>
-                    <th>Player</th>
-                    <th>{% if event.start|timeuntil == "0 minutes" %}Status{% endif %}</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for booking in event.bookings.display %}
+    {% block instruments %}
+        {% if event.bookings %}
+            <h3>Instruments</h3>
+            <table class="zebra-striped">
+                <thead>
                     <tr>
-                        <td>{{ booking.instrument.get_linked_name }}</td>
-                        <td>{{ booking.instrument.get_instrument_type_display }}</td>
-                        <td>{% if booking.user %}{{ booking.user.get_profile.get_linked_name }}{% else %}-{% endif %}</td>
-                        {% if event.start|timeuntil == "0 minutes" %}
-                            {% if booking.signed_in %}
-                                <td>Returned</td>
-                            {% else %}
-                                <td>Not yet returned
-                                    {% if user == booking.user %}
-                                        <a href="{{ booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
-                                    {% endif %}
-                                </td>
-                            {% endif %}
-                        {% else %}
-                            {% if booking.user == user %}
-                                <form action="{{ booking.get_cancel_url}}" method="POST">
-                                    {% csrf_token %}
-                                    <td>
-                                        <input type="submit" class="btn-inline btn error pull-right" value="Cancel booking" />
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Player</th>
+                        <th>{% if event.start|timeuntil == "0 minutes" %}Status{% endif %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in event.bookings.display %}
+                        <tr>
+                            <td>{{ booking.instrument.get_linked_name }}</td>
+                            <td>{{ booking.instrument.get_instrument_type_display }}</td>
+                            <td>{% if booking.user %}{{ booking.user.get_profile.get_linked_name }}{% else %}-{% endif %}</td>
+                            {% if event.start|timeuntil == "0 minutes" %}
+                                {% if booking.signed_in %}
+                                    <td>Returned</td>
+                                {% else %}
+                                    <td>Not yet returned
+                                        {% if user == booking.user %}
+                                            <a href="{{ booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                        {% endif %}
                                     </td>
-                                </form>
+                                {% endif %}
                             {% else %}
-                                {% if not booking.user %}
-                                    <form action="{{ booking.get_book_url}}" method="POST">
+                                {% if booking.user == user %}
+                                    <form action="{{ booking.get_cancel_url}}" method="POST">
                                         {% csrf_token %}
                                         <td>
-                                        <input type="submit" class="btn-inline btn success pull-right" value="Book this instrument" />
+                                            <input type="submit" class="btn-inline btn error pull-right" value="Cancel booking" />
                                         </td>
                                     </form>
                                 {% else %}
-                                    <td></td>
+                                    {% if not booking.user %}
+                                        <form action="{{ booking.get_book_url}}" method="POST">
+                                            {% csrf_token %}
+                                            <td>
+                                            <input type="submit" class="btn-inline btn success pull-right" value="Book this instrument" />
+                                            </td>
+                                        </form>
+                                    {% else %}
+                                        <td></td>
+                                    {% endif %}
                                 {% endif %}
                             {% endif %}
-                        {% endif %}
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endblock %}
 {% endblock %}
 
 {% block breadcrumb %}
@@ -144,12 +146,6 @@
 
 {% block todo %}
     <ul>
-        <li>TODO at next opportunity
-            <ul>
-                <li>Fix CSS so the table border in the main area lines up with the rest of the content nicely</li>
-                <li>Build admin option to edit players</li>
-            </ul>
-        </li>
         <li>TODO lower priority
             <ul>
                 <li>Add 'organiser' field to events</li>

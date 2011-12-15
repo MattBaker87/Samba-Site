@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from main.views import admin_required
 from django.views.generic import list_detail
 
-from main.forms import EventForm
+from main.forms import EventForm, EventPlayersForm
 from main.models import Event, Booking
 
 @login_required
@@ -63,4 +63,14 @@ def delete_event(request, slug):
         return HttpResponseRedirect(reverse('events_upcoming'))
     else:
         return render_to_response('main/events/event_delete.html', {'event': target_object},
+                                                                                    context_instance=RequestContext(request))
+
+@admin_required
+def edit_event_players(request, slug):
+    event = get_object_or_404(Event, slug=slug)
+    form = EventPlayersForm(data = request.POST or None, event = event)
+    if form.is_valid():
+        form.save(commit=True)
+        return HttpResponseRedirect(event.get_absolute_url())
+    return render_to_response('main/events/event_edit_players.html', {'form': form, 'event': event },
                                                                                     context_instance=RequestContext(request))

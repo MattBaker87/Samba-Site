@@ -44,10 +44,10 @@
 			</div>
     	</fieldset>
     	{% block buttons %}
-                <div class="input">
-                    <button class="btn success" type="submit">Update details</button>
-                    <a href="{{ event.get_absolute_url }}" class="btn danger">Cancel</a>
-                </div>
+            <div class="input">
+                <button class="btn success" type="submit">Update details</button>
+                <a href="{{ event.get_absolute_url }}" class="btn danger">Cancel</a>
+            </div>
         {% endblock %}
     </form>
 {% endblock %}
@@ -75,6 +75,5 @@
 {% block todo %}
     <ul>
         <li>TODO: Set up email alerts for people playing instruments that the admin removes</li>
-        <li>TODO: Set up an admin page allowing admins to select players for instruments</li>
     </ul>
 {% endblock %}

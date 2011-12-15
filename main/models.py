@@ -59,6 +59,10 @@ class Event(models.Model):
     def get_edit_url(self):
         return ('event_edit', (), {'slug': self.slug})
     get_edit_url = models.permalink(get_edit_url)
+    
+    def get_edit_players_url(self):
+        return ('event_edit_players', (), {'slug': self.slug})
+    get_edit_players_url = models.permalink(get_edit_players_url)
 
 
 class Instrument(models.Model):
@@ -137,6 +141,9 @@ class UserProfile(models.Model):
     telephone = models.CharField(max_length=15, blank=True)
     slug = models.SlugField(unique=True)
 
+    def __unicode__(self):
+    	return self.name
+    
     def save(self, *args, **kwargs):
     	self.slug = slugify(self.name)
     	super(UserProfile, self).save(*args, **kwargs)

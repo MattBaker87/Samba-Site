@@ -177,6 +177,27 @@ class EventForm(forms.ModelForm):
                         continue
         return event
 
+class EventPlayersForm(forms.Form):
+    def __init__(self, event=None, *args, **kwargs):
+        super(EventPlayersForm, self).__init__(*args, **kwargs)
+        self.event = event
+        for b in self.event.bookings.all():
+            self.fields[b.instrument.name] = forms.ModelChoiceField(
+                            label=mark_safe(b.instrument.name),
+                            queryset=UserProfile.objects.all(),
+                            required=False,
+                            initial=b.user.get_profile() if b.user else None,
+                            )
+    
+    def save(self, commit=True):
+        if commit:
+            for field in self.fields:
+                b = self.event.bookings.get(instrument=Instrument.objects.get(name=field))
+                b.user = self.cleaned_data[field].user if self.cleaned_data[field] else None
+                b.save()
+        return None
+
+
 class ContactForm(forms.ModelForm):
     username = forms.EmailField(label=_("Email"), max_length=30,
         help_text = _("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),

@@ -14,8 +14,6 @@
     <p>We know that the people who administer this site are likely to also be those who are keenest on playing samba, so we've set up the admin site to get out of your when you don't need it. You can use the rest of the website just like anyone else would but when you come across something you need to change look for the admin buttons in the nav bar. Your admin privileges are always just a click away, but they're not in your face all the time.</p>
     <h3>Upcoming Sambatage events</h3>
     <table class="zebra-striped">
-        {% load get_events %}
-        {% get_future_events as event_list %}
         <thead>
             <tr>
                 <th>Event</th>
@@ -42,14 +40,17 @@
                 </tr>
             {% endfor %}
         </tbody>
-        <thead>
-            <tr>
-                <td colspan="6">
-                    <a href="{% url event_add %}" class="btn success">Add event</a>
-                </td>
-            </tr>
-        </thead>
     </table>
+    <div class="row table-options">
+        <div class="span12">
+            {% load paginate %}
+            {% pagination %}
+            &nbsp;
+        </div>
+        <div class="pull-right">
+            <a href="{% url event_add %}" class="btn success btn-paginate">Add event</a>
+        </div>
+    </div>
     <h3>Instruments</h3>
     {% load get_instruments %}
     {% get_instruments as instrument_list %}
@@ -91,14 +92,12 @@
                 </tr>
             {% endfor %}
         </tbody>
-        <thead>
-            <tr>
-                <td colspan="8">
-                    <a href="{% url instrument_add %}" class="btn success">Add instrument</a>
-                </td>
-            </tr>
-        </thead>
     </table>
+    <div class="row table-options">
+        <div class="pull-right">
+            <a href="{% url instrument_add %}" class="btn success">Add instrument</a>
+        </div>
+    </div>
 {% endblock %}
 
 {% block breadcrumb %}
