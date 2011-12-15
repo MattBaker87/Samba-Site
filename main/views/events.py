@@ -10,9 +10,10 @@ from main.forms import EventForm
 from main.models import Event, Booking
 
 @login_required
-def list_events(request, template_name, queryset_filter, paginate_by=None):
+def list_events(request, template_name, queryset_filter, paginate_by=10):
     queryset = queryset_filter(Event.objects)
-    return list_detail.object_list(request, queryset=queryset, template_object_name='event', template_name=template_name)
+    return list_detail.object_list(request, queryset=queryset,template_object_name='event',
+                                    template_name=template_name, paginate_by=paginate_by)
 
 @login_required
 def detail_event(request, slug):

@@ -2,7 +2,7 @@
 
 {% block title %}Edit event - {{ event }}{% endblock %}
 
-{% block heading %}Edit {{ event }}{% endblock %}
+{% block heading %}Edit details of {{ event }}{% endblock %}
 
 {% block content %}
     {% block description %}
@@ -52,8 +52,7 @@
     </form>
 {% endblock %}
 
-{% block bottom %}
-    <br>
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>

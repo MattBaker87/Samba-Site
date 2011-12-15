@@ -2,7 +2,7 @@
 
 {% block title %}Instruments missing in action{% endblock %}
 
-{% block top %}
+{% block main %}
     <h1>Instruments missing in action <small>signed out but not yet returned</small></h1>
     {% load get_instruments %}
     {% get_instruments as instrument_list mia %}
@@ -18,7 +18,7 @@
     </table>
 {% endblock %}
 
-{% block bottom %}
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>

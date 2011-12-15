@@ -1,0 +1,25 @@
+<div class="pagination">
+    <ul>
+        {% if has_previous %}
+            <li class="prev">
+                <a href="?page={{ previous }}">&larr; Previous</a>
+            </li>
+        {% else %}
+            <li class="prev disabled"><a href="#">&larr; Previous</a></li>
+        {% endif %}
+        {% for p in page_range %}
+            {% if p == '...' %}
+                <li class="disabled"><a href="#">...</a></li>
+            {% else %}
+                <li {% if p == page %}class="active"{% endif %}><a href="?page={{ p }}">{{ p }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if has_next %}
+            <li class="next">
+                <a href="?page={{ next }}">Next &rarr;</a>
+            </li>
+        {% else %}
+            <li class="next disabled"><a href="#">Next &rarr;</a></li>
+        {% endif %}
+    </ul>
+</div>

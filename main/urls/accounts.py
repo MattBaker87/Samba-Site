@@ -15,7 +15,7 @@ urlpatterns = patterns('sambasite.main.views.accounts',
     url(r'^profile/(?P<slug>[-\w]+)/$', 'view_profile', name='view_profile'),
     url(r'^list/$', 'list_accounts', {'queryset_filter':lambda x:x.filter(last_login__gte=datetime.now()-timedelta(365)).order_by('userprofile__name'),
                                         'template_name': 'main/accounts/accounts_list.html'}, name='people'),
-    url(r'^profile/(?P<slug>[-\w]+)/past_events/$', 'profile_past_events', name='profile_past_events'),
+    url(r'^profile/(?P<slug>[-\w]+)/past_events/$', 'profile_past_events', {'paginate_by': 10}, name='profile_past_events'),
     url(r'^password/$', 'change_password', name='change_password'),
     url(r'^password/success/$', 'view_profile', {'password_changed': True}, name='password_changed'),
 )

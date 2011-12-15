@@ -2,11 +2,8 @@
 
 {% block title %}Past events{% endblock %}
 
-{% block top %}
+{% block main %}
     <h1>{% if target_user == user %}Your{% else %}{{ target_user.get_profile.name }}'s{%endif %} past events</h1>
-{% endblock %}
-
-{% block body %}
     <table class="zebra-striped">
         <thead>
             <tr>
@@ -46,17 +43,20 @@
                 </tr>
             {% endfor %}
         </tbody>
-        <thead>
-            <tr>
-                <td colspan="5">
-                    <a href="{{ target_user.get_profile.get_absolute_url }}" class="btn info">Back to {% if target_user == user %}your{% else %}{{ target_user.get_profile.name }}'s{% endif %} profile</a>
-                </td>
-            </tr>
-        </thead>
     </table>
+    <div class="row table-options">
+        <div class="span12">
+            {% load paginate %}
+            {% pagination %}
+            &nbsp;
+        </div>
+        <div class="pull-right">
+            <a href="{{ target_user.get_profile.get_absolute_url }}" class="btn btn-paginate info">Back to {% if target_user == user %}your{% else %}{{ target_user.get_profile.name }}'s{% endif %} profile</a>
+        </div>
+    </div>
 {% endblock %}
 
-{% block bottom %}
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>

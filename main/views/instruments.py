@@ -4,15 +4,19 @@ from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from django.contrib.auth.decorators import login_required
 from main.views import admin_required
+from django.views.generic import list_detail
 
 from main.forms import InstrumentForm, BookingSigninForm
 from main.models import Instrument, Booking
 
 @login_required
-def detail_instrument(request, slug):
+def detail_instrument(request, slug, paginate_by=10):
     target_object = get_object_or_404(Instrument, slug=slug)
-    return render_to_response('main/instruments/instrument_detail.html', {'instrument': target_object},
-                                                                context_instance=RequestContext(request))
+    return list_detail.object_list(request, template_name='main/instruments/instrument_detail.html',
+                                template_object_name='notes',
+                                paginate_by=paginate_by,
+                                queryset=target_object.notes.all(),
+                                extra_context={'instrument': target_object})
 
 @login_required
 def sign_in_booking(request, booking_id):
@@ -45,10 +49,14 @@ def edit_instrument(request, slug):
                                                                                     context_instance=RequestContext(request))
 
 @admin_required
-def delete_instrument(request, slug):
+def delete_instrument(request, slug, paginate_by=10):
     target_object = get_object_or_404(Instrument, slug=slug)
     if request.method == "POST":
         target_object.delete()
         return HttpResponseRedirect(reverse('instrument_list'))
     else:
-        return render_to_response('main/instruments/instrument_delete.html', {'instrument': target_object}, context_instance=RequestContext(request))
+        return list_detail.object_list(request, template_name='main/instruments/instrument_delete.html',
+                                    template_object_name='notes',
+                                    paginate_by=paginate_by,
+                                    queryset=target_object.notes.all(),
+                                    extra_context={'instrument': target_object})

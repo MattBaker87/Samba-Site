@@ -8,7 +8,7 @@
     {% endwith %}
 {% endblock %}
 
-{% block top %}
+{% block main %}
     <ul class="media-grid">
         <li>
             <a href="#">
@@ -34,37 +34,31 @@
     <h1>Hello <a href="{% url profile %}">{{ user.get_profile.name }}</a>!</h1>
     <p>This site will help you keep track of what's going on with the samba band. The links in the black navigation bar above let you quickly get information about upcoming events, where our instruments are, and people's contact details. We'll also display the most relevant information below.</p>
     <h3>Next Sambatage event</h3>
-    <table class="zebra-striped">
-        {% load get_events %}
-        {% get_future_events as event_list %}
-        {% with event_list|slice:":1" as event_list %}
-            {% include 'main/events/event_table.html' %}
-        {% endwith %}
-        <thead>
-            <tr>
-                <td colspan="5">
-                    <a href="{% url events_upcoming %}" class="btn info">View all upcoming events</a>
-                    <a href="{% url events_past %}" class="btn info">View past events</a>
-                </td>
-            </tr>
-        </thead>
-    </table>
+    {% load get_events %}
+    {% get_future_events as event_list %}
+    {% with event_list|slice:":1" as event_list %}
+        {% include 'main/events/event_table.html' %}
+    {% endwith %}
+    <div class="row table-options">
+        <div class="pull-right">
+            <a href="{% url events_upcoming %}" class="btn info">View all upcoming events</a>
+            <a href="{% url events_past %}" class="btn info">View past events</a>
+        </div>
+    </div>
     <h3>Instruments currently missing in action</h3>
     <table class="zebra-striped">
         {% load get_instruments %}
         {% get_instruments as instrument_list mia %}
         {% include 'main/instruments/instrument_mia_table.html' %}
-        <thead>
-            <tr>
-                <td colspan="5">
-                    <a href="{% url instrument_list %}" class="btn info">View all instruments</a>
-                </td>
-            </tr>
-        </thead>
     </table>
+    <div class="row table-options">
+        <div class="pull-right">
+            <a href="{% url instrument_list %}" class="btn info">View all instruments</a>
+        </div>
+    </div>
 {% endblock %}
 
-{% block bottom %}
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li class="active">
     		<a href="#">Home</a>

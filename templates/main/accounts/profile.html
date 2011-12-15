@@ -12,7 +12,7 @@
     {% endif %}
 {% endblock %}
 
-{% block top %}
+{% block main %}
     {% block details %}
     {% if password_changed %}
         <div class="alert-message success">
@@ -125,20 +125,18 @@
                             </tr>
                         {% endfor %}
                     </tbody>
-                    <thead>
-                        <tr>
-                            <td colspan="5">
-                                <a href="{{ target_user.get_profile.get_past_events_url }}" class="btn info">View {% if target_user == user %}your{% else %}{{ target_user.get_profile.name }}'s{% endif %} past events</a>
-                            </td>
-                        </tr>
-                    </thead>
                 </table>
+                <div class="row table-options">
+                    <div class="pull-right">
+                        <a href="{{ target_user.get_profile.get_past_events_url }}" class="btn info">View {% if target_user == user %}your{% else %}{{ target_user.get_profile.name }}'s{% endif %} past events</a>
+                    </div>
+                </div>
             </div>
         </div>
     {% endblock %}
 {% endblock %}
 
-{% block bottom %}
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>

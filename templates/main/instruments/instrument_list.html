@@ -12,7 +12,7 @@
     <li><a href="{% url instrument_add %}" class="btn success btn-nav">Add instrument</a></li>
 {% endblock %}
 
-{% block top %}
+{% block main %}
     <h1>Instruments <small>owned by the band</small></h1>
     {% load get_instruments %}
     {% get_instruments as instrument_list %}
@@ -52,7 +52,7 @@
     </table>
 {% endblock %}
 
-{% block bottom %}
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>

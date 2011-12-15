@@ -20,16 +20,16 @@ body {
   padding-left: 0px;
 }
 
-.dimmed td {
+.dimmed td, .dimmed td a {
   color: #aaa;
 }
 
-.dimmed a {
-  color: #aaa;
+.dimmed th, .dimmed th a {
+  color: #000;
 }
 
 tbody tr.highlighted td, tbody tr.highlighted td a, .zebra-striped tbody tr.highlighted td {
-  color: #000;
+  color: #444;
   background-color: #DEF
 }
 
@@ -200,8 +200,27 @@ a.label.warning:hover {
 
 /* Admin buttons in nav bar */
 .topbar div > ul .btn-nav {
-  padding: 1px 7px 1px;
-  margin: 10px 3px 9px;
+  padding: 2px 7px 2px;
+  margin: 9px 3px 8px;
   line-height: normal;
   display: normal;
+}
+
+/* Pagination */
+.btn-paginate {
+  padding: 9px 14px 10px;
+}
+
+.pagination {
+  margin-top: 0;
+}
+
+.table-options {
+  margin-top: -15px;
+  margin-bottom: 20px;
+}
+
+/* Breadcrumbs at the bottom of pages always have a big enough margin */
+.breadcrumb {
+  margin-top: 20px;
 }

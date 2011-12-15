@@ -36,26 +36,10 @@
     </div>
 {% endblock %}
 <div class="container">
-    {% block top %}
+    {% block main %}
     {% endblock %}
-    {% block body %}
-    <div class="row">
-        <div class="span13 offset3">
-            <h1>{% block heading %}{% endblock %}</h1>
-        </div>
-    </div>
-    <div class="row">
-        <div class="span3 sub-nav">
-            {% block sub-nav %}
-            {% endblock %}
-        </div>
-        <div class="span13">
-            {% block content %}
-            {% endblock %}
-        </div>
-    </div>
-    {% endblock %}
-    {% block bottom %}
+    
+    {% block breadcrumb %}
     {% endblock %}
     
     {% block wireframe %}

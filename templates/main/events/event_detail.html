@@ -1,4 +1,4 @@
-{% extends "main/base.html" %}
+{% extends "main/base_detailed.html" %}
 
 {% block title %}Event detail{% endblock %}
 
@@ -10,20 +10,28 @@
     <table class="condensed-table dimmed">
         <thead>
             <tr>
-                <th>Upcoming events</th>
+                <th><a href="{% url events_upcoming %}">Upcoming events</a></th>
             </tr>
         </thead>
         <tbody>
-            {% for item in event_list %}
+            {% for item in event_list|slice:":10" %}
                 <tr {% if item == event %}class="highlighted"{% endif %}>
-                    <td>
-                        <a href="{{ item.get_absolute_url }}"><p><strong>{{ item.name }}</strong></p>
-                        <p>{{ item.start|date:"jS F Y" }}</p></a>
-                    </td>
+                    <td><a href="{{ item.get_absolute_url }}">
+                        <strong>{{ item.name }}</strong><br>
+                        {{ item.start|date:"j M Y, P" }}
+                    </a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block admin_options %}
+    <li><a href="{{ event.get_delete_url }}" class="btn danger btn-nav">Delete</a></li>
+    {% if not event.start|timeuntil == "0 minutes" %}
+        <li><a href="{{ event.get_edit_url }}" class="btn info btn-nav">Edit details</a></li>
+        <li><a href="#" class="btn info btn-nav">Edit players</a></li>
+    {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -118,16 +126,7 @@
     {% endif %}
 {% endblock %}
 
-{% block admin_options %}
-    <li><a href="{{ event.get_delete_url }}" class="btn danger btn-nav">Delete</a></li>
-    {% if not event.start|timeuntil == "0 minutes" %}
-        <li><a href="{{ event.get_edit_url }}" class="btn info btn-nav">Edit details</a></li>
-        <li><a href="#" class="btn info btn-nav">Edit players</a></li>
-    {% endif %}
-{% endblock %}
-
-{% block bottom %}
-    <br>
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>
@@ -148,7 +147,6 @@
         <li>TODO at next opportunity
             <ul>
                 <li>Fix CSS so the table border in the main area lines up with the rest of the content nicely</li>
-                <li>Fix CSS in sub-nav so that it's not really ugly</li>
                 <li>Build admin option to edit players</li>
             </ul>
         </li>

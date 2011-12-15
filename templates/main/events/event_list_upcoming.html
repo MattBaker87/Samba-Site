@@ -1,4 +1,4 @@
-{% extends "main/base.html" %}
+{% extends "main/base_detailed.html" %}
 
 {% block nav %}
     {% with "events" as active %}
@@ -12,24 +12,22 @@
 
 {% block title %}Upcoming events{% endblock %}
 
-{% block top %}
+{% block main %}
     <h1>Upcoming events</h1>
-{% endblock %}
-
-{% block body %}
-<table class="zebra-striped">
     {% include 'main/events/event_table.html' %}
-    <thead>
-        <tr>
-            <td colspan="5">
-                <a href="{% url events_past %}" class="btn info">View past events</a>
-            </td>
-        </tr>
-    </thead>
-</table>
+    <div class="row table-options">
+        <div class="span12">
+            {% load paginate %}
+            {% pagination %}
+            &nbsp;
+        </div>
+        <div class="pull-right">
+            <a href="{% url events_past %}" class="btn info btn-paginate">View past events</a>
+        </div>
+    </div>
 {% endblock %}
 
-{% block bottom %}
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>

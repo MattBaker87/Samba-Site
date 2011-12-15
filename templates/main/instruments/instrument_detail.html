@@ -1,4 +1,4 @@
-{% extends "main/base.html" %}
+{% extends "main/base_detailed.html" %}
 
 {% block title %}Instrument detail{% endblock %}
 
@@ -18,7 +18,7 @@
     <table class="condensed-table dimmed">
         <thead>
             <tr>
-                <th colspan="2">All instruments</th>
+                <th colspan="2"><a href ="{% url instrument_list %}">All instruments</a></th>
             </tr>
         </thead>
         <tbody>
@@ -124,7 +124,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for note in instrument.notes.all %}
+                {% for note in notes_list %}
                     <tr>
                         <td>{{ note.date_made|date:"j M Y" }}</td>
                         <td>{{ note.note|safe }}</td>
@@ -132,11 +132,17 @@
                 {% endfor %}
             </tbody>
         </table>
+        <div class="row table-options">
+            <div class="span12">
+                {% load paginate %}
+                {% pagination %}
+                &nbsp;
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
 
-{% block bottom %}
-    <br>
+{% block breadcrumb %}
     <ul class="breadcrumb">
     	<li>
     		<a href="{% url home %}">Home</a>
@@ -156,7 +162,6 @@
     <ul>
         <li>TODO after adding event functionality:
             <ul>
-                <li>Add pagination to the above list of past events, or limit them to the last 10</li>
                 <li>Add ability to write notes that aren't related to an event</li>
             </ul>
         </li>
