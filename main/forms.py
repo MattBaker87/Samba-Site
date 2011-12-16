@@ -253,44 +253,46 @@ class ContactForm(forms.ModelForm):
             user.save()
             profile.save()
         return user
-        
-class BookingSigninForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super(BookingSigninForm, self).__init__(*args, **kwargs)
-        self.fields['damaged'] = InstrumentForm(instance=self.instance.instrument).fields['damaged']
-        
+
+class AdminBookingSigninForm(forms.Form):
+    def __init__(self, instrument=None, *args, **kwargs):
+        super(AdminBookingSigninForm, self).__init__(*args, **kwargs)
+        self.instrument = instrument
+        self.fields['damaged'] = InstrumentForm(instance=self.instrument).fields['damaged']
+        self.fields['booking'] = fields.BookingChoiceField(label=mark_safe("Booking after which instrument was returned"),
+                                                            queryset=self.instrument.bookings.not_signed_in(),
+                                                            empty_label=None, initial=instrument.get_last_booking(),)
+    
     notes = forms.CharField(label=_("Notes on instrument condition"), max_length=500, required=False,
         widget = Textarea(attrs={'class':'span9', 'rows':'4'}))
-                                    
-    class Meta:
-        model = Booking
-        fields = ("signed_in",)
-    
-    def _get_note_header(self, booking):
-        return ("<p>" + booking.user.get_profile().get_linked_name() + " played " + booking.instrument.get_linked_name()
-                + " at " + booking.event.get_linked_name())
-    
+
     def _get_note(self):
         return (" and wrote:</p><blockquote>"+linebreaks(escape(self.cleaned_data['notes']))
                 + "</blockquote>") if self.cleaned_data['notes'] else ""
-        
+    
     def save(self, commit=True):
-        booking = super(BookingSigninForm, self).save(commit=False)
+        booking = self.cleaned_data['booking'] if self.cleaned_data.has_key('booking') else self.booking
         if commit:
             booking.signed_in = True
             booking.save()
             booking.instrument.damaged = self.cleaned_data['damaged']
             booking.instrument.save()
             note = InstrumentNote(instrument=booking.instrument, user=booking.user, date_made=booking.event.start,
-                                    note=self._get_note_header(booking) + self._get_note(), booking=booking)
+                                    note=str(booking) + self._get_note(), booking=booking)
             note.save()
             for b in booking.instrument.bookings.not_signed_in().filter(event__start__lt=booking.event.start):
                 b.signed_in = True
                 b.save()
                 note = InstrumentNote(instrument=b.instrument, user=b.user, date_made=b.event.start,
-                                        note=self._get_note_header(b), booking=b)
+                                        note=str(b), booking=b)
                 note.save()
-        return booking
+        return booking.instrument
+
+class BookingSigninForm(AdminBookingSigninForm):
+    def __init__(self, booking=None, *args, **kwargs):
+        super(BookingSigninForm, self).__init__(instrument=booking.instrument, *args, **kwargs)
+        self.fields.pop('booking')
+        self.booking = booking
 
 class MyPasswordChangeForm(PasswordChangeForm):
     new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput(attrs={'class':'span3'}))

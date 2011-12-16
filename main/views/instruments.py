@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import login_required
 from main.views import admin_required
 from django.views.generic import list_detail
 
-from main.forms import InstrumentForm, BookingSigninForm
+from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm
 from main.models import Instrument, Booking
 
 @login_required
@@ -19,16 +19,20 @@ def detail_instrument(request, slug, paginate_by=10):
                                 extra_context={'instrument': target_object})
 
 @login_required
-def sign_in_booking(request, booking_id):
+def sign_in_booking(request, booking_id, paginate_by):
     target_booking = get_object_or_404(Booking, id=booking_id)
     if not target_booking.user == request.user or target_booking.signed_in:
         return HttpResponseRedirect(target_booking.instrument.get_absolute_url())
-    form = BookingSigninForm(data = request.POST or None, instance = target_booking)
+    form = BookingSigninForm(data = request.POST or None, booking = target_booking)
     if form.is_valid():
         form.save()
         return HttpResponseRedirect(target_booking.instrument.get_absolute_url())
-    return render_to_response('main/instruments/instrument_signin.html', {'booking': target_booking, 'form': form, 'instrument': target_booking.instrument},
-                                                                context_instance=RequestContext(request))
+    return list_detail.object_list(request, template_name='main/instruments/instrument_signin.html',
+                                template_object_name='notes',
+                                paginate_by=paginate_by,
+                                queryset=target_booking.instrument.notes.all(),
+                                extra_context={'booking': target_booking, 'form': form,
+                                                'instrument': target_booking.instrument})
 
 @admin_required
 def add_instrument(request):
@@ -60,3 +64,18 @@ def delete_instrument(request, slug, paginate_by=10):
                                     paginate_by=paginate_by,
                                     queryset=target_object.notes.all(),
                                     extra_context={'instrument': target_object})
+
+@login_required
+def sign_in_instrument(request, slug, paginate_by):
+    target_instrument = get_object_or_404(Instrument, slug=slug)
+    if target_instrument.get_signed_in():
+        return HttpResponseRedirect(target_instrument.get_absolute_url())
+    form = AdminBookingSigninForm(data = request.POST or None, instrument = target_instrument)
+    if form.is_valid():
+        form.save()
+        return HttpResponseRedirect(target_instrument.get_absolute_url())
+    return list_detail.object_list(request, template_name='main/instruments/instrument_signin_admin.html',
+                                template_object_name='notes',
+                                paginate_by=paginate_by,
+                                queryset=target_instrument.notes.all(),
+                                extra_context={'instrument': target_instrument, 'form': form})

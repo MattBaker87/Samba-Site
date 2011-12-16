@@ -6,7 +6,8 @@ urlpatterns = patterns('sambasite.main.views.instruments',
     url(r'^delete/(?P<slug>[-\w]+)/$', 'delete_instrument', {'paginate_by': 10}, name='instrument_delete'),
     url(r'^detail/(?P<slug>[-\w]+)/$', 'detail_instrument', {'paginate_by': 10}, name='instrument_detail'),
     url(r'^edit/(?P<slug>[-\w]+)/$', 'edit_instrument', name='instrument_edit'),
-    url(r'^sign_in/booking/(?P<booking_id>\d+)/$', 'sign_in_booking', name='instrument_booking_signin'),
+    url(r'^sign_in/(?P<slug>[-\w]+)/$', 'sign_in_instrument', {'paginate_by': 10}, name='instrument_signin_admin'),
+    url(r'^sign_in/booking/(?P<booking_id>\d+)/$', 'sign_in_booking', {'paginate_by': 10}, name='instrument_booking_signin'),
 )
 
 urlpatterns += patterns('sambasite.main.views',

@@ -8,13 +8,26 @@
         <div class="alert-message block-message success">
             <div class="row">
                 <div class="span5">
-                    <p>If you're sure this instrument was returned to the store room after {{ booking.event.get_linked_name }} you're ready to sign it in.</p>
+                    <p>As an admin you can mark any booking as signed in. Use the drop down menu to select the last booking after which this instrument was returned.</p>
                     <br>
-                    <p>Please take a moment to write some notes to help us keep the instruments in good condition.</p>
+                    <p>(Normally there'll only be one option, but if several events have passed since this instrument was signed in you can choose between them.)</p>
                 </div>
                 <div class="span10">
                     <fieldset style="padding-top:0; margin-bottom:0;">
-                        <div class="clearfix {% if form.notes.errors %}error{% endif %}" style="margin-top:0; margin-bottom:0;">
+                        <div class="clearfix {% if form.notes.errors %}error{% endif %}" style="margin-top:0;">
+                            {{ form.booking.label_tag }}
+                            <div class="input">
+                                {{ form.booking }}
+                                {% if form.booking.errors %}
+                                    {% for error in form.booking.errors %}
+                                        <span class="help-block">{{ error }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="help-block">{{ form.booking.help_text }}</span>
+                                {% endif %}
+            				</div>
+            			</div>
+                        <div class="clearfix {% if form.notes.errors %}error{% endif %}" style="margin-bottom:0;">
                             {{ form.notes.label_tag }}
                             <div class="input">
                                 {{ form.notes }}
@@ -42,7 +55,7 @@
                 	</fieldset>
                     <div class="alert-actions">
                         <button class="btn" type="submit">Sign instrument in</button>
-                        <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">Cancel - I haven't returned the instrument yet</a>
+                        <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">Cancel</a>
                     </div>
                 </div>
             </div>
@@ -65,13 +78,7 @@
     		<span class="divider">/</span>
     	</li>
     	<li class="active">
-    		<a href="#">Sign in instrument</a>
+    		<a href="#">Sign in instrument (admin)</a>
     	</li>
-    </ul>
-{% endblock %}
-
-{% block todo %}
-    <ul>
-        <li>TODO: Add functionality for player to say they didn't take this instrument out at this point</li>
     </ul>
 {% endblock %}

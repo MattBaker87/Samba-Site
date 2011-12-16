@@ -131,7 +131,7 @@ class Instrument(models.Model):
     get_delete_url = models.permalink(get_delete_url)
 
     def get_signin_url(self):
-        return ('instrument_booking_signin', (), {'booking_id': self.get_last_booking().id}) if self.get_last_booking() else ('instrument_detail', (), {'slug': self.slug})
+        return ('instrument_signin_admin', (), {'slug': self.slug})
     get_signin_url = models.permalink(get_signin_url)
         
 
@@ -186,6 +186,11 @@ class Booking(models.Model):
     
     class Meta:
         ordering = ['instrument']
+    
+    def __unicode__(self):
+        return "%s played %s at %s" % (self.user.get_profile().get_linked_name(),
+                                        self.instrument.get_linked_name(),
+                                        self.event.get_linked_name())
     
     ################ URLs and links #################
     def get_book_url(self):

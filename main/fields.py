@@ -1,5 +1,6 @@
 from django.forms import ValidationError
 from django.forms.fields import Field, EMPTY_VALUES
+from django.forms.models import ModelChoiceField
 from django.utils.encoding import smart_unicode
 from django.utils.translation import ugettext_lazy as _
 import re
@@ -105,3 +106,7 @@ class UKPhoneNumberField(Field):
                     components.append(value[position:position+chunk])
                     position += chunk
         return ' '.join(components)
+
+class BookingChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return "%s at %s" % (obj.user.get_profile().name, obj.event.name)
