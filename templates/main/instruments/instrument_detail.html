@@ -34,112 +34,116 @@
 {% endblock %}
 
 {% block content %}
-    <div class="row">
-        <div class="span2">
-            <p><strong>Name:</strong></p>
-        </div>
-        <div class="span10">
-            <p>{{ instrument.name }}</p>
-        </div>
-    </div>
-    <div class="row">
-        <div class="span2">
-            <p><strong>Type:</strong></p>
-        </div>
-        <div class="span10">
-            <p>{{ instrument.get_instrument_type_display }}</p>
-        </div>
-    </div>
-    {% if instrument.damaged %}
+    {% block instrument_details %}
         <div class="row">
             <div class="span2">
-                <p><strong>Damage:</strong></p>
+                <p><strong>Name:</strong></p>
             </div>
             <div class="span10">
-                <p><span class="label important">This instrument is flagged as damaged</span></p>
+                <p>{{ instrument.name }}</p>
             </div>
         </div>
-    {% endif %}
-    <div class="row">
-        <div class="span2">
-            <p><strong>Location:</strong></p>
+        <div class="row">
+            <div class="span2">
+                <p><strong>Type:</strong></p>
+            </div>
+            <div class="span10">
+                <p>{{ instrument.get_instrument_type_display }}</p>
+            </div>
         </div>
-        <div class="span10">
-            {% if not instrument.get_signed_in %}
-                <p><span class="label warning">Missing in action</span></p>
-                <ul class="unstyled">
-                    {% for b in instrument.bookings.not_signed_in %}
-                        <li>
-                            {{ b.user.get_profile.get_linked_name }} didn't sign it in after {{ b.event.get_linked_name }}
-                            {% if user == b.user %}
-                                &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>In the store room</p>
-            {% endif %}
+        {% if instrument.damaged %}
+            <div class="row">
+                <div class="span2">
+                    <p><strong>Damage:</strong></p>
+                </div>
+                <div class="span10">
+                    <p><span class="label important">This instrument is flagged as damaged</span></p>
+                </div>
+            </div>
+        {% endif %}
+        <div class="row">
+            <div class="span2">
+                <p><strong>Location:</strong></p>
+            </div>
+            <div class="span10">
+                {% if not instrument.get_signed_in %}
+                    <p><span class="label warning">Missing in action</span></p>
+                    <ul class="unstyled">
+                        {% for b in instrument.bookings.not_signed_in %}
+                            <li>
+                                {{ b.user.get_profile.get_linked_name }} didn't sign it in after {{ b.event.get_linked_name }}
+                                {% if user == b.user %}
+                                    &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>In the store room</p>
+                {% endif %}
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="span2">
-            <p><strong>Last user:</strong></p>
+        <div class="row">
+            <div class="span2">
+                <p><strong>Last user:</strong></p>
+            </div>
+            <div class="span10">
+                <p>
+                    {% with instrument.get_last_booking as b %}
+                        {% if b %}
+                            {{ b.user.get_profile.get_linked_name }} played {{ instrument.name }} at {{ b.event.get_linked_name }}, {{ b.event.start|timesince }} ago
+                        {% else %}
+                            Brand new!
+                        {% endif %}
+                    {% endwith %}
+                </p>
+            </div>
         </div>
-        <div class="span10">
-            <p>
-                {% with instrument.get_last_booking as b %}
-                    {% if b %}
-                        {{ b.user.get_profile.get_linked_name }} played {{ instrument.name }} at {{ b.event.get_linked_name }}, {{ b.event.start|timesince }} ago
-                    {% else %}
-                        Brand new!
-                    {% endif %}
-                {% endwith %}
-            </p>
+        <div class="row">
+            <div class="span2">
+                <p><strong>Next booking:</strong></p>
+            </div>
+            <div class="span10">
+                <p>
+                    {% with instrument.get_next_booking as b %}
+                        {% if b %}
+                            {{ b.user.get_profile.get_linked_name }} is playing {{ instrument.name }} at {{ b.event.get_linked_name }} in {{ b.event.start|timeuntil }} time
+                        {% else %}
+                            No future bookings
+                        {% endif %}
+                    {% endwith %}
+                </p>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="span2">
-            <p><strong>Next booking:</strong></p>
-        </div>
-        <div class="span10">
-            <p>
-                {% with instrument.get_next_booking as b %}
-                    {% if b %}
-                        {{ b.user.get_profile.get_linked_name }} is playing {{ instrument.name }} at {{ b.event.get_linked_name }} in {{ b.event.start|timeuntil }} time
-                    {% else %}
-                        No future bookings
-                    {% endif %}
-                {% endwith %}
-            </p>
-        </div>
-    </div>
-    {% if instrument.notes.all.exists %}
-        <h3>Instrument history</h3>
-        <table>
-            <thead>
-                <tr>
-                    <th width="85px">Date</th>
-                    <th>Note</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for note in notes_list %}
+    {% endblock %}
+    {% block instrument_history %}
+        {% if instrument.user_notes.all.exists %}
+            <h3>Instrument history</h3>
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ note.date_made|date:"j M Y" }}</td>
-                        <td>{{ note.note|safe }}</td>
+                        <th width="85px">Date</th>
+                        <th>Note</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <div class="row table-options">
-            <div class="span12">
-                {% load paginate %}
-                {% pagination %}
-                &nbsp;
+                </thead>
+                <tbody>
+                    {% for note in notes_list %}
+                        <tr>
+                            <td>{{ note.date_made|date:"j M Y" }}</td>
+                            <td>{{ note.note|safe }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="row table-options">
+                <div class="span12">
+                    {% load paginate %}
+                    {% pagination %}
+                    &nbsp;
+                </div>
             </div>
-        </div>
-    {% endif %}
+        {% endif %}
+    {% endblock %}
 {% endblock %}
 
 {% block breadcrumb %}

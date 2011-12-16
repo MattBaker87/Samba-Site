@@ -15,7 +15,7 @@ def detail_instrument(request, slug, paginate_by=10):
     return list_detail.object_list(request, template_name='main/instruments/instrument_detail.html',
                                 template_object_name='notes',
                                 paginate_by=paginate_by,
-                                queryset=target_object.notes.all(),
+                                queryset=target_object.user_notes.all(),
                                 extra_context={'instrument': target_object})
 
 @login_required
@@ -30,7 +30,7 @@ def sign_in_booking(request, booking_id, paginate_by):
     return list_detail.object_list(request, template_name='main/instruments/instrument_signin.html',
                                 template_object_name='notes',
                                 paginate_by=paginate_by,
-                                queryset=target_booking.instrument.notes.all(),
+                                queryset=target_booking.instrument.user_notes.all(),
                                 extra_context={'booking': target_booking, 'form': form,
                                                 'instrument': target_booking.instrument})
 
@@ -62,7 +62,7 @@ def delete_instrument(request, slug, paginate_by=10):
         return list_detail.object_list(request, template_name='main/instruments/instrument_delete.html',
                                     template_object_name='notes',
                                     paginate_by=paginate_by,
-                                    queryset=target_object.notes.all(),
+                                    queryset=target_object.user_notes.all(),
                                     extra_context={'instrument': target_object})
 
 @login_required
@@ -77,5 +77,5 @@ def sign_in_instrument(request, slug, paginate_by):
     return list_detail.object_list(request, template_name='main/instruments/instrument_signin_admin.html',
                                 template_object_name='notes',
                                 paginate_by=paginate_by,
-                                queryset=target_instrument.notes.all(),
+                                queryset=target_instrument.user_notes.all(),
                                 extra_context={'instrument': target_instrument, 'form': form})

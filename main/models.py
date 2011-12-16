@@ -14,8 +14,8 @@ SHORT = 100
 
 class Event(models.Model):
     name = models.CharField(max_length=LONG)
-    slug = models.SlugField(unique=True)
-    start = models.DateTimeField()
+    slug = models.SlugField(unique=True, editable=False)
+    start = models.DateTimeField(verbose_name="When")
     location = models.CharField(max_length=LONG)
     notes = models.CharField(max_length=LONG)
     
@@ -77,7 +77,7 @@ class Instrument(models.Model):
         ('tamb', 'Tamborim'),
         )
     
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, editable=False)
     instrument_type = models.CharField(max_length=4, choices=INSTRUMENT_CHOICES, verbose_name="Instrument type")
     name = models.CharField(max_length=SHORT, verbose_name="Instrument name")
     damaged = models.BooleanField(default=False, verbose_name="This instrument is damaged")
@@ -137,9 +137,9 @@ class Instrument(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
-    name = models.CharField(max_length=SHORT, unique=True)
+    name = models.CharField(max_length=30, unique=True)
     telephone = models.CharField(max_length=15, blank=True)
-    slug = models.SlugField(unique=True)
+    slug = models.SlugField(unique=True, editable=False)
 
     def __unicode__(self):
     	return self.name
@@ -207,11 +207,11 @@ class Booking(models.Model):
 
 
 class InstrumentNote(models.Model):
-    instrument = models.ForeignKey(Instrument, related_name='notes', blank=False, null=False)
-    user = models.ForeignKey(User, related_name='instrument_notes', blank=False, null=False)
-    booking = models.ForeignKey(Booking, related_name='notes', blank=True, null=True, default=None)
+    instrument = models.ForeignKey(Instrument, related_name='user_notes', blank=False, null=False, editable=False)
+    user = models.ForeignKey(User, related_name='instrument_notes', blank=False, null=False, editable=False)
+    event = models.ForeignKey(Event, related_name='user_notes', blank=True, null=True, default=None, editable=False)
     date_made = models.DateTimeField(editable=False)
-    note = models.TextField()
+    note = models.TextField(verbose_name="Notes on the instrument")
     
     class Meta:
         ordering = ['-date_made']

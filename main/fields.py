@@ -11,7 +11,7 @@ class UKPhoneNumberField(Field):
         # 'partial': _('Phone number must include an area code.'),
         'non_uk': _('Phone number must be a UK mobile number.'),
         'length_range': _('Phone number must be between %d and %d digits'),
-        'length': _('Oops, not enough digits - there should be %d (counting +44 as one)'),
+        'length': _("Oops, that's not the right number of digits - there should be %d"),
         # 'reject_premium': _('Phone number can\'t be premium rate.'),
         # 'reject_service': _('Phone number can\'t be a service number.'),
         'invalid': _('Please enter a valid UK mobile phone number.'),
