@@ -117,32 +117,69 @@
         </div>
     {% endblock %}
     {% block instrument_history %}
-        {% if instrument.user_notes.all.exists %}
-            <h3>Instrument history</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th width="85px">Date</th>
-                        <th>Note</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for note in notes_list %}
+        <h3>Instrument history</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th width="85px">Date</th>
+                    <th>Note</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{% now "j M Y" %}</td>
+                    {% if new_note_form %}
+                        <form action="" method="post" class="form-stacked">
+                            {% csrf_token %}
+                            <td>
+                                <p>{{ user.get_profile.get_linked_name }} wrote:</p>
+                                <blockquote>
+                                        <fieldset style="padding-top:0; margin-bottom:0;">
+                                            <div class="clearfix">
+                                                <div class="input">
+                                                    {{ new_note_form.note }}
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                </blockquote>
+                            </td>
+                            <td>
+                                <p>&nbsp;</p>
+                                <div style="margin-top:-5px">
+                                    <button class="success btn-inline btn note" type="submit">Sumbit</button>
+                                    <br>
+                                    <a href="{{ instrument.get_absolute_url}}" class="error btn-inline btn note">Cancel</a>
+                                </div>
+                            </td>
+                        </form>
+                    {% else %}
+                        <td><a href="{{ instrument.get_note_url }}" class="success btn-inline btn">Write a note</a></td>
+                        <td></td>
+                    {% endif %}
+                </tr>
+                {% for note in notes_list %}
+                    <form action="{{ note.get_delete_url }}" method="POST">
+                        {% csrf_token %}
                         <tr>
                             <td>{{ note.date_made|date:"j M Y" }}</td>
                             <td>{{ note.get_note_display|safe }}</td>
+                            <td>
+                                {% if note.user == user and note.note %}
+                                    <button class="close" title="Delete this post?" style="background:none; border:0; line-height:normal;" type="submit">x</button></td>
+                                {% endif %}
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <div class="row table-options">
-                <div class="span12">
-                    {% load paginate %}
-                    {% pagination %}
-                    &nbsp;
-                </div>
+                    </form>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="row table-options">
+            <div class="span12">
+                {% load paginate %}
+                {% pagination %}
+                &nbsp;
             </div>
-        {% endif %}
+        </div>
     {% endblock %}
 {% endblock %}
 
@@ -162,17 +199,5 @@
     </ul>
 {% endblock %}
 
-{% block todo %}
-    <ul>
-        <li>TODO after adding event functionality:
-            <ul>
-                <li>Add ability to write notes that aren't related to an event</li>
-            </ul>
-        </li>
-        <li>TODO lower priority:
-            <ul>
-                <li>Make table CSS prettier (flush with rest of content?)</li>
-            </ul>
-        </li>
-    </ul>
+{% block wireframe %}
 {% endblock %}

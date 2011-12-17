@@ -3,11 +3,13 @@ from django.conf.urls.defaults import include, patterns, url
 
 urlpatterns = patterns('sambasite.main.views.instruments',
     url(r'^add/$', 'add_instrument', name='instrument_add'),
-    url(r'^delete/(?P<slug>[-\w]+)/$', 'delete_instrument', {'paginate_by': 10}, name='instrument_delete'),
+    url(r'^delete/(?P<slug>[-\w]+)/$', 'delete_instrument', name='instrument_delete'),
     url(r'^detail/(?P<slug>[-\w]+)/$', 'detail_instrument', {'paginate_by': 10}, name='instrument_detail'),
+    url(r'^detail/(?P<slug>[-\w]+)/write_note/$', 'instrument_write_note', name='instrument_write_note'),
     url(r'^edit/(?P<slug>[-\w]+)/$', 'edit_instrument', name='instrument_edit'),
-    url(r'^sign_in/(?P<slug>[-\w]+)/$', 'sign_in_instrument', {'paginate_by': 10}, name='instrument_signin_admin'),
-    url(r'^sign_in/booking/(?P<booking_id>\d+)/$', 'sign_in_booking', {'paginate_by': 10}, name='instrument_booking_signin'),
+    url(r'^sign_in/(?P<slug>[-\w]+)/$', 'sign_in_instrument', name='instrument_signin_admin'),
+    url(r'^sign_in/booking/(?P<booking_id>\d+)/$', 'sign_in_booking', name='instrument_booking_signin'),
+    url(r'^delete_note/(?P<note_id>\d+)/$', 'delete_note', name='delete_note')
 )
 
 urlpatterns += patterns('sambasite.main.views',

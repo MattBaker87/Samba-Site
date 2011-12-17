@@ -133,6 +133,11 @@ class Instrument(models.Model):
     def get_signin_url(self):
         return ('instrument_signin_admin', (), {'slug': self.slug})
     get_signin_url = models.permalink(get_signin_url)
+
+    def get_note_url(self):
+        return ('instrument_write_note', (), {'slug': self.slug})
+    get_note_url = models.permalink(get_note_url)
+
         
 
 class UserProfile(models.Model):
@@ -222,8 +227,14 @@ class InstrumentNote(models.Model):
     
     def get_note_display(self):
         if self.event and self.note:
-            return "%s and wrote:</p><blockquote>%s</blockquote>" % (unicode(self.get_booking()), self.note)
+            return "<p>%s and wrote:</p><blockquote>%s</blockquote>" % (unicode(self.get_booking()), self.note)
         if self.event:
-            return "%s" % unicode(self.get_booking())
+            return "<p>%s" % unicode(self.get_booking())
         if self.note:
-            return "%s wrote:</p><blockquote>%s</blockquote>" % (self.user.get_profile().get_linked_name(), self.note)
+            return "<p>%s wrote:</p><blockquote>%s</blockquote>" % (self.user.get_profile().get_linked_name(), self.note)
+    
+    ################ URLs ##############
+    
+    def get_delete_url(self):
+        return ('delete_note', (), {'note_id': self.id})
+    get_delete_url = models.permalink(get_delete_url)

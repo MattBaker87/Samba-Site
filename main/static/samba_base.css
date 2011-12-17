@@ -224,3 +224,19 @@ a.label.warning:hover {
 .breadcrumb {
   margin-top: 20px;
 }
+
+/* Notes from take the same span whether or not it's in a table */
+
+table .span9 {
+  width: 510px;
+}
+
+button.note.btn-inline {
+  width: 60px;
+  text-align: center;
+}
+
+a.note.btn-inline {
+  width: 44px;
+  text-align: center;
+}

@@ -246,15 +246,15 @@ class InstrumentNoteForm(forms.ModelForm):
     
     class Meta:
         model = InstrumentNote
-        widgets = {'note': forms.Textarea(attrs={'class':'span9', 'rows':'4'})}
+        widgets = {'note': forms.Textarea(attrs={'class':'span9', 'rows':'3'})}
     
     def save(self, commit=True):
         note = super(InstrumentNoteForm, self).save(commit=False)
-        if not self.instance:
-            note.event = self.event
-            note.instrument = self.instrument
-            note.user = self.user
-        if commit:
+        note.event = self.event
+        note.instrument = self.instrument
+        note.user = self.user
+        note.date_made = datetime.now()
+        if commit and note.note:
             note.save()
         return note
 
@@ -265,7 +265,7 @@ class AdminBookingSigninForm(forms.Form):
         self.instrument = instrument
         self.admin = admin
         self.fields['damaged'] = InstrumentForm(instance=self.instrument).fields['damaged']
-        self.fields['booking'] = fields.BookingChoiceField(label=mark_safe("Booking after which instrument was returned"),
+        self.fields['booking'] = fields.BookingChoiceField(label=mark_safe("Last booking instrument was returned after"),
                                                             queryset=self.instrument.bookings.not_signed_in(),
                                                             empty_label=None, initial=instrument.get_last_booking(),)
     
