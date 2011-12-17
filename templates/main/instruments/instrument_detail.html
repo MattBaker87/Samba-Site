@@ -130,7 +130,7 @@
                     {% for note in notes_list %}
                         <tr>
                             <td>{{ note.date_made|date:"j M Y" }}</td>
-                            <td>{{ note.note|safe }}</td>
+                            <td>{{ note.get_note_display|safe }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>

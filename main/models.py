@@ -211,7 +211,19 @@ class InstrumentNote(models.Model):
     user = models.ForeignKey(User, related_name='instrument_notes', blank=False, null=False, editable=False)
     event = models.ForeignKey(Event, related_name='user_notes', blank=True, null=True, default=None, editable=False)
     date_made = models.DateTimeField(editable=False)
-    note = models.TextField(verbose_name="Notes on the instrument")
+    note = models.TextField(verbose_name="Notes on the instrument", blank=True)
     
     class Meta:
         ordering = ['-date_made']
+    
+    ################ Display of notes ################
+    def get_booking(self):
+        return Booking.objects.get(instrument=self.instrument, user=self.user, event=self.event) if self.event else None
+    
+    def get_note_display(self):
+        if self.event and self.note:
+            return "%s and wrote:</p><blockquote>%s</blockquote>" % (unicode(self.get_booking()), self.note)
+        if self.event:
+            return "%s" % unicode(self.get_booking())
+        if self.note:
+            return "%s wrote:</p><blockquote>%s</blockquote>" % (self.user.get_profile().get_linked_name(), self.note)

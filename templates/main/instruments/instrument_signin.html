@@ -14,16 +14,16 @@
                 </div>
                 <div class="span10">
                     <fieldset style="padding-top:0; margin-bottom:0;">
-                        <div class="clearfix {% if form.notes.errors %}error{% endif %}" style="margin-top:0; margin-bottom:0;">
-                            {{ form.notes.label_tag }}
+                        <div class="clearfix {% if form.note.errors %}error{% endif %}" style="margin-top:0; margin-bottom:0;">
+                            {{ form.note.label_tag }}
                             <div class="input">
-                                {{ form.notes }}
-                                {% if form.notes.errors %}
-                                    {% for error in form.notes.errors %}
+                                {{ form.note }}
+                                {% if form.note.errors %}
+                                    {% for error in form.note.errors %}
                                         <span class="help-block">{{ error }}</span>
                                     {% endfor %}
                                 {% else %}
-                                    <span class="help-block">{{ form.notes.help_text }}</span>
+                                    <span class="help-block">{{ form.note.help_text }}</span>
                                 {% endif %}
             				</div>
             			</div>

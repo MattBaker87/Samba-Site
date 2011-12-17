@@ -240,30 +240,48 @@ class ContactForm(forms.Form):
 class InstrumentNoteForm(forms.ModelForm):
     def __init__(self, event=None, instrument=None, user=None, *args, **kwargs):
         super(InstrumentNoteForm, self).__init__(*args, **kwargs)
+        self.event = event
+        self.instrument = instrument
+        self.user = user
     
     class Meta:
         model = InstrumentNote
         widgets = {'note': forms.Textarea(attrs={'class':'span9', 'rows':'4'})}
+    
+    def save(self, commit=True):
+        note = super(InstrumentNoteForm, self).save(commit=False)
+        if not self.instance:
+            note.event = self.event
+            note.instrument = self.instrument
+            note.user = self.user
+        if commit:
+            note.save()
+        return note
 
 
 class AdminBookingSigninForm(forms.Form):
-    def __init__(self, instrument=None, *args, **kwargs):
+    def __init__(self, instrument=None, admin=None, *args, **kwargs):
         super(AdminBookingSigninForm, self).__init__(*args, **kwargs)
         self.instrument = instrument
+        self.admin = admin
         self.fields['damaged'] = InstrumentForm(instance=self.instrument).fields['damaged']
         self.fields['booking'] = fields.BookingChoiceField(label=mark_safe("Booking after which instrument was returned"),
                                                             queryset=self.instrument.bookings.not_signed_in(),
                                                             empty_label=None, initial=instrument.get_last_booking(),)
     
-    notes = InstrumentNoteForm().fields['note']
-    notes.required = False
-
-    def _get_note(self):
-        return (" and wrote:</p><blockquote>%s</blockquote>"
-                                % (linebreaks(escape(self.cleaned_data['notes'])),) if self.cleaned_data['notes'] else "")
+    note = InstrumentNoteForm().fields['note']
+    note.required = False
     
     def get_booking(self):
         return self.cleaned_data['booking']
+    
+    def write_note(self):
+        booking = self.get_booking()
+        InstrumentNote.objects.create(instrument=booking.instrument, user=booking.user, event=booking.event,
+                                date_made=booking.event.start)
+        if self.cleaned_data['note']:
+            InstrumentNote.objects.create(instrument=booking.instrument, user=self.admin,
+                                    date_made=datetime.now(), note=self.cleaned_data['note'])
     
     def save(self, commit=True):
         booking = self.get_booking()
@@ -272,14 +290,11 @@ class AdminBookingSigninForm(forms.Form):
             booking.save()
             booking.instrument.damaged = self.cleaned_data['damaged']
             booking.instrument.save()
-            note = InstrumentNote(instrument=booking.instrument, user=booking.user, date_made=booking.event.start,
-                                    note=str(booking) + self._get_note(), event=booking.event)
-            note.save()
+            self.write_note()
             for b in booking.instrument.bookings.not_signed_in().filter(event__start__lt=booking.event.start):
                 b.signed_in = True
                 b.save()
-                note = InstrumentNote(instrument=b.instrument, user=b.user, date_made=b.event.start,
-                                        note=str(b), event=b.event)
+                note = InstrumentNote(instrument=b.instrument, user=b.user, event=b.event, date_made=b.event.start)
                 note.save()
         return booking.instrument
 
@@ -291,6 +306,11 @@ class BookingSigninForm(AdminBookingSigninForm):
     
     def get_booking(self):
         return self.booking
+    
+    def write_note(self):
+        booking = self.get_booking()
+        InstrumentNote.objects.create(instrument=booking.instrument, user=booking.user, event=booking.event,
+                                date_made=booking.event.start, note=self.cleaned_data['note'])
 
 class MyPasswordChangeForm(PasswordChangeForm):
     new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput(attrs={'class':'span3'}))

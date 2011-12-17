@@ -10,11 +10,11 @@
                 <div class="span5">
                     <p>As an admin you can mark any booking as signed in. Use the drop down menu to select the last booking after which this instrument was returned.</p>
                     <br>
-                    <p>(Normally there'll only be one option, but if several events have passed since this instrument was signed in you can choose between them.)</p>
+                    <p>(Normally there will only be one option, but if several events have passed since this instrument was signed in you can choose between them.)</p>
                 </div>
                 <div class="span10">
                     <fieldset style="padding-top:0; margin-bottom:0;">
-                        <div class="clearfix {% if form.notes.errors %}error{% endif %}" style="margin-top:0;">
+                        <div class="clearfix {% if form.note.errors %}error{% endif %}" style="margin-top:0;">
                             {{ form.booking.label_tag }}
                             <div class="input">
                                 {{ form.booking }}
@@ -27,16 +27,16 @@
                                 {% endif %}
             				</div>
             			</div>
-                        <div class="clearfix {% if form.notes.errors %}error{% endif %}" style="margin-bottom:0;">
-                            {{ form.notes.label_tag }}
+                        <div class="clearfix {% if form.note.errors %}error{% endif %}" style="margin-bottom:0;">
+                            {{ form.note.label_tag }}
                             <div class="input">
-                                {{ form.notes }}
-                                {% if form.notes.errors %}
-                                    {% for error in form.notes.errors %}
+                                {{ form.note }}
+                                {% if form.note.errors %}
+                                    {% for error in form.note.errors %}
                                         <span class="help-block">{{ error }}</span>
                                     {% endfor %}
                                 {% else %}
-                                    <span class="help-block">{{ form.notes.help_text }}</span>
+                                    <span class="help-block">{{ form.note.help_text }}</span>
                                 {% endif %}
             				</div>
             			</div>

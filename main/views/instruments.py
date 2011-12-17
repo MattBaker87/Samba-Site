@@ -65,12 +65,12 @@ def delete_instrument(request, slug, paginate_by=10):
                                     queryset=target_object.user_notes.all(),
                                     extra_context={'instrument': target_object})
 
-@login_required
+@admin_required
 def sign_in_instrument(request, slug, paginate_by):
     target_instrument = get_object_or_404(Instrument, slug=slug)
     if target_instrument.get_signed_in():
         return HttpResponseRedirect(target_instrument.get_absolute_url())
-    form = AdminBookingSigninForm(data = request.POST or None, instrument = target_instrument)
+    form = AdminBookingSigninForm(data = request.POST or None, instrument = target_instrument, admin=request.user)
     if form.is_valid():
         form.save()
         return HttpResponseRedirect(target_instrument.get_absolute_url())
