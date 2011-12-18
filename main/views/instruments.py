@@ -9,6 +9,8 @@ from django.views.generic import list_detail
 from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm, InstrumentNoteForm
 from main.models import Instrument, Booking, InstrumentNote
 
+from datetime import datetime
+
 @login_required
 def detail_instrument(request, slug, paginate_by=10, extra_context=None, template_name='main/instruments/instrument_detail.html'):
     target_object = get_object_or_404(Instrument, slug=slug)
@@ -16,7 +18,7 @@ def detail_instrument(request, slug, paginate_by=10, extra_context=None, templat
     if extra_context:
         c.update(extra_context)
     return list_detail.object_list(request, template_name=template_name, template_object_name='notes', paginate_by=paginate_by,
-                                queryset=target_object.user_notes.all(), extra_context=c)
+                                queryset=target_object.user_notes.filter(is_removed=False), extra_context=c)
 
 @login_required
 def sign_in_booking(request, booking_id):
@@ -36,35 +38,48 @@ def instrument_write_note(request, slug):
     target_object = get_object_or_404(Instrument, slug=slug)
     form = InstrumentNoteForm(data = request.POST or None, instrument=target_object, user=request.user)
     if form.is_valid():
-        form.save()
+        note = form.save(commit=False)
+        note.is_editable = True
+        note.subject = "general"
+        note.save()
         return HttpResponseRedirect(target_object.get_absolute_url())
     return detail_instrument(request, slug=target_object.slug, extra_context={'new_note_form': form})
 
 @login_required
-def delete_note(request, note_id):
+def remove_note(request, note_id):
     target_object = get_object_or_404(InstrumentNote, id=note_id)
-    if request.method == "POST":
-        if target_object.event:
-            target_object.note = ""
-            target_object.save()
-        else:
-            target_object.delete()
+    if request.method == "POST" and (request.user.is_staff or request.user == target_object.user):
+        target_object.is_removed = True
+        target_object.save()
     return HttpResponseRedirect(target_object.instrument.get_absolute_url())
 
 @admin_required
 def add_instrument(request):
     form = InstrumentForm(data = request.POST or None)
     if form.is_valid():
-        form.save(commit=True)
+        instrument = form.save(commit=True)
+        InstrumentNote.objects.create(instrument=instrument, user=request.user, date_made=datetime.now(), subject="added")
         return HttpResponseRedirect(reverse('instrument_list'))
     return render_to_response('main/instruments/instrument_add.html', {'form': form}, context_instance=RequestContext(request))
 
 @admin_required
 def edit_instrument(request, slug):
     instrument = get_object_or_404(Instrument, slug=slug)
+    i_old_name = str(instrument.name)
+    i_old_type = str(instrument.get_instrument_type_display())
     form = InstrumentForm(data = request.POST or None, instance = instrument)
     if form.is_valid():
-        form.save(commit=True)
+        new_instrument = form.save(commit=True)
+        if form.has_changed():
+            if 'damaged' in form._changed_data:
+                InstrumentNote.objects.create(instrument=instrument, user=request.user, date_made=datetime.now(),
+                                            subject="damage" if instrument.damaged else "repair")
+            if 'name' in form._changed_data:
+                InstrumentNote.objects.create(instrument=instrument, user=request.user, date_made=datetime.now(),
+                                            subject="rename", note="from %s to %s" % (i_old_name, instrument.name))
+            if 'instrument_type' in form._changed_data:
+                InstrumentNote.objects.create(instrument=instrument, user=request.user, date_made=datetime.now(), subject="type",
+                                            note="from %s to %s" % (i_old_type, instrument.get_instrument_type_display()))
         return HttpResponseRedirect(instrument.get_absolute_url())
     return render_to_response('main/instruments/instrument_edit.html', {'form': form, 'instrument': instrument },
                                                                                     context_instance=RequestContext(request))

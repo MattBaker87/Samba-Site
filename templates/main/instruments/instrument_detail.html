@@ -135,19 +135,19 @@
                             <td>
                                 <p>{{ user.get_profile.get_linked_name }} wrote:</p>
                                 <blockquote>
-                                        <fieldset style="padding-top:0; margin-bottom:0;">
-                                            <div class="clearfix">
-                                                <div class="input">
-                                                    {{ new_note_form.note }}
-                                                </div>
+                                    <fieldset style="padding-top:0; margin-bottom:0;">
+                                        <div class="clearfix">
+                                            <div class="input">
+                                                {{ new_note_form.note }}
                                             </div>
-                                        </fieldset>
+                                        </div>
+                                    </fieldset>
                                 </blockquote>
                             </td>
                             <td>
                                 <p>&nbsp;</p>
                                 <div style="margin-top:-5px">
-                                    <button class="success btn-inline btn note" type="submit">Sumbit</button>
+                                    <button class="success btn-inline btn note" type="submit">Submit</button>
                                     <br>
                                     <a href="{{ instrument.get_absolute_url}}" class="error btn-inline btn note">Cancel</a>
                                 </div>
@@ -165,9 +165,12 @@
                             <td>{{ note.date_made|date:"j M Y" }}</td>
                             <td>{{ note.get_note_display|safe }}</td>
                             <td>
-                                {% if note.user == user and note.note %}
-                                    <button class="close" title="Delete this post?" style="background:none; border:0; line-height:normal;" type="submit">x</button></td>
+                                {% if note.is_editable %}
+                                    {% if note.user == user or user.is_staff %}
+                                    <button class="close" title="Delete this post?" style="background:none; border:0; line-height:normal;" type="submit">x</button>
+                                    {% endif %}
                                 {% endif %}
+                            </td>
                         </tr>
                     </form>
                 {% endfor %}

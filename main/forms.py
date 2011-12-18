@@ -246,6 +246,7 @@ class InstrumentNoteForm(forms.ModelForm):
     
     class Meta:
         model = InstrumentNote
+        fields = ['note']
         widgets = {'note': forms.Textarea(attrs={'class':'span9', 'rows':'3'})}
     
     def save(self, commit=True):
@@ -254,6 +255,7 @@ class InstrumentNoteForm(forms.ModelForm):
         note.instrument = self.instrument
         note.user = self.user
         note.date_made = datetime.now()
+        note.subject = "general"
         if commit and note.note:
             note.save()
         return note
@@ -278,10 +280,13 @@ class AdminBookingSigninForm(forms.Form):
     def write_note(self):
         booking = self.get_booking()
         InstrumentNote.objects.create(instrument=booking.instrument, user=booking.user, event=booking.event,
-                                date_made=booking.event.start)
+                                date_made=booking.event.start, subject="event")
         if self.cleaned_data['note']:
             InstrumentNote.objects.create(instrument=booking.instrument, user=self.admin,
-                                    date_made=datetime.now(), note=self.cleaned_data['note'])
+                                    date_made=datetime.now(), note=self.cleaned_data['note'], subject="general")
+        if self.has_changed() and 'damaged' in self._changed_data:
+            InstrumentNote.objects.create(instrument=booking.instrument, user=self.admin,
+                                    date_made=datetime.now(), subject="damage" if self.cleaned_data['damaged'] else "repair")
     
     def save(self, commit=True):
         booking = self.get_booking()
@@ -294,7 +299,7 @@ class AdminBookingSigninForm(forms.Form):
             for b in booking.instrument.bookings.not_signed_in().filter(event__start__lt=booking.event.start):
                 b.signed_in = True
                 b.save()
-                note = InstrumentNote(instrument=b.instrument, user=b.user, event=b.event, date_made=b.event.start)
+                note = InstrumentNote(instrument=b.instrument, user=b.user, event=b.event, date_made=b.event.start, subject="event")
                 note.save()
         return booking.instrument
 
@@ -310,7 +315,10 @@ class BookingSigninForm(AdminBookingSigninForm):
     def write_note(self):
         booking = self.get_booking()
         InstrumentNote.objects.create(instrument=booking.instrument, user=booking.user, event=booking.event,
-                                date_made=booking.event.start, note=self.cleaned_data['note'])
+                                date_made=booking.event.start, note=self.cleaned_data['note'], subject="event")
+        if self.has_changed() and 'damaged' in self._changed_data:
+            InstrumentNote.objects.create(instrument=booking.instrument, user=booking.user, date_made=datetime.now(),
+                                subject="damage" if self.cleaned_data['damaged'] else "repair")
 
 class MyPasswordChangeForm(PasswordChangeForm):
     new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput(attrs={'class':'span3'}))

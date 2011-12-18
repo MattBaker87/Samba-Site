@@ -9,7 +9,7 @@ urlpatterns = patterns('sambasite.main.views.instruments',
     url(r'^edit/(?P<slug>[-\w]+)/$', 'edit_instrument', name='instrument_edit'),
     url(r'^sign_in/(?P<slug>[-\w]+)/$', 'sign_in_instrument', name='instrument_signin_admin'),
     url(r'^sign_in/booking/(?P<booking_id>\d+)/$', 'sign_in_booking', name='instrument_booking_signin'),
-    url(r'^delete_note/(?P<note_id>\d+)/$', 'delete_note', name='delete_note')
+    url(r'^remove_note/(?P<note_id>\d+)/$', 'remove_note', name='remove_note')
 )
 
 urlpatterns += patterns('sambasite.main.views',

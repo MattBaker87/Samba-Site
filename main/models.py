@@ -212,11 +212,24 @@ class Booking(models.Model):
 
 
 class InstrumentNote(models.Model):
+    NOTE_CHOICES =(
+        ('damage', 'Flagged as damaged'),
+        ('repair', 'Flaged as no longer damaged'),
+        ('general', 'General note'),
+        ('event', 'Played at event'),
+        ('rename', 'Renamed'),
+        ('type', 'Type changed'),
+        ('added', 'Added')
+        )
+    
     instrument = models.ForeignKey(Instrument, related_name='user_notes', blank=False, null=False, editable=False)
     user = models.ForeignKey(User, related_name='instrument_notes', blank=False, null=False, editable=False)
     event = models.ForeignKey(Event, related_name='user_notes', blank=True, null=True, default=None, editable=False)
     date_made = models.DateTimeField(editable=False)
     note = models.TextField(verbose_name="Notes on the instrument", blank=True)
+    is_editable = models.BooleanField(editable=False, default=False)
+    is_removed = models.BooleanField(editable=False, default=False)
+    subject = models.CharField(max_length=10, choices=NOTE_CHOICES)
     
     class Meta:
         ordering = ['-date_made']
@@ -226,15 +239,24 @@ class InstrumentNote(models.Model):
         return Booking.objects.get(instrument=self.instrument, user=self.user, event=self.event) if self.event else None
     
     def get_note_display(self):
-        if self.event and self.note:
-            return "<p>%s and wrote:</p><blockquote>%s</blockquote>" % (unicode(self.get_booking()), self.note)
-        if self.event:
-            return "<p>%s" % unicode(self.get_booking())
-        if self.note:
-            return "<p>%s wrote:</p><blockquote>%s</blockquote>" % (self.user.get_profile().get_linked_name(), self.note)
+        display_options = {'damage':'<p>%s marked %s as damaged</p>' % (self.user.get_profile().get_linked_name(), \
+                                                                            self.instrument.get_linked_name()),
+            'repair':'<p>%s marked %s as repaired</p>' % (self.user.get_profile().get_linked_name(), \
+                                                                            self.instrument.get_linked_name()),
+            'general':'<p>%s wrote:</p><blockquote>%s</blockquote>' % (self.user.get_profile().get_linked_name(), self.note),
+            'event':'<p>%s and wrote:</p><blockquote>%s</blockquote>' % (unicode(self.get_booking()), self.note) if self.note \
+                                                                            else '<p>%s</p>' % unicode(self.get_booking()),
+            'rename':'<p>%s renamed the instrument %s</p>' % (self.user.get_profile().get_linked_name(), self.note),
+            'type':'<p>%s changed the type of %s %s</p>' % (self.user.get_profile().get_linked_name(), self.instrument.name, \
+                                                                            self.note),
+            'added':'<p>%s added %s</p>' % (self.user.get_profile().get_linked_name(), self.instrument.name)
+            }
     
+        return display_options[self.subject]
+        
+        
     ################ URLs ##############
     
     def get_delete_url(self):
-        return ('delete_note', (), {'note_id': self.id})
+        return ('remove_note', (), {'note_id': self.id})
     get_delete_url = models.permalink(get_delete_url)
