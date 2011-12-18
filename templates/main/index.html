@@ -18,7 +18,7 @@
             <h2>Log in</h2>
             <form id="login-form" action="{% url login %}" method="post">
                 {% csrf_token %}
-                <input name="next" type="hidden" value="{% url home %}">
+                <input name="next" type="hidden" value="{{ next }}">
                 <fieldset style="padding-top:5px;">
                     <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
                         <div class="input">

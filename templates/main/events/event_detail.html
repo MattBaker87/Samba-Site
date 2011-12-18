@@ -69,7 +69,7 @@
                 <p><strong>Coordinator:</strong></p>
             </div>
             <div class="span10">
-                <p>{{ event.coordinator.get_profile.get_linked_name }}</p>
+                <p>{% if event.coordinator %}{{ event.coordinator.get_profile.get_linked_name }}{% else %}None{% endif %}</p>
             </div>
         </div>
     {% else %}
