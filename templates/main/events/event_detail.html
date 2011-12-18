@@ -62,21 +62,30 @@
         <div class="span10">
             <p>{{ event.location }}</p>
         </div>
-    </div>    
-    {% if not event.coordinator %}
-        <form action="{{ event.get_coordinate_url }}" method="POST" style="margin-bottom:0px;">
-        {% csrf_token %}
-            <div class="row">
-                <div class="span2">
-                    <p><strong>Coordinator:</strong></p>
-                </div>
-                <div class="span10">
-                    <p><input type="submit" class="btn-inline btn success" value="Sign up as event coordinator" /></p>
-                </div>
+    </div>
+    {% if event.start|timeuntil == "0 minutes" or event.coordinator and event.coordinator != user %}
+        <div class="row">
+            <div class="span2">
+                <p><strong>Coordinator:</strong></p>
             </div>
-        </form>
+            <div class="span10">
+                <p>{{ event.coordinator.get_profile.get_linked_name }}</p>
+            </div>
+        </div>
     {% else %}
-        {% if event.coordinator == user %}
+        {% if not event.coordinator %}
+            <form action="{{ event.get_coordinate_url }}" method="POST" style="margin-bottom:0px;">
+            {% csrf_token %}
+                <div class="row">
+                    <div class="span2">
+                        <p><strong>Coordinator:</strong></p>
+                    </div>
+                    <div class="span10">
+                        <p><input type="submit" class="btn-inline btn success" value="Sign up as event coordinator" /></p>
+                    </div>
+                </div>
+            </form>
+        {% else %}
             <form action="{{ event.get_cancel_coordinate_url }}" method="POST" style="margin-bottom:0px;">
             {% csrf_token %}
                 <div class="row">
@@ -91,15 +100,6 @@
                     </div>
                 </div>
             </form>
-            {% else %}
-            <div class="row">
-                <div class="span2">
-                    <p><strong>Coordinator:</strong></p>
-                </div>
-                <div class="span10">
-                    <p>{{ event.coordinator.get_profile.get_linked_name }}</p>
-                </div>
-            </div>
         {% endif %}
     {% endif %}
     <div class="row">

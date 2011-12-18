@@ -126,7 +126,7 @@ form .clearfix.error > label, form .clearfix.error .help-block, form .clearfix.e
 .btn-inline {
   padding: 1px 7px 2px;
   font-size: 9.75px;
-  font-weight: bold;
+  font-weight: normal;
   text-transform: uppercase;
   white-space: nowrap;
   -webkit-border-radius: 3px;
@@ -239,4 +239,20 @@ button.note.btn-inline {
 a.note.btn-inline {
   width: 44px;
   text-align: center;
+}
+
+/* Reset links within tables inside alert messages*/
+.alert-message table a {
+  color: #0069d6;
+  text-decoration: none;
+  line-height: inherit;
+  font-weight: inherit;
+}
+.alert-message table a:hover {
+  color: #00438a;
+  text-decoration: underline;
+}
+
+.alert-message table .btn-inline {
+  line-height: normal;
 }
