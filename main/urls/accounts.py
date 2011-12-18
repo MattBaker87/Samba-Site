@@ -26,6 +26,7 @@ urlpatterns += patterns('django.views.generic',
                                                                             name='password_reset_sent'),
     url(r'^password/reset/done/$', 'simple.direct_to_template', {'template': 'main/accounts/password_reset_confirm.html'},
                                                                             name='password_reset_done'),
+    url(r'^home/$', 'simple.direct_to_template', {'template': 'main/home.html'}, name='home')
 )
 
 urlpatterns += patterns('django.contrib',

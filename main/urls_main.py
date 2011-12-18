@@ -8,6 +8,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include('sambasite.main.urls.admin')),
 )
 
-urlpatterns += patterns('django.views.generic',
-    url(r'^home/$', 'simple.direct_to_template', {'template': 'main/home.html'}, name='home'),
+####### Vanity URLs for events. Note that this means there should be no other one-item path URLs in site #######
+urlpatterns += patterns('sambasite.main.views.events',
+    url(r'^(?P<slug>[-\w]+)/$', 'detail_event', name='event_detail'),
 )
