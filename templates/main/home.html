@@ -36,10 +36,10 @@
     {% load get_instruments %}
     {% get_instruments as your_mia mia user %}
     {% if your_mia %}
-        <div class="alert-message block-message warning">
+        <div class="home-alert">
             <p><strong>Are there instruments you haven't signed in yet?</strong> According to our records you played the below but haven't returned them yet.</p>
             {% with your_mia as instrument_list %}
-            <table style="background-color:#fff; margin-top:9px; margin-bottom:0px;">
+            <table style="background-color:#fff; margin-top:9px; margin-bottom:0px; border-radius:4px;">
                 <thead>
                     <tr>
                         <th>Instrument name</th>

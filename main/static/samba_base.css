@@ -241,18 +241,29 @@ a.note.btn-inline {
   text-align: center;
 }
 
-/* Reset links within tables inside alert messages*/
-.alert-message table a {
-  color: #0069d6;
-  text-decoration: none;
-  line-height: inherit;
-  font-weight: inherit;
-}
-.alert-message table a:hover {
-  color: #00438a;
-  text-decoration: underline;
+/* Add an alert to the front page, which includes a table */
+.home-alert {
+  background-color: #fdf5d9;
+  margin-bottom: 20px;
+  padding: 19px;
+  min-height: 20px;
+  border: 1px solid #eee;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  -webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  border-radius: 8px;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
-.alert-message table .btn-inline {
-  line-height: normal;
+.home-alert table {
+  border: 1px solid #ddd;
+  border-collapse: separate;
+  *border-collapse: collapse;
+  /* IE7, collapse table to remove spacing */
+
+  -webkit-border-radius: 6px;
+  -moz-border-radius: 6px;
+  border-radius: 6px;
 }
