@@ -21,3 +21,7 @@ class EventManager(models.Manager):
 
     def past_events(self):
         return self.filter(start__lt=datetime.now())
+
+class InstrumentManager(models.Manager):
+    def live(self):
+        return self.exclude(is_removed=True)

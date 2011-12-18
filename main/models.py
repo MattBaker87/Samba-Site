@@ -89,6 +89,7 @@ class Instrument(models.Model):
     instrument_type = models.CharField(max_length=4, choices=INSTRUMENT_CHOICES, verbose_name="Instrument type")
     name = models.CharField(max_length=SHORT, verbose_name="Instrument name")
     damaged = models.BooleanField(default=False, verbose_name="This instrument is damaged")
+    is_removed = models.BooleanField(default=False, editable=False, verbose_name="Removed from website")
     
     class Meta:
         ordering = ['instrument_type', 'name']
@@ -239,7 +240,7 @@ class InstrumentNote(models.Model):
     date_made = models.DateTimeField(editable=False)
     note = models.TextField(verbose_name="Notes on the instrument", blank=True)
     is_editable = models.BooleanField(editable=False, default=False)
-    is_removed = models.BooleanField(editable=False, default=False)
+    is_removed = models.BooleanField(editable=False, default=False, verbose_name="Removed from website")
     subject = models.CharField(max_length=10, choices=NOTE_CHOICES)
     
     class Meta:
