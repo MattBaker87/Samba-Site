@@ -18,6 +18,7 @@ class Event(models.Model):
     start = models.DateTimeField(verbose_name="When")
     location = models.CharField(max_length=LONG)
     notes = models.CharField(max_length=LONG)
+    coordinator = models.ForeignKey(User, related_name='coordinating', blank=True, null=True, default=None)
     
     objects = EventManager()
     
@@ -63,7 +64,14 @@ class Event(models.Model):
     def get_edit_players_url(self):
         return ('event_edit_players', (), {'slug': self.slug})
     get_edit_players_url = models.permalink(get_edit_players_url)
-
+    
+    def get_coordinate_url(self):
+        return ('event_coordinate', (), {'slug': self.slug})
+    get_coordinate_url = models.permalink(get_coordinate_url)
+    
+    def get_cancel_coordinate_url(self):
+        return ('event_cancel_coordinate', (), {'slug': self.slug})
+    get_cancel_coordinate_url = models.permalink(get_cancel_coordinate_url)
 
 class Instrument(models.Model):
     INSTRUMENT_CHOICES = (
@@ -71,9 +79,9 @@ class Instrument(models.Model):
         ('caix', 'Caixa'),
         ('repi', 'Repinique'),
         ('shak', 'Shaker'),
-        ('sur1', 'Surdo 1'),
-        ('sur2', 'Surdo 2'),
-        ('sur3', 'Surdo 3'),
+        ('sur1', 'Surdo (low)'),
+        ('sur2', 'Surdo (mid)'),
+        ('sur3', 'Surdo (high)'),
         ('tamb', 'Tamborim'),
         )
     
@@ -145,6 +153,9 @@ class UserProfile(models.Model):
     name = models.CharField(max_length=30, unique=True)
     telephone = models.CharField(max_length=15, blank=True)
     slug = models.SlugField(unique=True, editable=False)
+    
+    class Meta:
+        ordering = ['name']
 
     def __unicode__(self):
     	return self.name

@@ -62,7 +62,46 @@
         <div class="span10">
             <p>{{ event.location }}</p>
         </div>
-    </div>
+    </div>    
+    {% if not event.coordinator %}
+        <form action="{{ event.get_coordinate_url }}" method="POST" style="margin-bottom:0px;">
+        {% csrf_token %}
+            <div class="row">
+                <div class="span2">
+                    <p><strong>Coordinator:</strong></p>
+                </div>
+                <div class="span10">
+                    <p><input type="submit" class="btn-inline btn success" value="Sign up as event coordinator" /></p>
+                </div>
+            </div>
+        </form>
+    {% else %}
+        {% if event.coordinator == user %}
+            <form action="{{ event.get_cancel_coordinate_url }}" method="POST" style="margin-bottom:0px;">
+            {% csrf_token %}
+                <div class="row">
+                    <div class="span2">
+                        <p><strong>Coordinator:</strong></p>
+                    </div>
+                    <div class="span10">
+                        <p>
+                            {{ event.coordinator.get_profile.get_linked_name }} &nbsp; &nbsp; &nbsp;
+                            <button type="submit" class="btn-inline btn error">Remove me</button>
+                        </p>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+            <div class="row">
+                <div class="span2">
+                    <p><strong>Coordinator:</strong></p>
+                </div>
+                <div class="span10">
+                    <p>{{ event.coordinator.get_profile.get_linked_name }}</p>
+                </div>
+            </div>
+        {% endif %}
+    {% endif %}
     <div class="row">
         <div class="span2">
             <p><strong>Notes:</strong></p>
@@ -144,12 +183,5 @@
     </ul>
 {% endblock %}
 
-{% block todo %}
-    <ul>
-        <li>TODO lower priority
-            <ul>
-                <li>Add 'organiser' field to events</li>
-            </ul>
-        </li>
-    </ul>
+{% block wireframe %}
 {% endblock %}

@@ -37,6 +37,22 @@ def cancel_sign_out(request, booking_id):
         target_booking.save()
     return HttpResponseRedirect(target_booking.event.get_absolute_url())
 
+@login_required
+def coordinate_event(request, slug):
+    target_event = get_object_or_404(Event, slug=slug)
+    if request.method == 'POST' and target_event.coordinator == None:
+        target_event.coordinator = request.user
+        target_event.save()
+    return HttpResponseRedirect(target_event.get_absolute_url())
+
+@login_required
+def cancel_coordinate_event(request, slug):
+    target_event = get_object_or_404(Event, slug=slug)
+    if request.method == 'POST' and target_event.coordinator == request.user:
+        target_event.coordinator = None
+        target_event.save()
+    return HttpResponseRedirect(target_event.get_absolute_url())
+
 @admin_required
 def add_event(request):
     form = EventForm(data = request.POST or None)

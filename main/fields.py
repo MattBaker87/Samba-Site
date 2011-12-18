@@ -110,3 +110,7 @@ class UKPhoneNumberField(Field):
 class BookingChoiceField(ModelChoiceField):
     def label_from_instance(self, obj):
         return "%s at %s" % (obj.user.get_profile().name, obj.event.name)
+
+class OrganiserChoiceField(ModelChoiceField):
+    def label_from_instance(self, obj):
+        return "%s" % (obj.get_profile().name)

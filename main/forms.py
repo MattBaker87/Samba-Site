@@ -117,22 +117,24 @@ class EventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields['start'].help_text = _("Use dd/mm/yyyy, hh:mm format")
+        self.fields['coordinator'] = fields.OrganiserChoiceField(queryset=User.objects.all().order_by('userprofile'),
+                                                                required=False, initial=self.instance.coordinator)
         for instrument in Instrument.objects.all():
-            self.fields[instrument.name] = forms.BooleanField(
+            self.fields[instrument.name] = forms.BooleanField(required=False,
                     label=mark_safe(instrument.name +
                         ' <span class="label important">Damaged</span>' if instrument.damaged else instrument.name ),
-                    required=False,
-                    initial= self.instance.bookings.filter(instrument=instrument).exists() if self.instance else False,
-                    )
+                    initial= self.instance.bookings.filter(instrument=instrument).exists())
     
     class Meta:
         model = Event
+        fields = ['name', 'start', 'location','coordinator','notes']
         widgets = {
                     'name': forms.TextInput(attrs={'placeholder':'e.g., UNISON and UNITE Strike Day', 'class':'span7'}),
                     'notes': forms.Textarea(attrs={'class':'span7', 'rows':'4'}),
                     'start': MySplitDateTimeWidget(attrs={'class':'datetimefield'}, date_placeholder="31/12/2011",
                                                                                     time_placeholder="12:00"),
                     }
+    
     
     def instrument_fields(self):
         return [field for field in self if field.field.__class__ == forms.BooleanField]
