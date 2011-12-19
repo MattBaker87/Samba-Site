@@ -1,0 +1,70 @@
+{% extends "main/instruments/instrument_detail.html" %}
+
+{% block title %}Resurrect instrument{% endblock %}
+
+{% block top %}
+<form action="" method="post" class="form-stacked">
+    {% csrf_token %}
+    <div class="alert-message block-message success">
+        <div class="row">
+            <div class="span5">
+                <h5>Delete the instrument '{{ instrument.name }}'?</h5>
+                <h5>Resurrect the instrument '{{ instrument.name }}'?</h5>
+                <p>This will mark {{ instrument.name }} as back in the band's possession, and make it available for selection at upcoming events. (You'll still need to edit each event to mark it as an instrument that's attending that event though.)</p>
+            </div>
+            <div class="span10">
+                <fieldset style="padding-top:0; margin-bottom:0;">
+                    <div class="clearfix {% if form.note.errors %}error{% endif %}" style="margin-top:0; margin-bottom:0;">
+                        <label for="id_note">Why is this instrument being resurrected?</label>
+                        <div class="input">
+                            {{ form.note }}
+                            {% if form.note.errors %}
+                                {% for error in form.note.errors %}
+                                    <span class="help-block">{{ error }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="help-block">{{ form.note.help_text }}</span>
+                            {% endif %}
+        				</div>
+        			</div>
+        		</fieldset>
+        		</fieldset>
+                <div class="alert-actions">
+                    <button class="btn" type="submit">Yes, this instrument is back!</button>
+                    <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">No, sadly not</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    	    <a href="{% url instrument_list %}">Instruments</a>
+    	    <span class="divider">/</span>
+    	</li>
+    	<li>
+    		{{ instrument.get_linked_name }}
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    		<a href="#">Resurrect instrument</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block todo %}
+    <ul>
+        <li>TODO at next opportunity:
+            <ul>
+                <li>Fix CSS for buttons so it's not embedded in HTML</li>
+            </ul>
+        </li>
+    </ul>
+{% endblock %}

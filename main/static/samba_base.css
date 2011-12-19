@@ -267,3 +267,14 @@ a.note.btn-inline {
   -moz-border-radius: 6px;
   border-radius: 6px;
 }
+
+button.btn.delete {
+  width: 200px;
+  text-align: center;
+  margin-bottom:3px;
+}
+
+a.btn.delete {
+  width: 170px;
+  text-align: center;
+}

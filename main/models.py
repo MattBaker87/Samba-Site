@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 from django.utils.safestring import mark_safe
 from django.utils.timesince import timesince
-from main.managers import BookingManager, EventManager
+from main.managers import BookingManager, EventManager, InstrumentManager
 
 from django.contrib.sites.models import Site
 
@@ -94,6 +94,9 @@ class Instrument(models.Model):
     class Meta:
         ordering = ['instrument_type', 'name']
     
+    objects = models.Manager()
+    live = InstrumentManager()
+    
     def __unicode__(self):
         return self.name
 
@@ -105,7 +108,18 @@ class Instrument(models.Model):
     def get_signed_in(self):
         return not self.bookings.not_signed_in().exists()
     
-    ########## Related bookings and users ##########
+    ########## Remove instrument (and clean up past and future bookings) ##########
+    
+    def do_remove(self):
+        self.is_removed = True
+        self.save()
+        for b in self.bookings.future_bookings():       # Delete future bookings
+            b.delete()
+        for b in self.bookings.not_signed_in():         # Delete bookings that weren't signed in. Feels wrong...
+            b.delete()
+        return ''
+    
+    ########## Related bookings, notes and users ##########
     def get_past_bookings(self):
         return self.bookings.exclude(user__isnull=True).filter(event__start__lte=datetime.now()).order_by('-event__start')
     
@@ -122,15 +136,19 @@ class Instrument(models.Model):
     
     def get_users_since_signed_in(self):
         return User.objects.filter(id__in=[b.user.id for b in self.bookings.not_signed_in()])
-
+    
+    def get_removed_note(self):
+        x = self.user_notes.filter(subject="remove")
+        return x[0] if x else None
+    
     ########## URLS and links ##########
     def get_absolute_url(self):
         return ('instrument_detail', (), {'slug': self.slug})
     get_absolute_url = models.permalink(get_absolute_url)
-
+    
     def get_linked_name(self):
         return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
-
+    
     def get_edit_url(self):
         return ('instrument_edit', (), {'slug': self.slug})
     get_edit_url = models.permalink(get_edit_url)
@@ -139,10 +157,14 @@ class Instrument(models.Model):
         return ('instrument_delete', (), {'slug': self.slug})
     get_delete_url = models.permalink(get_delete_url)
 
+    def get_resurrect_url(self):
+        return ('instrument_resurrect', (), {'slug': self.slug})
+    get_resurrect_url = models.permalink(get_resurrect_url)
+    
     def get_signin_url(self):
         return ('instrument_signin_admin', (), {'slug': self.slug})
     get_signin_url = models.permalink(get_signin_url)
-
+    
     def get_note_url(self):
         return ('instrument_write_note', (), {'slug': self.slug})
     get_note_url = models.permalink(get_note_url)
@@ -231,7 +253,9 @@ class InstrumentNote(models.Model):
         ('event', 'Played at event'),
         ('rename', 'Renamed'),
         ('type', 'Type changed'),
-        ('added', 'Added')
+        ('added', 'Added'),
+        ('remove', 'Removed'),
+        ('resurrect', 'Resurrected')
         )
     
     instrument = models.ForeignKey(Instrument, related_name='user_notes', blank=False, null=False, editable=False)
@@ -261,7 +285,15 @@ class InstrumentNote(models.Model):
             'rename':'<p>%s renamed the instrument %s</p>' % (self.user.get_profile().get_linked_name(), self.note),
             'type':'<p>%s changed the type of %s %s</p>' % (self.user.get_profile().get_linked_name(), self.instrument.name, \
                                                                             self.note),
-            'added':'<p>%s added %s</p>' % (self.user.get_profile().get_linked_name(), self.instrument.name)
+            'added':'<p>%s added %s</p>' % (self.user.get_profile().get_linked_name(), self.instrument.name),
+            'remove':"<p>%s marked %s as no longer in the band's possession and wrote:</p><blockquote>%s</blockquote>" % (
+                        self.user.get_profile().get_linked_name(), self.instrument.name, self.note) if self.note else \
+                        "<p>%s marked %s as no longer in the band's possession</p>" % (self.user.get_profile().get_linked_name(),
+                                                                                        self.instrument.name),
+            'resurrect':"<p>%s marked %s as back in the band's possession and wrote:</p><blockquote>%s</blockquote>" % (
+                        self.user.get_profile().get_linked_name(), self.instrument.name, self.note) if self.note else \
+                        "<p>%s marked %s as back in the band's possession</p>" % (self.user.get_profile().get_linked_name(),
+                                                                                        self.instrument.name),
             }
     
         return display_options[self.subject]

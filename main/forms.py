@@ -119,7 +119,7 @@ class EventForm(forms.ModelForm):
         self.fields['start'].help_text = _("Use dd/mm/yyyy, hh:mm format")
         self.fields['coordinator'] = fields.OrganiserChoiceField(queryset=User.objects.all().order_by('userprofile'),
                                                                 required=False, initial=self.instance.coordinator)
-        for instrument in Instrument.objects.all():
+        for instrument in Instrument.live.all():
             self.fields[instrument.name] = forms.BooleanField(required=False,
                     label=mark_safe(instrument.name +
                         ' <span class="label important">Damaged</span>' if instrument.damaged else instrument.name ),
@@ -164,10 +164,10 @@ class EventForm(forms.ModelForm):
             event.save()
             for field in self.instrument_fields():
                 if self.cleaned_data[field.name]:
-                    Booking.objects.get_or_create(instrument=Instrument.objects.get(name=field.name), event=event)
+                    Booking.objects.get_or_create(instrument=Instrument.live.get(name=field.name), event=event)
                 else:
                     try:
-                        Booking.objects.get(instrument=Instrument.objects.get(name=field.name), event=event).delete()
+                        Booking.objects.get(instrument=Instrument.live.get(name=field.name), event=event).delete()
                     except Booking.DoesNotExist:
                         continue
         return event
@@ -187,7 +187,7 @@ class EventPlayersForm(forms.Form):
     def save(self, commit=True):
         if commit:
             for field in self.fields:
-                b = self.event.bookings.get(instrument=Instrument.objects.get(name=field))
+                b = self.event.bookings.get(instrument=Instrument.live.get(name=field))
                 b.user = self.cleaned_data[field].user if self.cleaned_data[field] else None
                 b.save()
         return None
@@ -262,6 +262,12 @@ class InstrumentNoteForm(forms.ModelForm):
             note.save()
         return note
 
+
+class InstrumentNoteRequiredForm(InstrumentNoteForm):      # Some as InstrumentNoteForm, but field is required
+    def __init__(self, *args, **kwargs):
+        super(InstrumentNoteRequiredForm, self).__init__(*args, **kwargs)
+        self.fields['note'].required = True
+        self.fields['note'].error_messages = {'required': _("Please enter a note.")}
 
 class AdminBookingSigninForm(forms.Form):
     def __init__(self, instrument=None, admin=None, *args, **kwargs):

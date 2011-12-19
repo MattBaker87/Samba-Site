@@ -23,5 +23,5 @@ class EventManager(models.Manager):
         return self.filter(start__lt=datetime.now())
 
 class InstrumentManager(models.Manager):
-    def live(self):
-        return self.exclude(is_removed=True)
+    def get_query_set(self):
+        return super(InstrumentManager, self).get_query_set().exclude(is_removed=True)

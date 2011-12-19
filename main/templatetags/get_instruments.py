@@ -26,7 +26,7 @@ class GetInstrumentsNode(template.Node):
             user = self.user.resolve(context) if self.user else None
         except template.VariableDoesNotExist:
             return u""
-        instruments = Instrument.objects.all()
+        instruments = Instrument.live.all()
         if self.mia and self.user:
             instruments = instruments.filter(id__in=[i.id for i in instruments if i.bookings.not_signed_in().filter(user=user).exists()])
         elif self.mia:

@@ -6,10 +6,16 @@ from django.contrib.auth.decorators import login_required
 from main.views import admin_required
 from django.views.generic import list_detail
 
-from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm, InstrumentNoteForm
+from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm, InstrumentNoteForm, InstrumentNoteRequiredForm
 from main.models import Instrument, Booking, InstrumentNote
 
 from datetime import datetime
+
+@login_required
+def list_instruments(request, template_name, queryset_filter, paginate_by=10):
+    queryset = queryset_filter(Instrument.objects)
+    return list_detail.object_list(request, queryset=queryset,template_object_name='instrument',
+                                    template_name=template_name, paginate_by=paginate_by)
 
 @login_required
 def detail_instrument(request, slug, paginate_by=10, extra_context=None, template_name='main/instruments/instrument_detail.html'):
@@ -64,7 +70,7 @@ def add_instrument(request):
 
 @admin_required
 def edit_instrument(request, slug):
-    instrument = get_object_or_404(Instrument, slug=slug)
+    instrument = get_object_or_404(Instrument.live.all(), slug=slug)
     i_old_name = str(instrument.name)
     i_old_type = str(instrument.get_instrument_type_display())
     form = InstrumentForm(data = request.POST or None, instance = instrument)
@@ -86,16 +92,36 @@ def edit_instrument(request, slug):
 
 @admin_required
 def delete_instrument(request, slug):
-    target_object = get_object_or_404(Instrument, slug=slug)
-    if request.method == "POST":
-        target_object.delete()
+    target_object = get_object_or_404(Instrument.live.all(), slug=slug)
+    form = InstrumentNoteRequiredForm(data = request.POST or None, instrument=target_object, user=request.user)
+    if form.is_valid():
+        target_object.do_remove()
+        note = form.save(commit=False)
+        note.subject = "remove"
+        note.save()
         return HttpResponseRedirect(reverse('instrument_list'))
     else:
-        return detail_instrument(request, slug=target_object.slug, template_name='main/instruments/instrument_delete.html')
+        return detail_instrument(request, slug=target_object.slug, extra_context={'form':form},
+                                                                template_name='main/instruments/instrument_delete.html')
+
+@admin_required
+def resurrect_instrument(request, slug):
+    target_object = get_object_or_404(Instrument.objects.filter(is_removed=True), slug=slug)
+    form = InstrumentNoteRequiredForm(data = request.POST or None, instrument=target_object, user=request.user)
+    if form.is_valid():
+        target_object.is_removed = False
+        target_object.save()
+        note = form.save(commit=False)
+        note.subject = "resurrect"
+        note.save()
+        return HttpResponseRedirect(target_object.get_absolute_url())
+    else:
+        return detail_instrument(request, slug=target_object.slug, extra_context={'form':form},
+                                                                template_name='main/instruments/instrument_resurrect.html')
 
 @admin_required
 def sign_in_instrument(request, slug):
-    target_instrument = get_object_or_404(Instrument, slug=slug)
+    target_instrument = get_object_or_404(Instrument.live.all(), slug=slug)
     if target_instrument.get_signed_in():
         return HttpResponseRedirect(target_instrument.get_absolute_url())
     form = AdminBookingSigninForm(data = request.POST or None, instrument = target_instrument, admin=request.user)
