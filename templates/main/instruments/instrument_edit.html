@@ -17,10 +17,10 @@
                     {{ form.name }}
                     {% if form.name.errors %}
                         {% for error in form.name.errors %}
-                            <span class="help-inline">{{ error }}</span>
+                            <span class="help-inline">{{ error|safe }}</span>
                         {% endfor %}
                     {% else %}
-                        <span class="help-inline">{{ form.name.help_text }}</span>
+                        <span class="help-inline">{{ form.name.help_text|safe }}</span>
                     {% endif %}
 				</div>
 			</div>

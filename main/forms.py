@@ -107,10 +107,10 @@ class InstrumentForm(forms.ModelForm):
         if name == self.instance.name:
             return name
         try:
-            Instrument.objects.get(slug=slugify(name))
+            instrument = Instrument.objects.get(slug=slugify(name))
         except Instrument.DoesNotExist:
             return name
-        raise forms.ValidationError(_("Instrument already exists"))
+        raise forms.ValidationError(_("%s already exists" % instrument.get_linked_name()))
 
 
 class EventForm(forms.ModelForm):
