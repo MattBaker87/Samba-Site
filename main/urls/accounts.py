@@ -2,14 +2,20 @@ from django.conf.urls.defaults import include, patterns, url
 from django.core.urlresolvers import reverse
 from django.utils.functional import lazy
 
-from sambasite.main.forms import LoginForm, MyPasswordChangeForm, MyPasswordResetForm, MySetPasswordForm
+from main.forms import LoginForm, MyPasswordChangeForm, MyPasswordResetForm, MySetPasswordForm, UserSignupFormNew
 
 from datetime import datetime, timedelta
 
 reverse_lazy = lazy(reverse, str)
 
+##### Used by django-registration URLs #####
+from django.views.generic.simple import direct_to_template
+
+from registration.views import activate
+from registration.views import register
+
 urlpatterns = patterns('sambasite.main.views.accounts',
-    url(r'^signup/$', 'signup', name='signup'),
+    # url(r'^signup/$', 'signup', name='signup'),
     url(r'^edit/$', 'edit_profile', name='edit_contact'),
     url(r'^profile/$', 'view_profile', name='profile'),
     url(r'^profile/(?P<slug>[-\w]+)/$', 'view_profile', name='view_profile'),
@@ -43,4 +49,23 @@ urlpatterns += patterns('django.contrib',
                                                         'post_reset_redirect': reverse_lazy('password_reset_done'),
                                                         'set_password_form': MySetPasswordForm},
                                                         name="password_reset_confirm"),
+)
+
+########### Patterns for user registration (uses django-registration) ############
+urlpatterns += patterns('',
+    url(r'^signup/$', register, { 'backend': 'main.auth_backends.RegistrationBackend', 'form_class': UserSignupFormNew,
+                                    'template_name': 'main/accounts/signup.html', 'success_url': reverse_lazy('signup_complete'),
+                                    'disallowed_url': reverse_lazy('signup_disallowed')},
+                                    name='signup'),                              
+    url(r'^signup/closed/$', direct_to_template, { 'template': 'registration/registration_closed.html' },
+                                    name='signup_disallowed'),
+    url(r'^signup/complete/$', direct_to_template, { 'template': 'main/accounts/signup.html' }, name='signup_complete'),
+                                    # Activation keys get matched by \w+ instead of the more specific
+                                    # [a-fA-F0-9]{40} because a bad activation key should still get to the view;
+                                    # that way it can return a sensible "invalid key" message instead of a
+                                    # confusing 404.
+    url(r'^signup/moderate/(?P<activation_key>\w+)/$', 'sambasite.main.views.accounts.moderate_new_users',
+                                    { 'backend': 'main.auth_backends.RegistrationBackend',
+                                    'success_url': reverse_lazy('admin_home') },
+                                    name='moderate_new_users'),
 )

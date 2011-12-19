@@ -12,6 +12,14 @@ def admin_required(fn):
         return fn(request, *args, **kwargs)
     return login_required(wrapper)
 
+def active_required(fn):
+    @wraps(fn)
+    def wrapper(request, *args, **kwargs):
+        if not request.user.is_active:
+            return HttpResponseRedirect('index')
+        return fn(request, *args, **kwargs)
+    return login_required(wrapper)
+
 def index(request):
     if request.user.is_authenticated():
         return HttpResponseRedirect(reverse('home'))

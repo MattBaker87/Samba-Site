@@ -1,41 +1,47 @@
 {% extends "main/base.html" %}
 
-{% block title %}Sign-up page{% endblock %}
+{% block title %}Sign-up{% endblock %}
 
 {% block main %}
     <div class="hero-unit">
     	<h1>Samba site</h1>
     	<p>Big sambatage logo will go here</p>
     </div>
-    <div class="signup-header">
-        <h1>Sign up for samba</h1>
-    </div>
-    <form id="signup-form" action="" method="post">
-        {% csrf_token %}
-        <fieldset>
-            {% for boundfield in form %}
-                <div class="clearfix {% if boundfield.errors %}error{% endif %}">
-                    <div class="input">
-                        {% if boundfield.errors %}
-                            {% for error in boundfield.errors %}
-                                <span class="help-inline">{{ error }}</span>
-                            {% endfor %}
-                        {% else %}
-                            <span class="help-inline">{{ boundfield.help_text }}</span>
-                        {% endif %}
-                        {{ boundfield }}
-    				</div>
-    			</div>
-    		{% endfor %}
-    	</fieldset>
-        <div class="input">
-            <button class="btn large success" type="submit">Sign up</button>
+    {% if form %}
+        <div class="signup-header">
+            <h1>Sign up for samba</h1>
         </div>
-    </form>
+        <form id="signup-form" action="" method="post">
+            {% csrf_token %}
+            <fieldset>
+                {% for boundfield in form %}
+                    <div class="clearfix {% if boundfield.errors %}error{% endif %}">
+                        <div class="input">
+                            {% if boundfield.errors %}
+                                {% for error in boundfield.errors %}
+                                    <span class="help-inline">{{ error }}</span>
+                                {% endfor %}
+                            {% else %}
+                                <span class="help-inline">{{ boundfield.help_text }}</span>
+                            {% endif %}
+                            {{ boundfield }}
+        				</div>
+        			</div>
+        		{% endfor %}
+        	</fieldset>
+            <div class="input">
+                <button class="btn large success" type="submit">Sign up</button>
+            </div>
+        </form>
+    {% else %}
+        <div class="row">
+            <div class="span14 offset1">
+                <h2>Sign up request submitted!</h2>
+                <p>Great! Your details have been sent to our admin team, who'll approve you to use the site as soon as they can. We'll send you an email once you've been approved and can use the site.</p>
+            </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
-{% block todo %}
-    <ul>
-        <li>TODO: on sign-up, send an email asking for authorisation to an admin, who then has to approve new members (at the moment it just creates a new user)</li>
-    </ul>
+{% block wireframe %}
 {% endblock %}

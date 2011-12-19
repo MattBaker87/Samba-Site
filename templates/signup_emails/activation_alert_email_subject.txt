@@ -1,0 +1,1 @@
+You account is all set up at {{ site.name }}!

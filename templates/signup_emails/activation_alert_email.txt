@@ -1,0 +1,7 @@
+Hi {{ user.get_profile.name }},
+
+Your account is all set up at {{ site.name }}.
+
+To log in, go to http://{{ site.domain }} and log in with the email {{ user.email }} and the password you provided.
+
+The {{ site.name }} team

@@ -9,6 +9,9 @@ from django.contrib.sites.models import Site
 
 from datetime import datetime
 
+
+####### Models #######
+
 LONG = 500
 SHORT = 100
 

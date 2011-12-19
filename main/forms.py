@@ -26,16 +26,17 @@ class UserSignupForm(UserCreationForm):
         self.fields['password2'].widget.attrs.update({'placeholder':'Password (check)', 'label':'password_again'})
         self.fields['password2'].help_text = _("Enter the same password as above, for verification.")
         self.fields['password2'].error_messages = {'required': _("You didn't confirm your password. There could be typos.")}
-        self.fields['username'] = forms.EmailField(label=_("Email"), max_length=30,
-                help_text = _("Required. 30 characters or fewer. Letters, digits and @/./+/-/_ only."),
-                error_messages = {'invalid': _("Please enter a valid email address. It should be 30 characters or fewer."),
+        self.fields['username'] = forms.CharField(label=_("Name"), max_length=30,
+                                help_text = _("This is the name you'll be known as on the site."),
+                                error_messages = {'required': _("You didn't enter a display name. We need that!"),
+                                                    'invalid': _("Your display name should be 30 characters or fewer.")},
+                                widget = forms.TextInput(attrs={'placeholder':'Display name', 'label':'name'}))
+    
+    email = forms.EmailField(label=_("Email"), max_length=30,
+                help_text = _("Required - we'll send you an activation email there."),
+                error_messages = {'invalid': _("Please enter a valid email address. We need that to work!"),
                                     'required': _("You didn't enter an email address. We need that!")},
                 widget = forms.TextInput(attrs={'placeholder':'Email', 'label':'email'}))
-
-    name = forms.CharField(label=_("Name"), max_length=30,
-        help_text = _("This is the name you'll be known as on the site."),
-        error_messages = {'required': _("You didn't enter a display name. We need that!")},
-        widget = forms.TextInput(attrs={'placeholder':'Display name', 'label':'name'}))
     
     telephone = fields.UKPhoneNumberField(reject=(None, 'premium', 'service'),
         help_text = _("Required. We use this to help organise, and to chase down drums."),
@@ -43,18 +44,20 @@ class UserSignupForm(UserCreationForm):
         widget = forms.TextInput(attrs={'placeholder':'Mobile phone number', 'label':'telephone'}))
     
     def clean_username(self):
+        username = self.cleaned_data["username"]
         try:
-            super(UserSignupForm, self).clean_username()
-        except forms.ValidationError:
-            raise forms.ValidationError(_("A user with that email address already exists."))
+            User.objects.get(username=slugify(username))
+        except User.DoesNotExist:
+            return username
+        raise forms.ValidationError(_("A user with that display name already exists."))
     
-    def clean_name(self):
-        name = self.cleaned_data["name"]
+    def clean_email(self):
+        email = self.cleaned_data["email"]
         try:
-            UserProfile.objects.get(name=name)
-        except UserProfile.DoesNotExist:
-            return name
-        raise forms.ValidationError(_("A user with that display name address already exists."))
+            User.objects.get(email=email)
+        except User.DoesNotExist:
+            return email
+        raise forms.ValidationError(_("A user with that email address already exists."))
     
     def clean_password2(self):
         try:
@@ -64,12 +67,69 @@ class UserSignupForm(UserCreationForm):
     
     def save(self, commit=True):
         user = super(UserSignupForm, self).save(commit=False) 
-        user.email=self.cleaned_data["username"]
+        user.username = slugify(self.cleaned_data['username'])
+        user.email=self.cleaned_data["email"]
         if commit:
             user.save()
-            profile = UserProfile.objects.create(user=user, name=self.cleaned_data["name"],
+            profile = UserProfile.objects.create(user=user, name=self.cleaned_data["username"],
                                                             telephone=self.cleaned_data["telephone"])
         return user
+
+class UserSignupFormNew(forms.Form):
+    name =  forms.CharField(label=_("Name"), max_length=30,
+                help_text = _("This is the name you'll be known as on the site."),
+                error_messages = {'required': _("You didn't enter a display name. We need that!"),
+                                    'invalid': _("Your display name should be 30 characters or fewer.")},
+                widget = forms.TextInput(attrs={'placeholder':'Display name', 'label':'name'}))
+    
+    password1 = forms.CharField(label=_("Password"),
+                widget=forms.PasswordInput(attrs={'placeholder':'Password', 'label':'password'}, render_value=False),
+                error_messages = {'required': _("You didn't enter a password. You need a password!")})
+    
+    password2 = forms.CharField(label=_("Password (again)"),
+                widget=forms.PasswordInput(attrs={'placeholder':'Password (check)', 'label':'password_again'}, render_value=False),
+                error_messages = {'required': _("You didn't confirm your password. There could be typos.")},
+                help_text = _("Enter the same password as above, for verification."))
+                
+    email = forms.EmailField(label=_("Email"), max_length=75,
+                help_text = _("Required - we'll send you an activation email there."),
+                error_messages = {'invalid': _("Please enter a valid email address. We need that to work!"),
+                                    'required': _("You didn't enter an email address. We need that!")},
+                widget = forms.TextInput(attrs={'placeholder':'Email', 'label':'email'}))
+    
+    telephone = fields.UKPhoneNumberField(reject=(None, 'premium', 'service'),
+                help_text = _("Required. We use this to help organise, and to chase down drums."),
+                error_messages = {'required': _("You didn't enter a phone number. We need that!")},
+                widget = forms.TextInput(attrs={'placeholder':'Mobile phone number', 'label':'telephone'}))
+    
+    def clean_name(self):
+        try:
+            User.objects.get(username=slugify(self.cleaned_data["name"]))
+        except User.DoesNotExist:
+            return self.cleaned_data["name"]
+        raise forms.ValidationError(_("A user with that display name already exists."))
+
+    def clean_email(self):
+        try:
+            User.objects.get(email=self.cleaned_data["email"])
+        except User.DoesNotExist:
+            return self.cleaned_data["email"]
+        raise forms.ValidationError(_("A user with that email address already exists."))
+    
+    def clean_password2(self):
+        password1 = self.cleaned_data.get("password1", "")
+        password2 = self.cleaned_data["password2"]
+        if password1 != password2:
+            raise forms.ValidationError(_("The two password fields didn't match."))
+        return password2
+    
+    def clean(self):
+        """
+        Slugify name and store it in the cleaned data as username
+        """
+        if 'name' in self.cleaned_data:
+            self.cleaned_data["username"] = slugify(self.cleaned_data["name"])
+        return self.cleaned_data
 
 
 class LoginForm(AuthenticationForm):
@@ -83,14 +143,12 @@ class LoginForm(AuthenticationForm):
         password = self.cleaned_data.get('password')
         
         if username and password:
-            try:
-                User.objects.get(username=username)
-            except User.DoesNotExist:
-                raise forms.ValidationError(_("That email address isn't registered with us"))
-            
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
-                raise forms.ValidationError(_("Password didn't match username"))
+                if User.objects.filter(username=username).exists() or User.objects.filter(email=username).exists():
+                    raise forms.ValidationError(_("Password didn't match username"))
+                else:
+                    raise forms.ValidationError(_("No account with that username/email"))
             elif not self.user_cache.is_active:
                 raise forms.ValidationError(_("This account is inactive"))
         self.check_for_test_cookie()
@@ -194,9 +252,9 @@ class EventPlayersForm(forms.Form):
 
 
 class ContactForm(forms.Form):
-    username = UserSignupForm().fields['username']
-    username.widget.attrs['class'] = "span3"
-    name = UserSignupForm().fields['name']
+    email = UserSignupForm().fields['email']
+    email.widget.attrs['class'] = "span3"
+    name = UserSignupForm().fields['username']
     name.widget.attrs['class'] = "span3"
     telephone = UserSignupForm().fields['telephone']
     telephone.widget.attrs['class'] = "span3"
@@ -204,18 +262,18 @@ class ContactForm(forms.Form):
     def __init__(self, instance=None, *args, **kwargs):
         super(ContactForm, self).__init__(*args, **kwargs)
         self.instance = instance
-        self.fields['username'].initial = self.instance.username
+        self.fields['email'].initial = self.instance.email
         self.fields['name'].initial = self.instance.get_profile().name
         self.fields['telephone'].initial = self.instance.get_profile().telephone
     
-    def clean_username(self):
-        username = self.cleaned_data["username"]
-        if username == self.instance.username:
-            return username
+    def clean_email(self):
+        email = self.cleaned_data["email"]
+        if email == self.instance.email:
+            return email
         try:
-            user = User.objects.get(username=username)
+            user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return username
+            return email
         raise forms.ValidationError(_("A user with that email address already exists."))
     
     def clean_name(self):
@@ -230,7 +288,8 @@ class ContactForm(forms.Form):
     
     def save(self, commit=True):
         user = self.instance
-        user.email = user.username = self.cleaned_data["username"]
+        user.email = self.cleaned_data["email"]
+        user.username = slugify(self.cleaned_data["name"])
         profile = self.instance.get_profile()
         profile.name = self.cleaned_data["name"]
         profile.telephone = self.cleaned_data["telephone"]

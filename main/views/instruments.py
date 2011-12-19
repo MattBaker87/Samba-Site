@@ -2,8 +2,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
-from django.contrib.auth.decorators import login_required
-from main.views import admin_required
+from main.views import admin_required, active_required
 from django.views.generic import list_detail
 
 from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm, InstrumentNoteForm, InstrumentNoteRequiredForm
@@ -11,13 +10,13 @@ from main.models import Instrument, Booking, InstrumentNote
 
 from datetime import datetime
 
-@login_required
+@active_required
 def list_instruments(request, template_name, queryset_filter, paginate_by=10):
     queryset = queryset_filter(Instrument.objects)
     return list_detail.object_list(request, queryset=queryset,template_object_name='instrument',
                                     template_name=template_name, paginate_by=paginate_by)
 
-@login_required
+@active_required
 def detail_instrument(request, slug, paginate_by=10, extra_context=None, template_name='main/instruments/instrument_detail.html'):
     target_object = get_object_or_404(Instrument, slug=slug)
     c = {'instrument': target_object}
@@ -26,7 +25,7 @@ def detail_instrument(request, slug, paginate_by=10, extra_context=None, templat
     return list_detail.object_list(request, template_name=template_name, template_object_name='notes', paginate_by=paginate_by,
                                 queryset=target_object.user_notes.filter(is_removed=False), extra_context=c)
 
-@login_required
+@active_required
 def sign_in_booking(request, booking_id):
     target_booking = get_object_or_404(Booking, id=booking_id)
     if not target_booking.user == request.user or target_booking.signed_in:
@@ -39,7 +38,7 @@ def sign_in_booking(request, booking_id):
                                     template_name='main/instruments/instrument_signin.html',
                                     extra_context={'booking': target_booking, 'form': form})
 
-@login_required
+@active_required
 def instrument_write_note(request, slug):
     target_object = get_object_or_404(Instrument, slug=slug)
     form = InstrumentNoteForm(data = request.POST or None, instrument=target_object, user=request.user)
@@ -51,7 +50,7 @@ def instrument_write_note(request, slug):
         return HttpResponseRedirect(target_object.get_absolute_url())
     return detail_instrument(request, slug=target_object.slug, extra_context={'new_note_form': form})
 
-@login_required
+@active_required
 def remove_note(request, note_id):
     target_object = get_object_or_404(InstrumentNote, id=note_id)
     if request.method == "POST" and (request.user.is_staff or request.user == target_object.user):

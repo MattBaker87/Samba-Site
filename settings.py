@@ -156,10 +156,15 @@ INSTALLED_APPS = (
     # 'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
-    'sambasite.main'
+    'sambasite.main',
+    'sambasite.registration',
 )
 
+ACCOUNT_ACTIVATION_DAYS = 7 # One-week activation window
+
 AUTH_PROFILE_MODULE = 'main.UserProfile'
+
+LOGIN_REDIRECT_URL = '/accounts/home/'
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -208,3 +213,11 @@ DEFAULT_FROM_EMAIL = 'webmaster@localhost'
 # Subject-line prefix for email messages send with django.core.mail.mail_admins
 # or ...mail_managers.  Make sure to include the trailing space.
 EMAIL_SUBJECT_PREFIX = '[Sambatage] '
+
+##################
+# AUTHENTICATION #
+##################
+
+AUTHENTICATION_BACKENDS = ('django.contrib.auth.backends.ModelBackend',
+                            'main.auth_backends.AuthWithEmailBackend',
+                            )

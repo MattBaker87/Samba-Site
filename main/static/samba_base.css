@@ -193,8 +193,12 @@ a.label.warning:hover {
 }
 
 /* Admin buttons (mini) */
-.admin.btn-inline {
+a.admin.btn-inline {
   width: 48px;
+  text-align: center;
+}
+button.admin.btn-inline {
+  width: 64px;
   text-align: center;
 }
 
