@@ -8,7 +8,7 @@ urlpatterns = patterns('',
     url(r'^admin/', include('sambasite.main.urls.admin')),
 )
 
-####### Vanity URLs for events. Note that this means there should be no other one-item path URLs in site #######
+####### Vanity URLs for events. Note that this means there should be no other one-item path URLs #######
 urlpatterns += patterns('sambasite.main.views.events',
     url(r'^(?P<slug>[-\w]+)/$', 'detail_event', name='event_detail'),
 )
