@@ -20,7 +20,7 @@ def inform_admins_of_registration(sender, **kwargs):
     ctx_dict = { 'user': kwargs['user'], 'site': site }
     subject = render_to_string('main/accounts/signup_emails/registration_alert_email_subject.txt', ctx_dict)
     # Email subject *must not* contain newlines
-    subject = ''.join(subject.splitlines())
+    subject = settings.EMAIL_SUBJECT_PREFIX + ''.join(subject.splitlines())
     message = render_to_string('main/accounts/signup_emails/registration_alert_email.txt', ctx_dict)
     
     email_admins(subject, message)
@@ -35,7 +35,7 @@ def inform_user_of_activation(sender, **kwargs):
     ctx_dict = { 'user': user, 'site': site }
     subject = render_to_string('main/accounts/signup_emails/activation_alert_email_subject.txt', ctx_dict)
     # Email subject *must not* contain newlines
-    subject = ''.join(subject.splitlines())
+    subject = settings.EMAIL_SUBJECT_PREFIX + ''.join(subject.splitlines())
     message = render_to_string('main/accounts/signup_emails/activation_alert_email.txt', ctx_dict)
 
     user.email_user(subject, message, settings.DEFAULT_FROM_EMAIL)

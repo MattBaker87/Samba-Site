@@ -175,7 +175,7 @@ class EventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields['start'].help_text = _("Use dd/mm/yyyy, hh:mm format")
-        self.fields['coordinator'] = fields.OrganiserChoiceField(queryset=User.objects.all().order_by('userprofile'),
+        self.fields['coordinator'] = fields.OrganiserChoiceField(queryset=User.objects.filter(is_active=True).order_by('userprofile'),
                                                                 required=False, initial=self.instance.coordinator)
         for instrument in Instrument.live.all():
             self.fields[instrument.name] = forms.BooleanField(required=False,
@@ -237,7 +237,7 @@ class EventPlayersForm(forms.Form):
         for b in self.event.bookings.all():
             self.fields[b.instrument.name] = forms.ModelChoiceField(
                             label=mark_safe(b.instrument.name),
-                            queryset=UserProfile.objects.all(),
+                            queryset=UserProfile.objects.filter(user__is_active=True),
                             required=False,
                             initial=b.user.get_profile() if b.user else None,
                             )
