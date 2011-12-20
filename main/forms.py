@@ -17,17 +17,75 @@ from main.models import UserProfile, Instrument, Event, Booking, InstrumentNote
 
 from django.db import IntegrityError
 
-class UserSignupFormNew(forms.Form):
+class ContactForm(forms.Form):
     """
-    Used for user registration. Requires users to give it a display name, email, telephone and password.
-    Creates a username from the display name by slugifying it.
+    Update contact details
     """
     name =  forms.CharField(label=_("Name"), max_length=30,
                 help_text = _("This is the name you'll be known as on the site."),
                 error_messages = {'required': _("You didn't enter a display name. We need that!"),
                                     'invalid': _("Your display name should be 30 characters or fewer.")},
                 widget = forms.TextInput(attrs={'placeholder':'Display name', 'label':'name'}))
+
+    email = forms.EmailField(label=_("Email"), max_length=75,
+                help_text = _("Required - we'll send you an activation email there."),
+                error_messages = {'invalid': _("Please enter a valid email address. We need that to work!"),
+                                    'required': _("You didn't enter an email address. We need that!")},
+                widget = forms.TextInput(attrs={'placeholder':'Email', 'label':'email'}))
+
+    telephone = fields.UKPhoneNumberField(reject=(None, 'premium', 'service'),
+                help_text = _("Required. We use this to help organise, and to chase down drums."),
+                error_messages = {'required': _("You didn't enter a phone number. We need that!")},
+                widget = forms.TextInput(attrs={'placeholder':'Mobile phone number', 'label':'telephone'}))
     
+    def __init__(self, instance=None, *args, **kwargs):
+        super(ContactForm, self).__init__(*args, **kwargs)
+        self.instance = instance
+        if instance:
+            for key in self.fields:
+                self.fields[key].widget.attrs['class'] = "span3"
+            self.fields['email'].initial = self.instance.email
+            self.fields['name'].initial = self.instance.get_profile().name
+            self.fields['telephone'].initial = self.instance.get_profile().telephone
+
+    def clean_email(self):
+        if self.instance and self.cleaned_data["email"] == self.instance.email:
+            return self.cleaned_data["email"]
+        try:
+            User.objects.get(email=self.cleaned_data["email"])
+        except User.DoesNotExist:
+            return self.cleaned_data["email"]
+        raise forms.ValidationError(_("A user with that email address already exists."))
+
+    def clean_name(self):
+        if self.instance and slugify(self.cleaned_data["name"]) == slugify(self.instance.get_profile().name):
+            return self.cleaned_data["name"]
+        try:
+            User.objects.get(username=slugify(self.cleaned_data["name"]))
+        except User.DoesNotExist:
+            return self.cleaned_data["name"]
+        raise forms.ValidationError(_("A user with that display name already exists."))
+
+    def save(self, commit=True):
+        if not self.instance:
+            return None
+        user = self.instance
+        user.email = self.cleaned_data["email"]
+        user.username = slugify(self.cleaned_data["name"])
+        profile = self.instance.get_profile()
+        profile.name = self.cleaned_data["name"]
+        profile.telephone = self.cleaned_data["telephone"]
+        if commit:
+            user.save()
+            profile.save()
+        return user
+
+
+class UserSignupForm(ContactForm):
+    """
+    Used for user registration. Requires users to give it a display name, email, telephone and password.
+    Creates a username from the display name by slugifying it.
+    """
     password1 = forms.CharField(label=_("Password"),
                 widget=forms.PasswordInput(attrs={'placeholder':'Password', 'label':'password'}, render_value=False),
                 error_messages = {'required': _("You didn't enter a password. You need a password!")})
@@ -36,31 +94,13 @@ class UserSignupFormNew(forms.Form):
                 widget=forms.PasswordInput(attrs={'placeholder':'Password (check)', 'label':'password_again'}, render_value=False),
                 error_messages = {'required': _("You didn't confirm your password. There could be typos.")},
                 help_text = _("Enter the same password as above, for verification."))
-                
-    email = forms.EmailField(label=_("Email"), max_length=75,
-                help_text = _("Required - we'll send you an activation email there."),
-                error_messages = {'invalid': _("Please enter a valid email address. We need that to work!"),
-                                    'required': _("You didn't enter an email address. We need that!")},
-                widget = forms.TextInput(attrs={'placeholder':'Email', 'label':'email'}))
     
-    telephone = fields.UKPhoneNumberField(reject=(None, 'premium', 'service'),
-                help_text = _("Required. We use this to help organise, and to chase down drums."),
-                error_messages = {'required': _("You didn't enter a phone number. We need that!")},
-                widget = forms.TextInput(attrs={'placeholder':'Mobile phone number', 'label':'telephone'}))
-    
-    def clean_name(self):
-        try:
-            User.objects.get(username=slugify(self.cleaned_data["name"]))
-        except User.DoesNotExist:
-            return self.cleaned_data["name"]
-        raise forms.ValidationError(_("A user with that display name already exists."))
-
-    def clean_email(self):
-        try:
-            User.objects.get(email=self.cleaned_data["email"])
-        except User.DoesNotExist:
-            return self.cleaned_data["email"]
-        raise forms.ValidationError(_("A user with that email address already exists."))
+    def __init__(self, *args, **kwargs):
+        """
+        Just used to reorder fields
+        """
+        super(UserSignupForm, self).__init__(*args, **kwargs)
+        self.fields.keyOrder = ['name', 'password1', 'password2', 'email', 'telephone']
     
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1", "")
@@ -96,7 +136,7 @@ class LoginForm(AuthenticationForm):
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
                 if User.objects.filter(username=username).exists() or User.objects.filter(email=username).exists():
-                    raise forms.ValidationError(_("Password didn't match username"))
+                    raise forms.ValidationError(_("Password didn't match username/email"))
                 else:
                     raise forms.ValidationError(_("No account with that username/email"))
             elif not self.user_cache.is_active:
@@ -202,57 +242,6 @@ class EventPlayersForm(forms.Form):
                 b.user = self.cleaned_data[field].user if self.cleaned_data[field] else None
                 b.save()
         return None
-
-
-class ContactForm(forms.Form):
-    """
-    Update contact details
-    """
-    email = UserSignupFormNew().fields['email']
-    email.widget.attrs['class'] = "span3"
-    name = UserSignupFormNew().fields['name']
-    name.widget.attrs['class'] = "span3"
-    telephone = UserSignupFormNew().fields['telephone']
-    telephone.widget.attrs['class'] = "span3"
-    
-    def __init__(self, instance=None, *args, **kwargs):
-        super(ContactForm, self).__init__(*args, **kwargs)
-        self.instance = instance
-        self.fields['email'].initial = self.instance.email
-        self.fields['name'].initial = self.instance.get_profile().name
-        self.fields['telephone'].initial = self.instance.get_profile().telephone
-    
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        if email == self.instance.email:
-            return email
-        try:
-            user = User.objects.get(email=email)
-        except User.DoesNotExist:
-            return email
-        raise forms.ValidationError(_("A user with that email address already exists."))
-    
-    def clean_name(self):
-        name = self.cleaned_data["name"]
-        if slugify(name) == slugify(self.instance.get_profile().name):
-            return name
-        try:
-            UserProfile.objects.get(slug=slugify(name))
-        except UserProfile.DoesNotExist:
-            return name
-        raise forms.ValidationError(_("A user with that display name address already exists."))
-    
-    def save(self, commit=True):
-        user = self.instance
-        user.email = self.cleaned_data["email"]
-        user.username = slugify(self.cleaned_data["name"])
-        profile = self.instance.get_profile()
-        profile.name = self.cleaned_data["name"]
-        profile.telephone = self.cleaned_data["telephone"]
-        if commit:
-            user.save()
-            profile.save()
-        return user
 
 
 class InstrumentNoteForm(forms.ModelForm):
