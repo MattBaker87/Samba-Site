@@ -17,65 +17,11 @@ from main.models import UserProfile, Instrument, Event, Booking, InstrumentNote
 
 from django.db import IntegrityError
 
-class UserSignupForm(UserCreationForm):
-    def __init__(self, *args, **kwargs):
-        super(UserSignupForm, self).__init__(*args, **kwargs)
-        self.fields['password1'].widget.attrs.update({'placeholder':'Password', 'label':'password'})
-        self.fields['password1'].error_messages = {'required': _("You didn't enter a password. You need a password!")}
-        
-        self.fields['password2'].widget.attrs.update({'placeholder':'Password (check)', 'label':'password_again'})
-        self.fields['password2'].help_text = _("Enter the same password as above, for verification.")
-        self.fields['password2'].error_messages = {'required': _("You didn't confirm your password. There could be typos.")}
-        self.fields['username'] = forms.CharField(label=_("Name"), max_length=30,
-                                help_text = _("This is the name you'll be known as on the site."),
-                                error_messages = {'required': _("You didn't enter a display name. We need that!"),
-                                                    'invalid': _("Your display name should be 30 characters or fewer.")},
-                                widget = forms.TextInput(attrs={'placeholder':'Display name', 'label':'name'}))
-    
-    email = forms.EmailField(label=_("Email"), max_length=30,
-                help_text = _("Required - we'll send you an activation email there."),
-                error_messages = {'invalid': _("Please enter a valid email address. We need that to work!"),
-                                    'required': _("You didn't enter an email address. We need that!")},
-                widget = forms.TextInput(attrs={'placeholder':'Email', 'label':'email'}))
-    
-    telephone = fields.UKPhoneNumberField(reject=(None, 'premium', 'service'),
-        help_text = _("Required. We use this to help organise, and to chase down drums."),
-        error_messages = {'required': _("You didn't enter a phone number. We need that!")},
-        widget = forms.TextInput(attrs={'placeholder':'Mobile phone number', 'label':'telephone'}))
-    
-    def clean_username(self):
-        username = self.cleaned_data["username"]
-        try:
-            User.objects.get(username=slugify(username))
-        except User.DoesNotExist:
-            return username
-        raise forms.ValidationError(_("A user with that display name already exists."))
-    
-    def clean_email(self):
-        email = self.cleaned_data["email"]
-        try:
-            User.objects.get(email=email)
-        except User.DoesNotExist:
-            return email
-        raise forms.ValidationError(_("A user with that email address already exists."))
-    
-    def clean_password2(self):
-        try:
-            super(UserSignupForm, self).clean_password2()
-        except forms.ValidationError:
-            raise forms.ValidationError(_("The two passwords you entered didn't match."))
-    
-    def save(self, commit=True):
-        user = super(UserSignupForm, self).save(commit=False) 
-        user.username = slugify(self.cleaned_data['username'])
-        user.email=self.cleaned_data["email"]
-        if commit:
-            user.save()
-            profile = UserProfile.objects.create(user=user, name=self.cleaned_data["username"],
-                                                            telephone=self.cleaned_data["telephone"])
-        return user
-
 class UserSignupFormNew(forms.Form):
+    """
+    Used for user registration. Requires users to give it a display name, email, telephone and password.
+    Creates a username from the display name by slugifying it.
+    """
     name =  forms.CharField(label=_("Name"), max_length=30,
                 help_text = _("This is the name you'll be known as on the site."),
                 error_messages = {'required': _("You didn't enter a display name. We need that!"),
@@ -133,6 +79,10 @@ class UserSignupFormNew(forms.Form):
 
 
 class LoginForm(AuthenticationForm):
+    """
+    Adds placeholders to AuthenticationForm and adjust error text.
+    All errors are given in form.errors, rather than being field specific.
+    """
     def __init__(self, *args, **kwargs):
         super(LoginForm, self).__init__(*args, **kwargs)
         self.fields['username'].widget.attrs.update({'placeholder':'Email', 'label':'email'})
@@ -156,13 +106,16 @@ class LoginForm(AuthenticationForm):
 
 
 class InstrumentForm(forms.ModelForm):
+    """
+    Used to add and edit instruments. Checks if new/edited instrument slug will be a duplicate.
+    """
     class Meta:
         model = Instrument
         widgets = {'name': forms.TextInput(attrs={'placeholder':'Agogo 1 (example)'}),}
     
     def clean_name(self):
         name = self.cleaned_data["name"]
-        if name == self.instance.name:
+        if slugify(name) == slugify(self.instance.name):
             return name
         try:
             instrument = Instrument.objects.get(slug=slugify(name))
@@ -172,37 +125,40 @@ class InstrumentForm(forms.ModelForm):
 
 
 class EventForm(forms.ModelForm):
+    """
+    Edit and create event details (not players).
+    """
     def __init__(self, *args, **kwargs):
         super(EventForm, self).__init__(*args, **kwargs)
         self.fields['start'].help_text = _("Use dd/mm/yyyy, hh:mm format")
-        self.fields['coordinator'] = fields.OrganiserChoiceField(queryset=User.objects.filter(is_active=True).order_by('userprofile'),
-                                                                required=False, initial=self.instance.coordinator)
+        self.fields['coordinator'] = fields.OrganiserChoiceField(required=False, initial=self.instance.coordinator,
+                                                        queryset=User.objects.filter(is_active=True).order_by('userprofile'))
         for instrument in Instrument.live.all():
             self.fields[instrument.name] = forms.BooleanField(required=False,
                     label=mark_safe(instrument.name +
-                        ' <span class="label important">Damaged</span>' if instrument.damaged else instrument.name ),
+                        ' <span class="label important">Dmg</span>' if instrument.damaged else instrument.name ),
                     initial= self.instance.bookings.filter(instrument=instrument).exists())
     
     class Meta:
         model = Event
-        fields = ['name', 'start', 'location','coordinator','notes']
         widgets = {
                     'name': forms.TextInput(attrs={'placeholder':'e.g., UNISON and UNITE Strike Day', 'class':'span7'}),
-                    'notes': forms.Textarea(attrs={'class':'span7', 'rows':'4'}),
                     'start': MySplitDateTimeWidget(attrs={'class':'datetimefield'}, date_placeholder="31/12/2011",
                                                                                     time_placeholder="12:00"),
+                    'notes': forms.Textarea(attrs={'class':'span7', 'rows':'4'}),
                     }
     
     
     def instrument_fields(self):
-        return [field for field in self if field.field.__class__ == forms.BooleanField]
+        return [self[instrument.name] for instrument in Instrument.live.all()]
     
+    # TODO: Make this less of a hack...
     def non_instrument_fields(self):
-        return [field for field in self if field.field.__class__ != forms.BooleanField]
+        return [field for field in self if not field.name in [i.name for i in self.instrument_fields()]]
     
     def clean_name(self):
         name = self.cleaned_data["name"]
-        if name == self.instance.name:
+        if slugify(name) == slugify(self.instance.name):
             return name
         try:
             Event.objects.get(slug=slugify(name))
@@ -224,23 +180,20 @@ class EventForm(forms.ModelForm):
                 if self.cleaned_data[field.name]:
                     Booking.objects.get_or_create(instrument=Instrument.live.get(name=field.name), event=event)
                 else:
-                    try:
-                        Booking.objects.get(instrument=Instrument.live.get(name=field.name), event=event).delete()
-                    except Booking.DoesNotExist:
-                        continue
+                    Booking.objects.filter(instrument=Instrument.live.get(name=field.name), event=event).delete()
         return event
 
 class EventPlayersForm(forms.Form):
+    """
+    Edit players at a given event.
+    """
     def __init__(self, event=None, *args, **kwargs):
         super(EventPlayersForm, self).__init__(*args, **kwargs)
         self.event = event
         for b in self.event.bookings.all():
-            self.fields[b.instrument.name] = forms.ModelChoiceField(
-                            label=mark_safe(b.instrument.name),
-                            queryset=UserProfile.objects.filter(user__is_active=True),
-                            required=False,
-                            initial=b.user.get_profile() if b.user else None,
-                            )
+            self.fields[b.instrument.name] = forms.ModelChoiceField(label=mark_safe(b.instrument.name),
+                                                queryset=UserProfile.objects.filter(user__is_active=True),
+                                                required=False, initial=b.user.get_profile() if b.user else None,)
     
     def save(self, commit=True):
         if commit:
@@ -252,11 +205,14 @@ class EventPlayersForm(forms.Form):
 
 
 class ContactForm(forms.Form):
-    email = UserSignupForm().fields['email']
+    """
+    Update contact details
+    """
+    email = UserSignupFormNew().fields['email']
     email.widget.attrs['class'] = "span3"
-    name = UserSignupForm().fields['username']
+    name = UserSignupFormNew().fields['name']
     name.widget.attrs['class'] = "span3"
-    telephone = UserSignupForm().fields['telephone']
+    telephone = UserSignupFormNew().fields['telephone']
     telephone.widget.attrs['class'] = "span3"
     
     def __init__(self, instance=None, *args, **kwargs):
@@ -278,7 +234,7 @@ class ContactForm(forms.Form):
     
     def clean_name(self):
         name = self.cleaned_data["name"]
-        if name == self.instance.get_profile().name:
+        if slugify(name) == slugify(self.instance.get_profile().name):
             return name
         try:
             UserProfile.objects.get(slug=slugify(name))
@@ -298,7 +254,11 @@ class ContactForm(forms.Form):
             profile.save()
         return user
 
+
 class InstrumentNoteForm(forms.ModelForm):
+    """
+    Write an (optional) note on an instrument
+    """
     def __init__(self, event=None, instrument=None, user=None, *args, **kwargs):
         super(InstrumentNoteForm, self).__init__(*args, **kwargs)
         self.event = event
@@ -322,13 +282,20 @@ class InstrumentNoteForm(forms.ModelForm):
         return note
 
 
-class InstrumentNoteRequiredForm(InstrumentNoteForm):      # Some as InstrumentNoteForm, but field is required
+class InstrumentNoteRequiredForm(InstrumentNoteForm):
+    """
+    Subclass of InstrumentNoteForm that makes the note required
+    """
     def __init__(self, *args, **kwargs):
         super(InstrumentNoteRequiredForm, self).__init__(*args, **kwargs)
         self.fields['note'].required = True
         self.fields['note'].error_messages = {'required': _("Please enter a note.")}
 
+
 class AdminBookingSigninForm(forms.Form):
+    """
+    Booking signin form used by admins (has drop-down selection of the booking they're signing in).
+    """
     def __init__(self, instrument=None, admin=None, *args, **kwargs):
         super(AdminBookingSigninForm, self).__init__(*args, **kwargs)
         self.instrument = instrument
@@ -370,7 +337,11 @@ class AdminBookingSigninForm(forms.Form):
                 note.save()
         return booking.instrument
 
+
 class BookingSigninForm(AdminBookingSigninForm):
+    """
+    User sign-in form is the same as the admin one, but they don't set the booking and they write different notes.
+    """
     def __init__(self, booking=None, *args, **kwargs):
         super(BookingSigninForm, self).__init__(instrument=booking.instrument, *args, **kwargs)
         self.fields.pop('booking')
@@ -387,15 +358,18 @@ class BookingSigninForm(AdminBookingSigninForm):
             InstrumentNote.objects.create(instrument=booking.instrument, user=booking.user, date_made=datetime.now(),
                                 subject="damage" if self.cleaned_data['damaged'] else "repair")
 
+
 class MyPasswordChangeForm(PasswordChangeForm):
     new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput(attrs={'class':'span3'}))
     new_password2 = forms.CharField(label=_("New password (again)"), widget=forms.PasswordInput(attrs={'class':'span3'}))
     old_password = forms.CharField(label=_("Old password"), widget=forms.PasswordInput(attrs={'class':'span3'}))
 
+
 class MyPasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
         super(MyPasswordResetForm, self).__init__(*args, **args)
         self.fields['email'].widget = forms.TextInput(attrs={'placeholder':'Email'})
+
     
 class MySetPasswordForm(SetPasswordForm):
     new_password1 = forms.CharField(label=_("New password"), widget=forms.PasswordInput(attrs={'placeholder':'New password'}))

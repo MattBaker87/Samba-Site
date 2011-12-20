@@ -107,10 +107,18 @@ class UKPhoneNumberField(Field):
                     position += chunk
         return ' '.join(components)
 
+
 class BookingChoiceField(ModelChoiceField):
+    """
+    Adjusts label for the booking that an admin is signing in
+    """
     def label_from_instance(self, obj):
         return "%s at '%s'" % (obj.user.get_profile().name, obj.event.name)
 
+
 class OrganiserChoiceField(ModelChoiceField):
+    """
+    Adjusts display name of users
+    """
     def label_from_instance(self, obj):
         return "%s" % (obj.get_profile().name)

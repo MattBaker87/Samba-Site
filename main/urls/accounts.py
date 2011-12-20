@@ -15,7 +15,6 @@ from registration.views import activate
 from registration.views import register
 
 urlpatterns = patterns('sambasite.main.views.accounts',
-    # url(r'^signup/$', 'signup', name='signup'),
     url(r'^edit/$', 'edit_profile', name='edit_contact'),
     url(r'^profile/$', 'view_profile', name='profile'),
     url(r'^profile/(?P<slug>[-\w]+)/$', 'view_profile', name='view_profile'),

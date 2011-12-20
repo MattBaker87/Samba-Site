@@ -20,8 +20,8 @@ class Event(models.Model):
     slug = models.SlugField(unique=True, editable=False)
     start = models.DateTimeField(verbose_name="When")
     location = models.CharField(max_length=LONG)
-    notes = models.CharField(max_length=LONG)
     coordinator = models.ForeignKey(User, related_name='coordinating', blank=True, null=True, default=None)
+    notes = models.CharField(max_length=LONG)
     
     objects = EventManager()
     

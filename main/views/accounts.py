@@ -6,28 +6,11 @@ from django.contrib.auth import authenticate, login
 from main.views import admin_required, active_required
 from django.views.generic import list_detail
 
-from main.forms import UserSignupForm, ContactForm, MyPasswordChangeForm
+from main.forms import ContactForm, MyPasswordChangeForm
 from main.models import UserProfile
 from django.contrib.auth.models import User
 
 import registration
-
-
-def signup(request):
-    if request.user.is_authenticated():
-        return HttpResponse("You're already logged in") #TODO Fail more cleanly if authenticated user tries to sign up
-
-    if request.method == 'POST':
-        form = UserSignupForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            user = authenticate(username=user.username, password=form.cleaned_data['password1'])
-            login(request, user)
-            return HttpResponseRedirect(reverse('home'))
-    else:
-        form = UserSignupForm()
-
-    return render_to_response('main/accounts/signup.html', {'form': form}, context_instance=RequestContext(request))
 
 
 @active_required
