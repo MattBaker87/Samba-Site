@@ -5,7 +5,7 @@ from django.template.context import RequestContext
 from main.views import admin_required, active_required
 
 from django.views.generic import ListView
-from main.views import ActiveViewMixin
+from main.views import ActiveViewMixin, ActiveTemplateView
 
 from main.forms import EventForm, EventPlayersForm
 from main.models import Event, Booking
@@ -20,37 +20,41 @@ def detail_event(request, slug):
     return render_to_response('main/events/event_detail.html', {'event': target_object},
                                                                 context_instance=RequestContext(request))
 
-@active_required
-def sign_out_instrument(request, booking_id):
-    target_booking = get_object_or_404(Booking, id=booking_id)
-    if request.method == "POST" and target_booking.user == None:
-        target_booking.user = request.user
-        target_booking.save()
-    return HttpResponseRedirect(target_booking.event.get_absolute_url())
+class BookInstrument(ActiveTemplateView):
+    def dispatch(self, request, *args, **kwargs):
+        self.target_object = get_object_or_404(Booking, id=kwargs['booking_id'])
+        return super(BookInstrument, self).dispatch(request, *args, **kwargs)
+    
+    def get(self, request, *args, **kwargs):
+        HttpResponseRedirect(self.target_object.event.get_absolute_url())
+    
+    def post(self, request, *args, **kwargs):
+        if self.target_object.user == None:
+            self.target_object.user = request.user
+            self.target_object.save()
+        elif self.target_object.user == request.user:
+            self.target_object.user = None
+            self.target_object.save()
+        return HttpResponseRedirect(self.target_object.event.get_absolute_url())
 
-@active_required
-def cancel_sign_out(request, booking_id):
-    target_booking = get_object_or_404(Booking, id=booking_id)
-    if request.method == "POST" and target_booking.user == request.user:
-        target_booking.user = None
-        target_booking.save()
-    return HttpResponseRedirect(target_booking.event.get_absolute_url())
 
-@active_required
-def coordinate_event(request, slug):
-    target_event = get_object_or_404(Event, slug=slug)
-    if request.method == 'POST' and target_event.coordinator == None:
-        target_event.coordinator = request.user
-        target_event.save()
-    return HttpResponseRedirect(target_event.get_absolute_url())
+class CoordinateEvent(ActiveTemplateView):
+    def dispatch(self, request, *args, **kwargs):
+        self.target_object = get_object_or_404(Event, slug=kwargs['slug'])
+        return super(CoordinateEvent, self).dispatch(request, *args, **kwargs)
 
-@active_required
-def cancel_coordinate_event(request, slug):
-    target_event = get_object_or_404(Event, slug=slug)
-    if request.method == 'POST' and target_event.coordinator == request.user:
-        target_event.coordinator = None
-        target_event.save()
-    return HttpResponseRedirect(target_event.get_absolute_url())
+    def get(self, request, *args, **kwargs):
+        HttpResponseRedirect(self.target_object.get_absolute_url())
+
+    def post(self, request, *args, **kwargs):
+        if self.target_object.coordinator == None:
+            self.target_object.coordinator = request.user
+            self.target_object.save()
+        elif self.target_object.coordinator == request.user:
+            self.target_object.coordinator = None
+            self.target_object.save()
+        return HttpResponseRedirect(self.target_object.get_absolute_url())
+
 
 @admin_required
 def add_event(request):
