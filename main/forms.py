@@ -290,6 +290,7 @@ class AdminBookingSigninForm(forms.Form):
         self.instrument = instrument
         self.admin = admin
         self.fields['damaged'] = InstrumentForm(instance=self.instrument).fields['damaged']
+        self.fields['damaged'].initial = instrument.damaged
         self.fields['booking'] = fields.BookingChoiceField(label=mark_safe("Last booking instrument was returned after"),
                                                             queryset=self.instrument.bookings.not_signed_in(),
                                                             empty_label=None, initial=instrument.get_last_booking(),)

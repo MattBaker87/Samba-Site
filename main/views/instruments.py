@@ -5,7 +5,7 @@ from django.template.context import RequestContext
 from main.views import admin_required, active_required
 
 from django.views.generic import list_detail
-from django.views.generic import ListView
+from django.views.generic import ListView, FormView
 from main.views import ActiveViewMixin
 
 from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm, InstrumentNoteForm, InstrumentNoteRequiredForm
@@ -15,7 +15,7 @@ from datetime import datetime
 
 class ListInstruments(ListView, ActiveViewMixin):
     paginate_by=None
-    
+
 
 class DetailInstrument(ListInstruments):
     def get_queryset(self):
@@ -31,7 +31,7 @@ class DetailInstrument(ListInstruments):
     paginate_by=10
     context_object_name = 'notes_list'
 
-
+######## This gets called by other views, so can't be removed yet #######
 @active_required
 def detail_instrument(request, slug, paginate_by=10, extra_context=None, template_name='main/instruments/instrument_detail.html'):
     target_object = get_object_or_404(Instrument, slug=slug)
@@ -53,6 +53,7 @@ def sign_in_booking(request, booking_id):
     return detail_instrument(request, slug=target_booking.instrument.slug,
                                     template_name='main/instruments/instrument_signin.html',
                                     extra_context={'booking': target_booking, 'form': form})
+        
 
 @active_required
 def instrument_write_note(request, slug):
