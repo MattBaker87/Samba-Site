@@ -42,3 +42,28 @@ class AdminTemplateView(TemplateView, AdminViewMixin):
 
 class ActiveTemplateView(TemplateView, ActiveViewMixin):
     pass
+
+class ChangeObjectView(TemplateView):
+    """
+    View that takes a single object and changes that object if the request type is POST.
+    Otherwise redirects to a supplied address.
+    """
+    def dispatch(self, request, *args, **kwargs):
+        self.target_object = self.get_object(**kwargs)
+        return super(ChangeObjectView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        HttpResponseRedirect(self.get_redirect())
+
+    def post(self, request, *args, **kwargs):
+        self.change_object(self.target_object)
+        return HttpResponseRedirect(self.get_redirect())
+
+    def get_object(self, **kwargs):
+        pass
+
+    def change_object(self, obj):
+        pass
+
+    def get_redirect(self):
+        pass

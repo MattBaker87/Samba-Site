@@ -4,8 +4,8 @@ from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from main.views import admin_required, active_required
 
-from django.views.generic import ListView
-from main.views import ActiveViewMixin, ActiveTemplateView
+from django.views.generic import ListView, DetailView
+from main.views import ActiveViewMixin, ChangeObjectView
 
 from main.forms import EventForm, EventPlayersForm
 from main.models import Event, Booking
@@ -14,46 +14,40 @@ from main.models import Event, Booking
 class ListEvents(ListView, ActiveViewMixin):
     paginate_by = 10
 
-@active_required
-def detail_event(request, slug):
-    target_object = get_object_or_404(Event, slug=slug)
-    return render_to_response('main/events/event_detail.html', {'event': target_object},
-                                                                context_instance=RequestContext(request))
+class DetailEvent(DetailView, ActiveViewMixin):
+    model = Event
+    template_name = 'main/events/event_detail.html'
 
-class BookInstrument(ActiveTemplateView):
-    def dispatch(self, request, *args, **kwargs):
-        self.target_object = get_object_or_404(Booking, id=kwargs['booking_id'])
-        return super(BookInstrument, self).dispatch(request, *args, **kwargs)
+class BookInstrument(ChangeObjectView, ActiveViewMixin):
+    def get_object(self, **kwargs):
+        return get_object_or_404(Booking, id=kwargs['booking_id'])
     
-    def get(self, request, *args, **kwargs):
-        HttpResponseRedirect(self.target_object.event.get_absolute_url())
+    def change_object(self, obj):
+        if obj.user == None:
+            obj.user = self.request.user
+            obj.save()
+        elif obj.user == self.request.user:
+            obj.user = None
+            obj.save()
     
-    def post(self, request, *args, **kwargs):
-        if self.target_object.user == None:
-            self.target_object.user = request.user
-            self.target_object.save()
-        elif self.target_object.user == request.user:
-            self.target_object.user = None
-            self.target_object.save()
-        return HttpResponseRedirect(self.target_object.event.get_absolute_url())
+    def get_redirect(self):
+        return self.target_object.event.get_absolute_url()
 
 
-class CoordinateEvent(ActiveTemplateView):
-    def dispatch(self, request, *args, **kwargs):
-        self.target_object = get_object_or_404(Event, slug=kwargs['slug'])
-        return super(CoordinateEvent, self).dispatch(request, *args, **kwargs)
+class CoordinateEvent(ChangeObjectView, ActiveViewMixin):
+    def get_object(self, **kwargs):
+        return get_object_or_404(Event, slug=kwargs['slug'])
 
-    def get(self, request, *args, **kwargs):
-        HttpResponseRedirect(self.target_object.get_absolute_url())
+    def get_redirect(self):
+        return self.target_object.get_absolute_url()
 
-    def post(self, request, *args, **kwargs):
-        if self.target_object.coordinator == None:
-            self.target_object.coordinator = request.user
-            self.target_object.save()
-        elif self.target_object.coordinator == request.user:
-            self.target_object.coordinator = None
-            self.target_object.save()
-        return HttpResponseRedirect(self.target_object.get_absolute_url())
+    def change_object(self, obj):
+        if obj.coordinator == None:
+            obj.coordinator = self.request.user
+            obj.save()
+        elif obj.coordinator == self.request.user:
+            obj.coordinator = None
+            obj.save()
 
 
 @admin_required
