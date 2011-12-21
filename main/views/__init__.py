@@ -50,7 +50,7 @@ class ChangeObjectView(TemplateView, SingleObjectMixin):
     Otherwise redirects to a supplied address.
     """
     success_url = None
-    
+
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         HttpResponseRedirect(self.get_success_url())
@@ -74,4 +74,4 @@ class ChangeObjectView(TemplateView, SingleObjectMixin):
 
     def change_object(self, obj):
         pass
-
+    

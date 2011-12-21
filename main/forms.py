@@ -227,9 +227,9 @@ class EventPlayersForm(forms.Form):
     """
     Edit players at a given event.
     """
-    def __init__(self, event=None, *args, **kwargs):
+    def __init__(self, instance=None, *args, **kwargs):
         super(EventPlayersForm, self).__init__(*args, **kwargs)
-        self.event = event
+        self.event = instance
         for b in self.event.bookings.all():
             self.fields[b.instrument.name] = forms.ModelChoiceField(label=mark_safe(b.instrument.name),
                                                 queryset=UserProfile.objects.filter(user__is_active=True),
@@ -241,7 +241,7 @@ class EventPlayersForm(forms.Form):
                 b = self.event.bookings.get(instrument=Instrument.live.get(name=field))
                 b.user = self.cleaned_data[field].user if self.cleaned_data[field] else None
                 b.save()
-        return None
+        return self.event
 
 
 class InstrumentNoteForm(forms.ModelForm):

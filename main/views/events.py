@@ -1,14 +1,17 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
+from django.utils.functional import lazy
 from django.template.context import RequestContext
 from main.views import admin_required, active_required
 
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from main.views import ActiveViewMixin, ChangeObjectView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from main.views import ActiveViewMixin, AdminViewMixin, ChangeObjectView
 
 from main.forms import EventForm, EventPlayersForm
 from main.models import Event, Booking
+
+reverse_lazy = lazy(reverse, str)
 
 
 class ListEvents(ListView, ActiveViewMixin):
@@ -44,33 +47,24 @@ class CoordinateEvent(ChangeObjectView, ActiveViewMixin):
             obj.save()
 
 
-class AddEvent(CreateView, ActiveViewMixin):
+class AddEvent(CreateView, AdminViewMixin):
     form_class = EventForm
     template_name = 'main/events/event_add.html'
 
 
-class EditEvent(UpdateView, ActiveViewMixin):
+class EditEvent(UpdateView, AdminViewMixin):
     form_class = EventForm
     model = Event
     template_name = 'main/events/event_edit.html'
 
 
-@admin_required
-def delete_event(request, slug):
-    target_object = get_object_or_404(Event, slug=slug)
-    if request.method == "POST":
-        target_object.delete()
-        return HttpResponseRedirect(reverse('events_upcoming'))
-    else:
-        return render_to_response('main/events/event_delete.html', {'event': target_object},
-                                                                                    context_instance=RequestContext(request))
+class DeleteEvent(DeleteView, AdminViewMixin):
+    model = Event
+    success_url = reverse_lazy('events_upcoming')
+    template_name = 'main/events/event_delete.html'
 
-@admin_required
-def edit_event_players(request, slug):
-    event = get_object_or_404(Event, slug=slug)
-    form = EventPlayersForm(data = request.POST or None, event = event)
-    if form.is_valid():
-        form.save(commit=True)
-        return HttpResponseRedirect(event.get_absolute_url())
-    return render_to_response('main/events/event_edit_players.html', {'form': form, 'event': event },
-                                                                                    context_instance=RequestContext(request))
+
+class EditEventPlayers(UpdateView, AdminViewMixin):
+    form_class = EventPlayersForm
+    model = Event
+    template_name = 'main/events/event_edit_players.html'
