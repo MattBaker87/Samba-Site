@@ -4,7 +4,7 @@ from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from main.views import admin_required, active_required
 
-from django.views.generic import ListView, DetailView
+from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from main.views import ActiveViewMixin, ChangeObjectView
 
 from main.forms import EventForm, EventPlayersForm
@@ -14,13 +14,14 @@ from main.models import Event, Booking
 class ListEvents(ListView, ActiveViewMixin):
     paginate_by = 10
 
+
 class DetailEvent(DetailView, ActiveViewMixin):
     model = Event
     template_name = 'main/events/event_detail.html'
 
+
 class BookInstrument(ChangeObjectView, ActiveViewMixin):
-    def get_object(self, **kwargs):
-        return get_object_or_404(Booking, id=kwargs['booking_id'])
+    model = Booking
     
     def change_object(self, obj):
         if obj.user == None:
@@ -29,17 +30,10 @@ class BookInstrument(ChangeObjectView, ActiveViewMixin):
         elif obj.user == self.request.user:
             obj.user = None
             obj.save()
-    
-    def get_redirect(self):
-        return self.target_object.event.get_absolute_url()
 
 
 class CoordinateEvent(ChangeObjectView, ActiveViewMixin):
-    def get_object(self, **kwargs):
-        return get_object_or_404(Event, slug=kwargs['slug'])
-
-    def get_redirect(self):
-        return self.target_object.get_absolute_url()
+    model = Event
 
     def change_object(self, obj):
         if obj.coordinator == None:
@@ -50,23 +44,16 @@ class CoordinateEvent(ChangeObjectView, ActiveViewMixin):
             obj.save()
 
 
-@admin_required
-def add_event(request):
-    form = EventForm(data = request.POST or None)
-    if form.is_valid():
-        event = form.save(commit=True)
-        return HttpResponseRedirect(event.get_absolute_url())
-    return render_to_response('main/events/event_add.html', {'form': form}, context_instance=RequestContext(request))
+class AddEvent(CreateView, ActiveViewMixin):
+    form_class = EventForm
+    template_name = 'main/events/event_add.html'
 
-@admin_required
-def edit_event(request, slug):
-    event = get_object_or_404(Event, slug=slug)
-    form = EventForm(data = request.POST or None, instance = event)
-    if form.is_valid():
-        form.save(commit=True)
-        return HttpResponseRedirect(event.get_absolute_url())
-    return render_to_response('main/events/event_edit.html', {'form': form, 'event': event },
-                                                                                    context_instance=RequestContext(request))
+
+class EditEvent(UpdateView, ActiveViewMixin):
+    form_class = EventForm
+    model = Event
+    template_name = 'main/events/event_edit.html'
+
 
 @admin_required
 def delete_event(request, slug):

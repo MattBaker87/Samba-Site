@@ -235,12 +235,16 @@ class Booking(models.Model):
                                         self.event.get_linked_name())
     
     ################ URLs and links #################
+    def get_absolute_url(self):
+        return ('event_detail', (), {'slug': self.event.slug})
+    get_absolute_url = models.permalink(get_absolute_url)
+    
     def get_book_url(self):
-        return ('instrument_sign_out', (), {'booking_id': self.id})
+        return ('instrument_sign_out', (), {'pk': self.id})
     get_book_url = models.permalink(get_book_url)
     
     def get_cancel_url(self):
-        return ('cancel_sign_out', (), {'booking_id': self.id})
+        return ('cancel_sign_out', (), {'pk': self.id})
     get_cancel_url = models.permalink(get_cancel_url)
     
     def get_signin_url(self):

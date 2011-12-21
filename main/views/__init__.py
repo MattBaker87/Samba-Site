@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.generic.base import TemplateView, View
+from django.views.generic.detail import SingleObjectMixin
 from django.utils.decorators import method_decorator
 
 def admin_required(fn):
@@ -43,27 +44,34 @@ class AdminTemplateView(TemplateView, AdminViewMixin):
 class ActiveTemplateView(TemplateView, ActiveViewMixin):
     pass
 
-class ChangeObjectView(TemplateView):
+class ChangeObjectView(TemplateView, SingleObjectMixin):
     """
     View that takes a single object and changes that object if the request type is POST.
     Otherwise redirects to a supplied address.
     """
-    def dispatch(self, request, *args, **kwargs):
-        self.target_object = self.get_object(**kwargs)
-        return super(ChangeObjectView, self).dispatch(request, *args, **kwargs)
-
+    success_url = None
+    
     def get(self, request, *args, **kwargs):
-        HttpResponseRedirect(self.get_redirect())
+        self.object = self.get_object()
+        HttpResponseRedirect(self.get_success_url())
 
     def post(self, request, *args, **kwargs):
-        self.change_object(self.target_object)
-        return HttpResponseRedirect(self.get_redirect())
-
-    def get_object(self, **kwargs):
-        pass
+        self.object = self.get_object()
+        self.change_object(self.object)
+        return HttpResponseRedirect(self.get_success_url())
+    
+    def get_success_url(self):
+        if self.success_url:
+            url = self.success_url % self.object.__dict__
+        else:
+            try:
+                url = self.object.get_absolute_url()
+            except AttributeError:
+                raise ImproperlyConfigured(
+                    "No URL to redirect to.  Either provide a url or define"
+                    " a get_absolute_url method on the Model.")
+        return url
 
     def change_object(self, obj):
         pass
 
-    def get_redirect(self):
-        pass
