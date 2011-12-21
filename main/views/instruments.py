@@ -6,8 +6,6 @@ from main.views import admin_required, active_required
 
 from django.views.generic import list_detail
 from django.views.generic import ListView
-from django.views.generic.list import MultipleObjectMixin
-from django.views.generic.edit import  FormMixin
 from main.views import ActiveViewMixin
 
 from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm, InstrumentNoteForm, InstrumentNoteRequiredForm
@@ -17,6 +15,21 @@ from datetime import datetime
 
 class ListInstruments(ListView, ActiveViewMixin):
     paginate_by=None
+    
+
+class DetailInstrument(ListInstruments):
+    def get_queryset(self):
+        self.target_instrument = get_object_or_404(Instrument, slug=self.kwargs['slug'])
+        return self.target_instrument.user_notes.filter(is_removed=False)
+    
+    def get_context_data(self, **kwargs):
+        context = super(DetailInstrument, self).get_context_data(**kwargs)
+        context['instrument'] = self.target_instrument
+        return context
+    
+    template_name='main/instruments/instrument_detail.html'
+    paginate_by=10
+    context_object_name = 'notes_list'
 
 
 @active_required

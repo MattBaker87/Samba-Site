@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import include, patterns, url
 
 from main.views import ActiveTemplateView
-from main.views.instruments import ListInstruments
+from main.views.instruments import ListInstruments, DetailInstrument
 from main.models import Instrument
 
 
@@ -10,7 +10,7 @@ urlpatterns = patterns('sambasite.main.views.instruments',
     url(r'^add/$', 'add_instrument', name='instrument_add'),
     url(r'^delete/(?P<slug>[-\w]+)/$', 'delete_instrument', name='instrument_delete'),
     url(r'^resurrect/(?P<slug>[-\w]+)/$', 'resurrect_instrument', name='instrument_resurrect'),
-    url(r'^detail/(?P<slug>[-\w]+)/$', 'detail_instrument', {'paginate_by': 10}, name='instrument_detail'),
+    url(r'^detail/(?P<slug>[-\w]+)/$', DetailInstrument.as_view(paginate_by=10), name='instrument_detail'),
     url(r'^edit/(?P<slug>[-\w]+)/$', 'edit_instrument', name='instrument_edit'),
     
     ###### Sign in (sign out is on event page) ######
