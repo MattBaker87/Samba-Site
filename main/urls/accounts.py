@@ -1,10 +1,10 @@
 from django.conf.urls.defaults import include, patterns, url
 from django.core.urlresolvers import reverse
 from django.utils.functional import lazy
-from datetime import datetime, timedelta
 
-from main.views import login_direct_to_template
-from django.views.generic.simple import direct_to_template
+from main.views import ActiveTemplateView
+from main.views.accounts import ProfilePastEvents, ListAccounts
+from django.views.generic.base import TemplateView
 from registration.views import activate
 from registration.views import register
 
@@ -14,13 +14,12 @@ reverse_lazy = lazy(reverse, str)
 
 ######### View and edit profile (includes homepage and list of all users) ##########
 urlpatterns = patterns('sambasite.main.views.accounts',
-    url(r'^home/$', login_direct_to_template, {'template': 'main/home.html'}, name='home'),
+    url(r'^home/$', ActiveTemplateView.as_view(template_name='main/home.html'), name='home'),
     url(r'^profile/$', 'view_profile', name='profile'),
     url(r'^profile/(?P<slug>[-\w]+)/$', 'view_profile', name='view_profile'),
-    url(r'^profile/(?P<slug>[-\w]+)/past_events/$', 'profile_past_events', {'paginate_by': 10}, name='profile_past_events'),
+    url(r'^profile/(?P<slug>[-\w]+)/past_events/$', ProfilePastEvents.as_view(paginate_by=10), name='profile_past_events'),
     url(r'^edit/$', 'edit_profile', name='edit_contact'),
-    url(r'^list/$', 'list_accounts', {'queryset_filter':lambda x:x.filter(last_login__gte=datetime.now()-timedelta(365), is_active=True).order_by('userprofile__name'),
-                                        'template_name': 'main/accounts/accounts_list.html'}, name='people'),
+    url(r'^list/$', ListAccounts.as_view(), name='people'),
     url(r'^password/$', 'change_password', name='change_password'),
     url(r'^password/success/$', 'view_profile', {'password_changed': True}, name='password_changed'),
 )
@@ -32,14 +31,14 @@ urlpatterns += patterns('django.contrib',
                                                         'post_reset_redirect': reverse_lazy('password_reset_sent'),
                                                         'password_reset_form': MyPasswordResetForm},
                                                         name="forgotten"),
-    url(r'^password/reset/sent/$', login_direct_to_template, {'template': 'main/accounts/password_reset_form.html'},
+    url(r'^password/reset/sent/$', ActiveTemplateView.as_view(template_name='main/accounts/password_reset_form.html'),
                                                                             name='password_reset_sent'),
     url(r'^password/reset/(?P<uidb36>[-\w]+)/(?P<token>[-\w]+)/$', 'auth.views.password_reset_confirm',
                                                         {'template_name': 'main/accounts/password_reset_confirm.html',
                                                         'post_reset_redirect': reverse_lazy('password_reset_done'),
                                                         'set_password_form': MySetPasswordForm},
                                                         name="password_reset_confirm"),
-    url(r'^password/reset/done/$', login_direct_to_template, {'template': 'main/accounts/password_reset_confirm.html'},
+    url(r'^password/reset/done/$', ActiveTemplateView.as_view(template_name='main/accounts/password_reset_confirm.html'),
                                                                             name='password_reset_done'),
 )
 
@@ -52,9 +51,9 @@ urlpatterns += patterns('',
                                     'template_name': 'main/accounts/signup.html', 'success_url': reverse_lazy('signup_complete'),
                                     'disallowed_url': reverse_lazy('signup_disallowed')},
                                     name='signup'),                              
-    url(r'^signup/closed/$', direct_to_template, { 'template': 'registration/registration_closed.html' },
+    url(r'^signup/closed/$', TemplateView.as_view(template_name='registration/registration_closed.html'),
                                     name='signup_disallowed'),
-    url(r'^signup/complete/$', direct_to_template, { 'template': 'main/accounts/signup.html' }, name='signup_complete'),
+    url(r'^signup/complete/$', TemplateView.as_view(template_name='main/accounts/signup.html'), name='signup_complete'),
                                     # Activation keys get matched by \w+ instead of the more specific
                                     # [a-fA-F0-9]{40} because a bad activation key should still get to the view;
                                     # that way it can return a sensible "invalid key" message instead of a

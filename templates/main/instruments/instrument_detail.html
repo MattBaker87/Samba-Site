@@ -186,8 +186,10 @@
         </table>
         <div class="row table-options">
             <div class="span12">
-                {% load paginate %}
-                {% pagination %}
+                {% if is_paginated %}
+                {% load paginate_class %}
+                {% pagination_class %}
+                {% endif %}
                 &nbsp;
             </div>
         </div>

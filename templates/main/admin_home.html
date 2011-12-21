@@ -71,13 +71,17 @@
                         <a class="info btn-inline btn admin" href="{{ event.get_delete_url }}">Delete</a>
                     </td>
                 </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No upcoming events!</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
     <div class="row table-options">
         <div class="span12">
-            {% load paginate %}
-            {% pagination %}
+            {% load paginate_class %}
+            {% pagination_class %}
             &nbsp;
         </div>
         <div class="pull-right" style="margin-right:10px;">

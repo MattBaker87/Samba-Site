@@ -1,8 +1,8 @@
 <div class="pagination">
     <ul>
-        {% if has_previous %}
+        {% if page_obj.has_previous %}
             <li class="prev">
-                <a href="?page={{ previous }}">&larr; Previous</a>
+                <a href="?page={{ page_obj.previous_page_number }}">&larr; Previous</a>
             </li>
         {% else %}
             <li class="prev disabled"><a href="#">&larr; Previous</a></li>
@@ -11,12 +11,12 @@
             {% if p == '...' %}
                 <li class="disabled"><a href="#">...</a></li>
             {% else %}
-                <li {% if p == page %}class="active"{% endif %}><a href="?page={{ p }}">{{ p }}</a></li>
+                <li {% if p == page_obj.number %}class="active"{% endif %}><a href="?page={{ p }}">{{ p }}</a></li>
             {% endif %}
         {% endfor %}
-        {% if has_next %}
+        {% if page_obj.has_next %}
             <li class="next">
-                <a href="?page={{ next }}">Next &rarr;</a>
+                <a href="?page={{ page_obj.next_page_number }}">Next &rarr;</a>
             </li>
         {% else %}
             <li class="next disabled"><a href="#">Next &rarr;</a></li>

@@ -3,18 +3,21 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from main.views import admin_required, active_required
+
 from django.views.generic import list_detail
+from django.views.generic import ListView
+from django.views.generic.list import MultipleObjectMixin
+from django.views.generic.edit import  FormMixin
+from main.views import ActiveViewMixin
 
 from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm, InstrumentNoteForm, InstrumentNoteRequiredForm
 from main.models import Instrument, Booking, InstrumentNote
 
 from datetime import datetime
 
-@active_required
-def list_instruments(request, template_name, queryset_filter, paginate_by=10):
-    queryset = queryset_filter(Instrument.objects)
-    return list_detail.object_list(request, queryset=queryset,template_object_name='instrument',
-                                    template_name=template_name, paginate_by=paginate_by)
+class ListInstruments(ListView, ActiveViewMixin):
+    paginate_by=None
+
 
 @active_required
 def detail_instrument(request, slug, paginate_by=10, extra_context=None, template_name='main/instruments/instrument_detail.html'):

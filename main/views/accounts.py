@@ -4,7 +4,10 @@ from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from django.contrib.auth import authenticate, login
 from main.views import admin_required, active_required
-from django.views.generic import list_detail
+from datetime import datetime, timedelta
+
+from django.views.generic import ListView
+from main.views import ActiveViewMixin
 
 from main.forms import ContactForm, MyPasswordChangeForm
 from main.models import UserProfile
@@ -30,20 +33,27 @@ def view_profile(request, slug=None, password_changed=False):
                                                                 'password_changed': password_changed},
                                                                 context_instance=RequestContext(request))
 
-@active_required
-def list_accounts(request, template_name, queryset_filter, paginate_by=10):
-    user_list = queryset_filter(User.objects)
-    return render_to_response(template_name, {'user_list': user_list}, context_instance=RequestContext(request))
 
-@active_required
-def profile_past_events(request, slug, paginate_by=10):
-    target_userprofile = get_object_or_404(UserProfile, slug=slug)
-    queryset = target_userprofile.get_past_events()
-    return list_detail.object_list(request, queryset=queryset, template_object_name='event',
-                                    extra_context={'target_user': target_userprofile.user},
-                                    paginate_by=paginate_by,
-                                    template_name='main/accounts/profile_past_events.html')
-                                    
+class ListAccounts(ListView, ActiveViewMixin):
+    def get_queryset(self):
+        return User.objects.filter(last_login__gte=datetime.now()-timedelta(365), is_active=True).order_by('userprofile__name')
+    
+    template_name = 'main/accounts/accounts_list.html'
+
+
+class ProfilePastEvents(ListView, ActiveViewMixin):
+    def get_queryset(self):
+        self.userprofile = get_object_or_404(UserProfile, slug=self.kwargs['slug'])
+        return self.userprofile.get_past_events()
+    
+    def get_context_data(self, **kwargs):
+        context = super(ProfilePastEvents, self).get_context_data(**kwargs)
+        context['target_user'] = self.userprofile.user
+        return context
+    
+    template_name = 'main/accounts/profile_past_events.html'
+
+
 @active_required
 def change_password(request):
     user = request.user

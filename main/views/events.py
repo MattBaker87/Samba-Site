@@ -3,16 +3,16 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.core.urlresolvers import reverse
 from django.template.context import RequestContext
 from main.views import admin_required, active_required
-from django.views.generic import list_detail
+
+from django.views.generic import ListView
+from main.views import ActiveViewMixin
 
 from main.forms import EventForm, EventPlayersForm
 from main.models import Event, Booking
 
-@active_required
-def list_events(request, template_name, queryset_filter, paginate_by=10):
-    queryset = queryset_filter(Event.objects)
-    return list_detail.object_list(request, queryset=queryset,template_object_name='event',
-                                    template_name=template_name, paginate_by=paginate_by)
+
+class ListEvents(ListView, ActiveViewMixin):
+    paginate_by = 10
 
 @active_required
 def detail_event(request, slug):

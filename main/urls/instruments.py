@@ -1,5 +1,8 @@
 from django.conf.urls.defaults import include, patterns, url
-from main.views import login_direct_to_template
+
+from main.views import ActiveTemplateView
+from main.views.instruments import ListInstruments
+from main.models import Instrument
 
 
 urlpatterns = patterns('sambasite.main.views.instruments',
@@ -19,11 +22,11 @@ urlpatterns = patterns('sambasite.main.views.instruments',
     url(r'^remove_note/(?P<note_id>\d+)/$', 'remove_note', name='remove_note'),
     
     ###### Lists #######
-    url(r'^list/$', login_direct_to_template, {'template': 'main/instruments/instrument_list.html'},
+    url(r'^list/$', ActiveTemplateView.as_view(template_name='main/instruments/instrument_list.html'),
                                             name='instrument_list'),
-    url(r'^list/mia/$', login_direct_to_template, {'template': 'main/instruments/instrument_mia_list.html'},
+    url(r'^list/mia/$', ActiveTemplateView.as_view(template_name='main/instruments/instrument_mia_list.html'),
                                             name='instrument_mia_list'),
-    url(r'^list/deceased/$', 'list_instruments', {'queryset_filter': lambda x:x.filter(is_removed=True),
-                                        'template_name': 'main/instruments/instrument_list_removed.html', 'paginate_by':10},
+    url(r'^list/deceased/$', ListInstruments.as_view(queryset=Instrument.objects.filter(is_removed=True),
+                                        template_name='main/instruments/instrument_list_removed.html', paginate_by=None),
                                         name='instrument_list_removed'),
 )

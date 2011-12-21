@@ -2,7 +2,8 @@ from functools import wraps
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
-from django.views.generic import simple
+from django.views.generic.base import TemplateView, View
+from django.utils.decorators import method_decorator
 
 def admin_required(fn):
     @wraps(fn)
@@ -26,6 +27,18 @@ def index(request):
     else:
         return HttpResponseRedirect(reverse('login'))
 
-@login_required
-def login_direct_to_template(request, template):
-    return simple.direct_to_template(request, template=template)
+class ActiveViewMixin(View):
+    @method_decorator(active_required)
+    def dispatch(self, *args, **kwargs):
+        return super(ActiveViewMixin, self).dispatch(*args, **kwargs)
+
+class AdminViewMixin(View):
+    @method_decorator(admin_required)
+    def dispatch(self, *args, **kwargs):
+        return super(AdminViewMixin, self).dispatch(*args, **kwargs)
+
+class AdminTemplateView(TemplateView, AdminViewMixin):
+    pass
+
+class ActiveTemplateView(TemplateView, ActiveViewMixin):
+    pass

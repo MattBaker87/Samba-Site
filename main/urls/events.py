@@ -1,14 +1,15 @@
 from django.conf.urls.defaults import include, patterns, url
 
+from main.views.events import ListEvents
+from main.models import Event
+
 
 urlpatterns = patterns('sambasite.main.views.events',
     ####### Lists ########
-    url(r'^upcoming/$', 'list_events', {'queryset_filter': lambda x:x.future_events(),
-                                        'template_name': 'main/events/event_list_upcoming.html', 'paginate_by':10},
-                                        name='events_upcoming'),
-    url(r'^past/$', 'list_events', {'queryset_filter': lambda x:x.past_events(),
-                                        'template_name': 'main/events/event_list_past.html', 'paginate_by':10},
-                                        name='events_past'),
+    url(r'^upcoming/$', ListEvents.as_view(queryset=Event.objects.future_events(), paginate_by=10,
+                                            template_name='main/events/event_list_upcoming.html'), name='events_upcoming'),
+    url(r'^past/$', ListEvents.as_view(queryset=Event.objects.past_events(), paginate_by=10,
+                                             template_name='main/events/event_list_past.html'), name='events_past'),
     
     ####### Add, edit, delete (note: detail view is in the URLs main section) #######
     url(r'^add/$', 'add_event', name='event_add'),
