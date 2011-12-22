@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.utils.functional import lazy
 
 from main.views import ActiveTemplateView
-from main.views.accounts import ProfilePastEvents, ListAccounts
+from main.views.accounts import ProfilePastEvents, ListAccounts, EditProfile, ViewProfile, ChangePassword, ModerateNewUser
 from django.views.generic.base import TemplateView
 from registration.views import activate
 from registration.views import register
@@ -15,13 +15,13 @@ reverse_lazy = lazy(reverse, str)
 ######### View and edit profile (includes homepage and list of all users) ##########
 urlpatterns = patterns('sambasite.main.views.accounts',
     url(r'^home/$', ActiveTemplateView.as_view(template_name='main/home.html'), name='home'),
-    url(r'^profile/$', 'view_profile', name='profile'),
-    url(r'^profile/(?P<slug>[-\w]+)/$', 'view_profile', name='view_profile'),
+    url(r'^profile/$', ViewProfile.as_view(), name='profile'),
+    url(r'^profile/(?P<slug>[-\w]+)/$', ViewProfile.as_view(), name='view_profile'),
     url(r'^profile/(?P<slug>[-\w]+)/past_events/$', ProfilePastEvents.as_view(paginate_by=10), name='profile_past_events'),
-    url(r'^edit/$', 'edit_profile', name='edit_contact'),
+    url(r'^edit/$', EditProfile.as_view(), name='edit_contact'),
     url(r'^list/$', ListAccounts.as_view(), name='people'),
-    url(r'^password/$', 'change_password', name='change_password'),
-    url(r'^password/success/$', 'view_profile', {'password_changed': True}, name='password_changed'),
+    url(r'^password/$', ChangePassword.as_view(), name='change_password'),
+    url(r'^password/success/$', ViewProfile.as_view(), {'password_changed': True}, name='password_changed'),
 )
 
 ######### Password reset ##########
@@ -58,7 +58,7 @@ urlpatterns += patterns('',
                                     # [a-fA-F0-9]{40} because a bad activation key should still get to the view;
                                     # that way it can return a sensible "invalid key" message instead of a
                                     # confusing 404.
-    url(r'^signup/moderate/(?P<activation_key>\w+)/$', 'sambasite.main.views.accounts.moderate_new_users',
+    url(r'^signup/moderate/(?P<activation_key>\w+)/$', ModerateNewUser.as_view(),
                                     { 'backend': 'main.auth_backends.RegistrationBackend',
                                     'success_url': reverse_lazy('admin_home') },
                                     name='moderate_new_users'),

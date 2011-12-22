@@ -1,47 +1,57 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
-from django.template.context import RequestContext
-from django.contrib.auth import authenticate, login
-from main.views import admin_required, active_required
+from django.utils.functional import lazy
 from datetime import datetime, timedelta
 
-from django.views.generic import ListView
-from main.views import ActiveViewMixin
+from django.views.generic import ListView, UpdateView, DetailView, TemplateView
+from main.views import ActiveViewMixin, AdminViewMixin
 
 from main.forms import ContactForm, MyPasswordChangeForm
+
 from main.models import UserProfile
 from django.contrib.auth.models import User
 
 import registration
 
+reverse_lazy = lazy(reverse, str)
 
-@active_required
-def edit_profile(request):
-    user = request.user
-    form = ContactForm(data = request.POST or None, instance = user)
-    if form.is_valid():
-        form.save(commit=True)
-        return HttpResponseRedirect(reverse('profile'))
-    return render_to_response('main/accounts/edit_contact.html', {'form': form, 'target_user': user},
-                                                                context_instance=RequestContext(request))
 
-@active_required
-def view_profile(request, slug=None, password_changed=False):
-    target_userprofile = get_object_or_404(UserProfile, slug=slug) if slug else request.user.get_profile()
-    return render_to_response('main/accounts/profile.html', {'target_user': target_userprofile.user,
-                                                                'password_changed': password_changed},
-                                                                context_instance=RequestContext(request))
+class EditProfile(UpdateView, ActiveViewMixin):
+    form_class = ContactForm
+    template_name = 'main/accounts/edit_contact.html'
+    success_url = reverse_lazy('profile')
+    
+    def get_object(self):
+        return self.request.user
+    
+    def get_context_data(self, **kwargs):
+        context = super(EditProfile, self).get_context_data(**kwargs)
+        context['target_user'] = self.request.user
+        return context
+
+
+class ViewProfile(DetailView, ActiveViewMixin):
+    template_name = 'main/accounts/profile.html'
+    context_object_name = 'target_user'
+    
+    def get_object(self):
+        return get_object_or_404(UserProfile, slug=self.kwargs['slug']).user if 'slug' in self.kwargs else self.request.user
+    
+    def get_context_data(self, **kwargs):
+        context = super(ViewProfile, self).get_context_data(**kwargs)
+        context['password_changed'] = bool('password_changed' in self.kwargs)
+        return context
 
 
 class ListAccounts(ListView, ActiveViewMixin):
+    template_name = 'main/accounts/accounts_list.html'
     def get_queryset(self):
         return User.objects.filter(last_login__gte=datetime.now()-timedelta(365), is_active=True).order_by('userprofile__name')
-    
-    template_name = 'main/accounts/accounts_list.html'
 
 
 class ProfilePastEvents(ListView, ActiveViewMixin):
+    template_name = 'main/accounts/profile_past_events.html'
     def get_queryset(self):
         self.userprofile = get_object_or_404(UserProfile, slug=self.kwargs['slug'])
         return self.userprofile.get_past_events()
@@ -50,25 +60,36 @@ class ProfilePastEvents(ListView, ActiveViewMixin):
         context = super(ProfilePastEvents, self).get_context_data(**kwargs)
         context['target_user'] = self.userprofile.user
         return context
+
+
+class ChangePassword(UpdateView, ActiveViewMixin):
+    form_class = MyPasswordChangeForm
+    template_name = 'main/accounts/change_password.html'
+    success_url = reverse_lazy('password_changed')
+
+    def get_object(self):
+        return self.request.user
+
+    def get_context_data(self, **kwargs):
+        context = super(ChangePassword, self).get_context_data(**kwargs)
+        context['target_user'] = self.request.user
+        return context
     
-    template_name = 'main/accounts/profile_past_events.html'
+    def get_form_kwargs(self):
+        kwargs = super(ChangePassword, self).get_form_kwargs()
+        kwargs.pop('instance')
+        kwargs['user'] = self.object
+        return kwargs
 
 
-@active_required
-def change_password(request):
-    user = request.user
-    form = MyPasswordChangeForm(data = request.POST or None, user=user)
-    if form.is_valid():
-        form.save(commit=True)
-        return redirect(reverse('password_changed'))
-    return render_to_response('main/accounts/change_password.html', {'form': form, 'target_user': user},
-                                                                    context_instance=RequestContext(request))
-
-@admin_required
-def moderate_new_users(request, **kwargs):
-    if request.method == "POST":
-        if request.POST.has_key('approve'):
-            return registration.views.activate(request, **kwargs)
-        if request.POST.has_key('deny'):
+class ModerateNewUser(TemplateView, AdminViewMixin):
+    def get(self, request, *args, **kwargs):
+        return HttpResponseRedirect(reverse_lazy('admin_home'))
+    
+    def post(self, request, *args, **kwargs):
+        if self.request.POST.has_key('approve'):
+            return registration.views.activate(request, **self.kwargs)
+        if self.request.POST.has_key('deny'):
             registration.models.RegistrationProfile.objects.get(activation_key=kwargs['activation_key']).user.delete()
-    return HttpResponseRedirect(reverse('admin_home'))
+            return HttpResponseRedirect(reverse('admin_home'))
+
