@@ -1,3 +1,8 @@
+"""
+This is the paginator that supports pages generated with class-based generic views. Intention is to migrate
+all views to use this
+"""
+
 from django import template
 import math
 
@@ -13,38 +18,35 @@ def do_display_pagination(parser, token):
     return DisplayPaginationNode()
 
 class DisplayPaginationNode(template.Node):
-    def display_pages(self, page, last_page):
+    def display_pages(self, page_obj, paginator):
         DISPLAY_LENGTH = 10
-        if last_page <= DISPLAY_LENGTH:
-            return range(1, last_page + 1)
+        if paginator.num_pages <= DISPLAY_LENGTH:
+            return range(1, paginator.num_pages + 1)
             
-        if page <= math.ceil(float(DISPLAY_LENGTH)/2):
+        if page_obj.number <= math.ceil(float(DISPLAY_LENGTH)/2):
             display_p = list(range(1, DISPLAY_LENGTH - 1))
-            display_p.extend(['...', last_page])
+            display_p.extend(['...', paginator.num_pages])
             return display_p
         
-        if page >= last_page - math.ceil(float(DISPLAY_LENGTH)/2):
+        if page_obj.number >= paginator.num_pages - math.ceil(float(DISPLAY_LENGTH)/2):
             display_p = [1, '...']
-            display_p.extend(range(last_page - DISPLAY_LENGTH + 3, last_page + 1))
+            display_p.extend(range(paginator.num_pages - DISPLAY_LENGTH + 3, paginator.num_pages + 1))
             return display_p
         
         display_p = [1, '...']
-        display_p.extend(range(page - int(math.ceil(float(DISPLAY_LENGTH)/2)) + 3, page + int(DISPLAY_LENGTH/2) -1))
-        display_p.extend(['...', last_page])
+        display_p.extend(range(page_obj.number - int(math.ceil(float(DISPLAY_LENGTH)/2)) + 3,
+                                                                                page_obj.number + int(DISPLAY_LENGTH/2) -1))
+        display_p.extend(['...', paginator.num_pages])
         return display_p
 
     def render(self, context):
         t = template.loader.get_template('main/utils/paginate.html')
-        if context['pages'] > 1:
+        if context['is_paginated']:
             return t.render(template.Context({
-                                            'has_previous': context['has_previous'],
-                                            'previous': context['previous'],
-                                            'has_next': context['has_next'],
-                                            'next': context['next'],
-                                            'page': context['page'],
-                                            'page_range': self.display_pages(context['page'], context['pages']),
+                                            'page_obj': context['page_obj'],
+                                            'page_range': self.display_pages(context['page_obj'], context['paginator']),
                                             }))
         else:
             return ''
 
-register.tag('pagination', do_display_pagination)
+register.tag('display_pagination', do_display_pagination)
