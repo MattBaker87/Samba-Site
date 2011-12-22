@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block body %}
-    {% block details %}
+    {% block profile_details %}
     {% if password_changed %}
         <div class="alert-message success">
             <a class="close" href="{% url profile %}">×</a>
@@ -52,7 +52,7 @@
         </div>
     {% endblock %}
     <hr>
-    {% block instruments %}
+    {% block profile_instruments %}
         <div class="row">
             <div class="span3">
                 {% if target_user == user %}
@@ -72,7 +72,7 @@
         </div>
     {% endblock %}
     <hr>
-    {% block events %}
+    {% block profile_events %}
         <div class="row">
             <div class="span3">
                 {% if target_user == user %}
