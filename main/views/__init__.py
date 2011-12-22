@@ -81,12 +81,10 @@ class ChangeObjectView(TemplateView, SingleObjectMixin):
     def change_object(self, obj):
         pass
 
-######## Redefine FormMixin so that it doesn't interfere with get_context_data ########
 class FormMixin(object):
     """
-    A mixin that provides a way to show and handle a form in a request.
+    A mixin that provides a way to show and handle a form in a request (but doesn't interfere with get_context_data)
     """
-
     initial = {}
     form_class = None
     success_url = None
@@ -119,7 +117,11 @@ class FormMixin(object):
                 'data': self.request.POST,
                 'files': self.request.FILES,
             })
+        kwargs.update(self.get_additional_form_args())
         return kwargs
+    
+    def get_additional_form_args(self):
+        return {}
 
     def get_success_url(self):
         if self.success_url:

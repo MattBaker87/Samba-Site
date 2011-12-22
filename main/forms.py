@@ -357,7 +357,7 @@ class MyPasswordChangeForm(PasswordChangeForm):
 
 class MyPasswordResetForm(PasswordResetForm):
     def __init__(self, *args, **kwargs):
-        super(MyPasswordResetForm, self).__init__(*args, **args)
+        super(MyPasswordResetForm, self).__init__(*args, **kwargs)
         self.fields['email'].widget = forms.TextInput(attrs={'placeholder':'Email'})
 
     

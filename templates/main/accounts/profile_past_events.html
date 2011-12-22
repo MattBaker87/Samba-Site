@@ -2,7 +2,7 @@
 
 {% block title %}Past events{% endblock %}
 
-{% block main %}
+{% block body %}
     <h1>{% if target_user == user %}Your{% else %}{{ target_user.get_profile.name }}'s{%endif %} past events</h1>
     <table class="zebra-striped">
         <thead>

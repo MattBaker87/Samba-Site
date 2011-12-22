@@ -2,7 +2,7 @@
 
 {% block title %}Instruments missing in action{% endblock %}
 
-{% block main %}
+{% block body %}
     <h1>Instruments missing in action <small>signed out but not yet returned</small></h1>
     {% load get_instruments %}
     {% get_instruments as instrument_list mia %}
