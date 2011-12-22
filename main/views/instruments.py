@@ -1,148 +1,190 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import get_object_or_404
 from django.core.urlresolvers import reverse
-from django.template.context import RequestContext
-from main.views import admin_required, active_required
+from django.utils.functional import lazy
 
-from django.views.generic import list_detail
-from django.views.generic import ListView, FormView
-from main.views import ActiveViewMixin
+from django.views.generic import ListView, FormView, CreateView, UpdateView
+from main.views import ActiveViewMixin, AdminViewMixin, FormMixin, ChangeObjectView
 
 from main.forms import InstrumentForm, BookingSigninForm, AdminBookingSigninForm, InstrumentNoteForm, InstrumentNoteRequiredForm
 from main.models import Instrument, Booking, InstrumentNote
 
 from datetime import datetime
+from copy import copy
+
+reverse_lazy = lazy(reverse, str)
 
 class ListInstruments(ListView, ActiveViewMixin):
     paginate_by=None
 
 
-class DetailInstrument(ListInstruments):
+class DetailInstrument(ListView, ActiveViewMixin):    
+    template_name='main/instruments/instrument_detail.html'
+    paginate_by=10
+    context_object_name='notes_list'
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.instrument = get_object_or_404(Instrument, slug=kwargs.pop('slug'))
+        return super(DetailInstrument, self).dispatch(request, *args, **kwargs)
+    
     def get_queryset(self):
-        self.target_instrument = get_object_or_404(Instrument, slug=self.kwargs['slug'])
-        return self.target_instrument.user_notes.filter(is_removed=False)
+        return self.instrument.user_notes.filter(is_removed=False)
     
     def get_context_data(self, **kwargs):
         context = super(DetailInstrument, self).get_context_data(**kwargs)
-        context['instrument'] = self.target_instrument
+        context['instrument'] = self.instrument
+        return context
+
+
+class SignInBooking(DetailInstrument):
+    template_name='main/instruments/instrument_signin.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.booking = get_object_or_404(Booking, id=kwargs.pop('booking_id'))
+        if not self.booking.user == request.user or self.booking.signed_in:
+            return HttpResponseRedirect(self.booking.instrument.get_absolute_url())
+        return super(SignInBooking, self).dispatch(request, *args, slug=self.booking.instrument.slug, **kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super(SignInBooking, self).get_context_data(**kwargs)
+        context['booking'] = self.booking
+        context['form'] = self.form
         return context
     
-    template_name='main/instruments/instrument_detail.html'
-    paginate_by=10
-    context_object_name = 'notes_list'
-
-######## This gets called by other views, so can't be removed yet #######
-@active_required
-def detail_instrument(request, slug, paginate_by=10, extra_context=None, template_name='main/instruments/instrument_detail.html'):
-    target_object = get_object_or_404(Instrument, slug=slug)
-    c = {'instrument': target_object}
-    if extra_context:
-        c.update(extra_context)
-    return list_detail.object_list(request, template_name=template_name, template_object_name='notes', paginate_by=paginate_by,
-                                queryset=target_object.user_notes.filter(is_removed=False), extra_context=c)
-
-@active_required
-def sign_in_booking(request, booking_id):
-    target_booking = get_object_or_404(Booking, id=booking_id)
-    if not target_booking.user == request.user or target_booking.signed_in:
-        return HttpResponseRedirect(target_booking.instrument.get_absolute_url())
-    form = BookingSigninForm(data = request.POST or None, booking = target_booking)
-    if form.is_valid():
-        form.save()
-        return HttpResponseRedirect(target_booking.instrument.get_absolute_url())
-    return detail_instrument(request, slug=target_booking.instrument.slug,
-                                    template_name='main/instruments/instrument_signin.html',
-                                    extra_context={'booking': target_booking, 'form': form})
+    def get(self, request, *args, **kwargs):
+        self.form = BookingSigninForm(booking = self.booking)
+        return super(SignInBooking, self).get(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        self.form = BookingSigninForm(data = self.request.POST, booking = self.booking)
+        if self.form.is_valid():
+            self.form.save()
+            return HttpResponseRedirect(self.booking.instrument.get_absolute_url())
+        return super(SignInBooking, self).get(request, *args, **kwargs)
         
 
-@active_required
-def instrument_write_note(request, slug):
-    target_object = get_object_or_404(Instrument, slug=slug)
-    form = InstrumentNoteForm(data = request.POST or None, instrument=target_object, user=request.user)
-    if form.is_valid():
+class InstrumentWriteNote(DetailInstrument, FormMixin):
+    form_class = InstrumentNoteForm
+    form_context_name = 'new_note_form'
+    
+    def get(self, request, *args, **kwargs):
+        form_class = self.form_class
+        self.form = self.form_class(**self.get_form_kwargs())
+        return super(InstrumentWriteNote, self).get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form_class = self.form_class
+        self.form = self.form_class(**self.get_form_kwargs())
+        if self.form.is_valid():
+            return self.form_valid(self.form)
+        else:
+            return self.form_invalid(self.form)
+    
+    def get_form_kwargs(self):
+        kwargs = super(InstrumentWriteNote, self).get_form_kwargs()
+        kwargs.update({'instrument': self.instrument, 'user': self.request.user})
+        return kwargs
+    
+    def form_valid(self, form):
         note = form.save(commit=False)
         note.is_editable = True
         note.subject = "general"
-        note.save()
-        return HttpResponseRedirect(target_object.get_absolute_url())
-    return detail_instrument(request, slug=target_object.slug, extra_context={'new_note_form': form})
+        if note.note:
+            note.save()
+        return HttpResponseRedirect(self.instrument.get_absolute_url())
+    
+    def form_invalid(self, form):
+        return super(InstrumentWriteNote, self).get(self.request, *self.args, **self.kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super(InstrumentWriteNote, self).get_context_data(**kwargs)
+        context[self.form_context_name] = self.form
+        return context
 
-@active_required
-def remove_note(request, note_id):
-    target_object = get_object_or_404(InstrumentNote, id=note_id)
-    if request.method == "POST" and (request.user.is_staff or request.user == target_object.user):
-        target_object.is_removed = True
-        target_object.save()
-    return HttpResponseRedirect(target_object.instrument.get_absolute_url())
 
-@admin_required
-def add_instrument(request):
-    form = InstrumentForm(data = request.POST or None)
-    if form.is_valid():
-        instrument = form.save(commit=True)
-        InstrumentNote.objects.create(instrument=instrument, user=request.user, date_made=datetime.now(), subject="added")
-        return HttpResponseRedirect(reverse('instrument_list'))
-    return render_to_response('main/instruments/instrument_add.html', {'form': form}, context_instance=RequestContext(request))
+class RemoveNote(ChangeObjectView, ActiveViewMixin):
+    model = InstrumentNote
 
-@admin_required
-def edit_instrument(request, slug):
-    instrument = get_object_or_404(Instrument.live.all(), slug=slug)
-    i_old_name = str(instrument.name)
-    i_old_type = str(instrument.get_instrument_type_display())
-    form = InstrumentForm(data = request.POST or None, instance = instrument)
-    if form.is_valid():
-        new_instrument = form.save(commit=True)
+    def change_object(self, obj):
+        if obj.is_editable and (self.request.user.is_staff or self.request.user == obj.user):
+            obj.is_removed = True
+            obj.save()
+    
+    def get_success_url(self):
+        return self.object.instrument.get_absolute_url()
+
+
+class AddInstrument(CreateView, AdminViewMixin):
+    form_class = InstrumentForm
+    template_name = 'main/instruments/instrument_add.html'
+    success_url = reverse_lazy('instrument_list')
+    
+    def form_valid(self, form):
+        self.object = form.save(commit=True)
+        InstrumentNote.objects.create(instrument=self.object, user=self.request.user, date_made=datetime.now(), subject="added")
+        return HttpResponseRedirect(self.get_success_url())
+
+
+class EditInstrument(UpdateView, AdminViewMixin):
+    form_class = InstrumentForm
+    model = Instrument
+    template_name = 'main/instruments/instrument_edit.html'
+    
+    def form_valid(self, form):
+        self.old_obj = copy(self.get_object())
+        self.object = form.save(commit=True)
         if form.has_changed():
             if 'damaged' in form._changed_data:
-                InstrumentNote.objects.create(instrument=instrument, user=request.user, date_made=datetime.now(),
-                                            subject="damage" if instrument.damaged else "repair")
+                InstrumentNote.objects.create(instrument=self.object, user=self.request.user, date_made=datetime.now(),
+                            subject="damage" if instrument.damaged else "repair")
             if 'name' in form._changed_data:
-                InstrumentNote.objects.create(instrument=instrument, user=request.user, date_made=datetime.now(),
-                                            subject="rename", note="from %s to %s" % (i_old_name, instrument.name))
+                InstrumentNote.objects.create(instrument=self.object, user=self.request.user, date_made=datetime.now(),
+                            subject="rename", note="from %s to %s" % (self.old_obj.name, self.object.name))
             if 'instrument_type' in form._changed_data:
-                InstrumentNote.objects.create(instrument=instrument, user=request.user, date_made=datetime.now(), subject="type",
-                                            note="from %s to %s" % (i_old_type, instrument.get_instrument_type_display()))
-        return HttpResponseRedirect(instrument.get_absolute_url())
-    return render_to_response('main/instruments/instrument_edit.html', {'form': form, 'instrument': instrument },
-                                                                                    context_instance=RequestContext(request))
+                InstrumentNote.objects.create(instrument=self.object, user=self.request.user, date_made=datetime.now(),
+                            subject="type", note="from %s to %s" % (self.old_obj.get_instrument_type_display(),
+                                                                    self.object.get_instrument_type_display()))
+        return HttpResponseRedirect(self.get_success_url())
 
-@admin_required
-def delete_instrument(request, slug):
-    target_object = get_object_or_404(Instrument.live.all(), slug=slug)
-    form = InstrumentNoteRequiredForm(data = request.POST or None, instrument=target_object, user=request.user)
-    if form.is_valid():
-        target_object.do_remove()
+
+class DeleteInstrument(InstrumentWriteNote, AdminViewMixin):
+    form_class = InstrumentNoteRequiredForm
+    form_context_name = 'form'
+    template_name = 'main/instruments/instrument_delete.html'
+    
+    def form_valid(self, form):
+        self.instrument.do_remove()
         note = form.save(commit=False)
         note.subject = "remove"
         note.save()
-        return HttpResponseRedirect(reverse('instrument_list'))
-    else:
-        return detail_instrument(request, slug=target_object.slug, extra_context={'form':form},
-                                                                template_name='main/instruments/instrument_delete.html')
+        return HttpResponseRedirect(reverse_lazy('instrument_list'))
 
-@admin_required
-def resurrect_instrument(request, slug):
-    target_object = get_object_or_404(Instrument.objects.filter(is_removed=True), slug=slug)
-    form = InstrumentNoteRequiredForm(data = request.POST or None, instrument=target_object, user=request.user)
-    if form.is_valid():
-        target_object.is_removed = False
-        target_object.save()
+
+class ResurrectInstrument(InstrumentWriteNote, AdminViewMixin):
+    form_class = InstrumentNoteRequiredForm
+    form_context_name = 'form'
+    template_name = 'main/instruments/instrument_resurrect.html'
+
+    def form_valid(self, form):
+        self.instrument.is_removed = False
+        self.instrument.save()
         note = form.save(commit=False)
         note.subject = "resurrect"
         note.save()
-        return HttpResponseRedirect(target_object.get_absolute_url())
-    else:
-        return detail_instrument(request, slug=target_object.slug, extra_context={'form':form},
-                                                                template_name='main/instruments/instrument_resurrect.html')
+        return HttpResponseRedirect(self.instrument.get_absolute_url())
 
-@admin_required
-def sign_in_instrument(request, slug):
-    target_instrument = get_object_or_404(Instrument.live.all(), slug=slug)
-    if target_instrument.get_signed_in():
-        return HttpResponseRedirect(target_instrument.get_absolute_url())
-    form = AdminBookingSigninForm(data = request.POST or None, instrument = target_instrument, admin=request.user)
-    if form.is_valid():
+
+class SignInInstrument(InstrumentWriteNote, AdminViewMixin):
+    form_class = AdminBookingSigninForm
+    form_context_name = 'form'
+    template_name = 'main/instruments/instrument_signin_admin.html'
+    
+    def dispatch(self, request, *args, **kwargs):
+        instrument = get_object_or_404(Instrument.live.all(), slug=kwargs['slug'])
+        if instrument.get_signed_in():
+            return HttpResponseRedirect(instrument.get_absolute_url())
+        return super(SignInInstrument, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
         form.save()
-        return HttpResponseRedirect(target_instrument.get_absolute_url())
-    return detail_instrument(request, slug=target_instrument.slug, template_name='main/instruments/instrument_signin_admin.html',
-                                extra_context={'form': form})
+        return HttpResponseRedirect(self.instrument.get_absolute_url())

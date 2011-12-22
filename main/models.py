@@ -309,5 +309,5 @@ class InstrumentNote(models.Model):
     ################ URLs ##############
     
     def get_delete_url(self):
-        return ('remove_note', (), {'note_id': self.id})
+        return ('remove_note', (), {'pk': self.id})
     get_delete_url = models.permalink(get_delete_url)

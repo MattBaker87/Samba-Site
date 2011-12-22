@@ -285,10 +285,10 @@ class AdminBookingSigninForm(forms.Form):
     """
     Booking signin form used by admins (has drop-down selection of the booking they're signing in).
     """
-    def __init__(self, instrument=None, admin=None, *args, **kwargs):
+    def __init__(self, instrument=None, user=None, *args, **kwargs):
         super(AdminBookingSigninForm, self).__init__(*args, **kwargs)
         self.instrument = instrument
-        self.admin = admin
+        self.user = user
         self.fields['damaged'] = InstrumentForm(instance=self.instrument).fields['damaged']
         self.fields['damaged'].initial = instrument.damaged
         self.fields['booking'] = fields.BookingChoiceField(label=mark_safe("Last booking instrument was returned after"),
@@ -306,10 +306,10 @@ class AdminBookingSigninForm(forms.Form):
         InstrumentNote.objects.create(instrument=booking.instrument, user=booking.user, event=booking.event,
                                 date_made=booking.event.start, subject="event")
         if self.cleaned_data['note']:
-            InstrumentNote.objects.create(instrument=booking.instrument, user=self.admin,
+            InstrumentNote.objects.create(instrument=booking.instrument, user=self.user,
                                     date_made=datetime.now(), note=self.cleaned_data['note'], subject="general")
         if self.has_changed() and 'damaged' in self._changed_data:
-            InstrumentNote.objects.create(instrument=booking.instrument, user=self.admin,
+            InstrumentNote.objects.create(instrument=booking.instrument, user=self.user,
                                     date_made=datetime.now(), subject="damage" if self.cleaned_data['damaged'] else "repair")
     
     def save(self, commit=True):
