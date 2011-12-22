@@ -12,36 +12,40 @@
 {% block body %}
     <div class="row">
         <div class="span5 offset1">
-            <h2>Sign up</h2>
-            <p style="padding-top:5px;">Not already signed up for samba?</p>
-            <p>A couple of lines about samba and who can sign up should go here (explaining that we'll need to approve you because once you're in you'll be able to sign up for events etc.).</p>
-            <a class="btn large success" href="{% url signup %}">Sign up</a>
+            {% block index_left %}
+                <h2>Sign up</h2>
+                <p style="padding-top:5px;">Not already signed up for samba?</p>
+                <p>A couple of lines about samba and who can sign up should go here (explaining that we'll need to approve you because once you're in you'll be able to sign up for events etc.).</p>
+                <a class="btn large success" href="{% url signup %}">Sign up</a>
+            {% endblock %}
         </div>
         <div class="span9 offset1">
-            <h2>Log in</h2>
-            <form id="login-form" action="{% url login %}" method="post">
-                {% csrf_token %}
-                <input name="next" type="hidden" value="{{ next }}">
-                <fieldset style="padding-top:5px;">
-                    <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
-                        <div class="input">
-                            {% for error in form.non_field_errors %}
-                                <span class="help-inline">{{ error }}</span>
-                            {% endfor %}
-                            {{ form.username }}
+            {% block index_right %}
+                <h2>Log in</h2>
+                <form id="login-form" action="{% url login %}" method="post">
+                    {% csrf_token %}
+                    <input name="next" type="hidden" value="{{ next }}">
+                    <fieldset style="padding-top:5px;">
+                        <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
+                            <div class="input">
+                                {% for error in form.non_field_errors %}
+                                    <span class="help-inline">{{ error }}</span>
+                                {% endfor %}
+                                {{ form.username }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
-                        <div class="input">
-                            <span class="help-inline"><a href="{% url forgotten %}">Forgotten it?</a></span>
-                            {{ form.password }}
+                        <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
+                            <div class="input">
+                                <span class="help-inline"><a href="{% url forgotten %}">Forgotten it?</a></span>
+                                {{ form.password }}
+                            </div>
                         </div>
-                    </div>
-                    <div class="clearfix">
-                        <button class="btn large" type="submit">Log in</button>
-                    </div>
-                </fieldset>
-            </form>
+                        <div class="clearfix">
+                            <button class="btn large" type="submit">Log in</button>
+                        </div>
+                    </fieldset>
+                </form>
+            {% endblock %}
         </div>
     </div>
 {% endblock %}

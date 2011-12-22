@@ -26,19 +26,19 @@ urlpatterns = patterns('sambasite.main.views.accounts',
 
 ######### Password reset ##########
 urlpatterns += patterns('django.contrib',
-    url(r'^password/reset/$', 'auth.views.password_reset', {'template_name': 'main/not_logged_in/password_reset_form.html',
+    url(r'^password/reset/$', 'auth.views.password_reset', {'template_name': 'main/not_logged_in/password_reset_request.html',
                                                         'email_template_name': 'main/not_logged_in/password_reset_email.html',
                                                         'post_reset_redirect': reverse_lazy('password_reset_sent'),
                                                         'password_reset_form': MyPasswordResetForm},
                                                         name="forgotten"),
-    url(r'^password/reset/sent/$', ActiveTemplateView.as_view(template_name='main/not_logged_in/password_reset_form.html'),
+    url(r'^password/reset/sent/$', TemplateView.as_view(template_name='main/not_logged_in/password_reset_sent.html'),
                                                                             name='password_reset_sent'),
     url(r'^password/reset/(?P<uidb36>[-\w]+)/(?P<token>[-\w]+)/$', 'auth.views.password_reset_confirm',
-                                                        {'template_name': 'main/not_logged_in/password_reset_confirm.html',
+                                                        {'template_name': 'main/not_logged_in/password_reset_form.html',
                                                         'post_reset_redirect': reverse_lazy('password_reset_done'),
                                                         'set_password_form': MySetPasswordForm},
                                                         name="password_reset_confirm"),
-    url(r'^password/reset/done/$', ActiveTemplateView.as_view(template_name='main/not_logged_in/password_reset_confirm.html'),
+    url(r'^password/reset/done/$', TemplateView.as_view(template_name='main/not_logged_in/password_reset_success.html'),
                                                                             name='password_reset_done'),
 )
 
