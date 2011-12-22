@@ -1,9 +1,10 @@
 from django.conf.urls.defaults import include, patterns, url
 
 from main.views.events import DetailEvent
+from main.views import IndexView
 
 urlpatterns = patterns('',
-    url(r'^$', 'sambasite.main.views.index', name='index'),
+    url(r'^$', IndexView.as_view(), name='index'),
     url(r'^accounts/', include('sambasite.main.urls.accounts')),
     url(r'^events/', include('sambasite.main.urls.events')),
     url(r'^instruments/', include('sambasite.main.urls.instruments')),

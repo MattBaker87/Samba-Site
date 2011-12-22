@@ -6,6 +6,16 @@ from django.views.generic.base import TemplateView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.utils.decorators import method_decorator
 
+########## Index View #########
+class IndexView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            return HttpResponseRedirect(reverse('home'))
+        else:
+            return HttpResponseRedirect(reverse('login'))
+        
+
+########## Decorators #########
 def admin_required(fn):
     @wraps(fn)
     def wrapper(request, *args, **kwargs):
@@ -22,12 +32,8 @@ def active_required(fn):
         return fn(request, *args, **kwargs)
     return login_required(wrapper)
 
-def index(request):
-    if request.user.is_authenticated():
-        return HttpResponseRedirect(reverse('home'))
-    else:
-        return HttpResponseRedirect(reverse('login'))
 
+########## Template Class Based Views ############
 class ActiveViewMixin(View):
     @method_decorator(active_required)
     def dispatch(self, *args, **kwargs):
