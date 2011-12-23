@@ -91,5 +91,5 @@ class ModerateNewUser(TemplateView, AdminViewMixin):
             return registration.views.activate(request, **self.kwargs)
         if self.request.POST.has_key('deny'):
             registration.models.RegistrationProfile.objects.get(activation_key=kwargs['activation_key']).user.delete()
-            return HttpResponseRedirect(reverse('admin_users'))
+            return HttpResponseRedirect(reverse('admin_users_denied'))
 

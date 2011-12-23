@@ -61,6 +61,7 @@ urlpatterns += patterns('',
                                     # confusing 404.
     url(r'^signup/moderate/(?P<activation_key>\w+)/$', ModerateNewUser.as_view(),
                                     { 'backend': 'main.auth_backends.RegistrationBackend',
-                                    'success_url': reverse_lazy('admin_users') },
+                                    'success_url': reverse_lazy('admin_users_success'),
+                                    'template_name': 'main/admin/approve_user_failure.html' },
                                     name='moderate_new_users'),
 )

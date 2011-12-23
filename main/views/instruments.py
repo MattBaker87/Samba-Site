@@ -71,6 +71,7 @@ class DetailInstrument(ListView, ActiveViewMixin):
 
     def dispatch(self, request, *args, **kwargs):
         self.instrument = get_object_or_404(Instrument, slug=kwargs.pop('slug'))
+        self.check_instrument()
         return super(DetailInstrument, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -80,6 +81,9 @@ class DetailInstrument(ListView, ActiveViewMixin):
         context = super(DetailInstrument, self).get_context_data(**kwargs)
         context['instrument'] = self.instrument
         return context
+    
+    def check_instrument(self):
+        pass
 
 
 class InstrumentWriteNote(DetailInstrument, FormMixin):
@@ -122,10 +126,14 @@ class InstrumentWriteNote(DetailInstrument, FormMixin):
         return context
 
 
-class DeleteInstrument(InstrumentWriteNote, AdminViewMixin):
+class RetireInstrument(InstrumentWriteNote, AdminViewMixin):
     form_class = InstrumentNoteRequiredForm
     form_context_name = 'form'
     template_name = 'main/instruments/instrument_delete.html'
+    
+    def check_instrument(self):
+        if self.instrument.is_removed:
+            return HttpResponseRedirect(self.instrument.get_absolute_url())
     
     def form_valid(self, form):
         self.instrument.do_remove()
@@ -139,6 +147,10 @@ class ResurrectInstrument(InstrumentWriteNote, AdminViewMixin):
     form_class = InstrumentNoteRequiredForm
     form_context_name = 'form'
     template_name = 'main/instruments/instrument_resurrect.html'
+    
+    def check_instrument(self):
+        if not self.instrument.is_removed:
+            return HttpResponseRedirect(self.instrument.get_absolute_url())
 
     def form_valid(self, form):
         self.instrument.is_removed = False
@@ -149,16 +161,50 @@ class ResurrectInstrument(InstrumentWriteNote, AdminViewMixin):
         return HttpResponseRedirect(self.instrument.get_absolute_url())
 
 
+class DamageInstrument(InstrumentWriteNote, AdminViewMixin):
+    form_class = InstrumentNoteRequiredForm
+    form_context_name = 'form'
+    template_name = 'main/instruments/instrument_damage.html'
+
+    def check_instrument(self):
+        if self.instrument.damaged:
+            return HttpResponseRedirect(self.instrument.get_absolute_url())
+
+    def form_valid(self, form):
+        self.instrument.damaged = True
+        self.instrument.save()
+        note = form.save(commit=False)
+        note.subject = "damage"
+        note.save()
+        return HttpResponseRedirect(self.instrument.get_absolute_url())
+
+
+class RepairInstrument(InstrumentWriteNote, AdminViewMixin):
+    form_class = InstrumentNoteRequiredForm
+    form_context_name = 'form'
+    template_name = 'main/instruments/instrument_repair.html'
+
+    def check_instrument(self):
+        if not self.instrument.damaged:
+            return HttpResponseRedirect(self.instrument.get_absolute_url())
+
+    def form_valid(self, form):
+        self.instrument.damaged = False
+        self.instrument.save()
+        note = form.save(commit=False)
+        note.subject = "repair"
+        note.save()
+        return HttpResponseRedirect(self.instrument.get_absolute_url())
+
+
 class SignInInstrument(InstrumentWriteNote, AdminViewMixin):
     form_class = AdminBookingSigninForm
     form_context_name = 'form'
     template_name = 'main/instruments/instrument_signin_admin.html'
     
-    def dispatch(self, request, *args, **kwargs):
-        instrument = get_object_or_404(Instrument.live.all(), slug=kwargs['slug'])
-        if instrument.get_signed_in():
-            return HttpResponseRedirect(instrument.get_absolute_url())
-        return super(SignInInstrument, self).dispatch(request, *args, **kwargs)
+    def check_instrument(self):
+        if instrument.get_signed_in:
+            return HttpResponseRedirect(self.instrument.get_absolute_url())
 
     def form_valid(self, form):
         form.save()

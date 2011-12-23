@@ -1,0 +1,39 @@
+{% extends "main/admin/admin_events.html" %}
+
+{% block body %}
+    <ul class="tabs">
+        <li>
+            <a href="{% url admin_events %}">Upcoming Sambatage events</a>
+        </li>
+        <li>
+            <a href="{% url admin_instruments %}">Instruments</a>
+        </li>
+        <li class="active">
+            <a href="#">Users awaiting approval to join the site</a>
+        </li>
+    </ul>
+    <h3>Users awaiting approval to join the site</h3>
+    <div class="alert-message error">
+        <a class="close" href="{% url admin_users %}">×</a>
+        <p><strong>Uh oh, something went wrong trying to approve that user.</strong> Perhaps there's another admin working at the same time as you?</p>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url home %}">Home</a>
+            <span class="divider">/</span>
+        </li>
+        <li>
+            <a href="{% url admin_events %}">Admin</a>
+            <span class="divider">/</span>
+        </li>
+    	<li class="active">
+    		<a href="#">Users</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe %}
+{% endblock %}

@@ -43,7 +43,7 @@
             <div class="span2">
                 <p><strong>Name:</strong></p>
             </div>
-            <div class="span10">
+            <div class="span11">
                 <p>{{ instrument.name }}</p>
             </div>
         </div>
@@ -51,36 +51,44 @@
             <div class="span2">
                 <p><strong>Type:</strong></p>
             </div>
-            <div class="span10">
+            <div class="span11">
                 <p>{{ instrument.get_instrument_type_display }}</p>
             </div>
         </div>
-        {% if instrument.damaged %}
-            <div class="row">
-                <div class="span2">
-                    <p><strong>Damage:</strong></p>
-                </div>
-                <div class="span10">
-                    <p><span class="label important">This instrument is flagged as damaged</span></p>
-                </div>
+        <div class="row">
+            <div class="span2">
+                <p><strong>Damage:</strong></p>
             </div>
-        {% endif %}
+            <div class="span11">
+                {% if instrument.damaged %}
+                <p>
+                    <span class="label important">This instrument is flagged as damaged</span>
+                    &nbsp;<a href="{{ instrument.get_repair_url }}" class="info btn-inline btn">Mark as repaired</a>
+                </p>
+                {% else %}
+                <p>
+                    No damage, hurrah!
+                    &nbsp;<a href="{{ instrument.get_damage_url }}" class="info btn-inline btn">Mark as damaged</a>
+                </p>
+                {% endif %}
+            </div>
+        </div>
         <div class="row">
             <div class="span2">
                 <p><strong>Location:</strong></p>
             </div>
-            <div class="span10">
+            <div class="span11">
                 {% if instrument.is_removed %}
                     <p><span class="label notice">The band no longer has access to this instrument</span></p>
                 {% else %}
                     {% if not instrument.get_signed_in %}
-                        <p><span class="label warning">Missing in action</span></p>
+                        <p><span class="label warning">This instrument is missing in action</span></p>
                         <ul class="unstyled">
                             {% for b in instrument.bookings.not_signed_in %}
                                 <li>
-                                    {{ b.user.get_profile.get_linked_name }} didn't sign it in after {{ b.event.get_linked_name }}
+                                    {{ b.user.get_profile.get_linked_name }} didn't sign {{ instrument.name }} in after {{ b.event.get_linked_name }}
                                     {% if user == b.user %}
-                                        &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                        &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn">Sign in</a>
                                     {% endif %}
                                 </li>
                             {% endfor %}
@@ -95,7 +103,7 @@
             <div class="span2">
                 <p><strong>Last user:</strong></p>
             </div>
-            <div class="span10">
+            <div class="span11">
                 <p>
                     {% with instrument.get_last_booking as b %}
                         {% if b %}
@@ -111,7 +119,7 @@
             <div class="span2">
                 <p><strong>Next booking:</strong></p>
             </div>
-            <div class="span10">
+            <div class="span11">
                 <p>
                     {% with instrument.get_next_booking as b %}
                         {% if b %}

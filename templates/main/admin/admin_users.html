@@ -9,10 +9,22 @@
             <a href="{% url admin_instruments %}">Instruments</a>
         </li>
         <li class="active">
-            <a href="{% url admin_users %}">Users awaiting approval to join the site</a>
+            <a href="#">Users awaiting approval to join the site</a>
         </li>
     </ul>
     <h3>Users awaiting approval to join the site</h3>
+    {% if action == 'added' %}
+        <div class="alert-message success">
+            <a class="close" href="{% url admin_users %}">×</a>
+            <p>User approved!</p>
+        </div>
+    {% endif %}
+    {% if action == 'denied' %}
+        <div class="alert-message error">
+            <a class="close" href="{% url admin_users %}">×</a>
+            <p>You denied access to that user. They can apply again if they want/need to.</p>
+        </div>
+    {% endif %}
     <table class="zebra-striped">
         <thead>
             <tr>
@@ -60,8 +72,12 @@
             <a href="{% url home %}">Home</a>
             <span class="divider">/</span>
         </li>
+        <li>
+            <a href="{% url admin_events %}">Admin</a>
+            <span class="divider">/</span>
+        </li>
     	<li class="active">
-    		<a href="#">Admin users</a>
+    		<a href="#">Users</a>
     	</li>
     </ul>
 {% endblock %}

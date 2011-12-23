@@ -177,8 +177,15 @@ class Instrument(models.Model):
     def get_note_url(self):
         return ('instrument_write_note', (), {'slug': self.slug})
     get_note_url = models.permalink(get_note_url)
-
-        
+    
+    def get_repair_url(self):
+        return ('instrument_repair', (), {'slug': self.slug})
+    get_repair_url = models.permalink(get_repair_url)
+    
+    def get_damage_url(self):
+        return ('instrument_damage', (), {'slug': self.slug})
+    get_damage_url = models.permalink(get_damage_url)
+    
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, primary_key=True)
@@ -288,9 +295,13 @@ class InstrumentNote(models.Model):
         return Booking.objects.get(instrument=self.instrument, user=self.user, event=self.event) if self.event else None
     
     def get_note_display(self):
-        display_options = {'damage':"<p>%s marked '%s' as damaged</p>" % (self.user.get_profile().get_linked_name(), \
+        display_options = {'damage':"<p>%s marked '%s' as damaged and wrote:</p><blockquote>%s</blockquote>" % (
+                        self.user.get_profile().get_linked_name(), self.instrument.name, self.note) if self.note else \
+                        "<p>%s marked '%s' as damaged</p>" % (self.user.get_profile().get_linked_name(), \
                                                                             self.instrument.name),
-            'repair':"<p>%s marked '%s' as repaired</p>" % (self.user.get_profile().get_linked_name(), \
+            'repair':"<p>%s marked '%s' as repaired and wrote:</p><blockquote>%s</blockquote>" % (
+                        self.user.get_profile().get_linked_name(), self.instrument.name, self.note) if self.note else \
+                        "<p>%s marked '%s' as repaired</p>" % (self.user.get_profile().get_linked_name(), \
                                                                             self.instrument.name),
             'general':'<p>%s wrote:</p><blockquote>%s</blockquote>' % (self.user.get_profile().get_linked_name(), self.note),
             'event':'<p>%s and wrote:</p><blockquote>%s</blockquote>' % (unicode(self.get_booking()), self.note) if self.note \

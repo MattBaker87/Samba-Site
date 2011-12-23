@@ -1,21 +1,21 @@
 {% extends "main/instruments/instrument_detail.html" %}
 
-{% block title %}Retire instrument{% endblock %}
+{% block title %}Mark instrument as repaired{% endblock %}
 
 {% block top %}
     <form action="" method="post" class="form-stacked">
         {% csrf_token %}
-        <div class="alert-message block-message error">
+        <div class="alert-message block-message info">
             <div class="row">
                 <div class="span5">
-                    <p><strong>Retire '{{ instrument.name }}'?</strong></p>
-                    <p>This will automatically cancel all future bookings of the instrument, and prevent it from being added to future events.</p>
-                    <p>(Don't worry though, we never delete an instrument's history or details, so it's possible to resurrect them later if required.)</p>
+                    <p><strong>Mark '{{ instrument.name }}' as repaired?</strong></p>
+                    <p>Fantastic! This will remove the damaged flag from the instrument throughout the site.</p>
+                    <p>Please write a quick note explaining the repair you made.</p>
                 </div>
                 <div class="span10">
                     <fieldset style="padding-top:0; margin-bottom:0;">
                         <div class="clearfix {% if form.note.errors %}error{% endif %}" style="margin-top:0; margin-bottom:0;">
-                            <label for="id_note">Why is this instrument being retired?</label>
+                            <label for="id_note">What did you repair (and how)?</label>
                             <div class="input">
                                 {{ form.note }}
                                 {% if form.note.errors %}
@@ -30,7 +30,7 @@
             		</fieldset>
             		</fieldset>
                     <div class="alert-actions">
-                        <button class="btn" type="submit">Yes, retire this instrument</button>
+                        <button class="btn" type="submit">Mark as repaired</button>
                         <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">No, I've changed my mind</a>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
     		<span class="divider">/</span>
     	</li>
     	<li class="active">
-    		<a href="#">Retire instrument</a>
+    		<a href="#">Mark as repaired</a>
     	</li>
     </ul>
 {% endblock %}

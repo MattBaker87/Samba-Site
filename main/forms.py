@@ -151,6 +151,7 @@ class InstrumentForm(forms.ModelForm):
     """
     class Meta:
         model = Instrument
+        exclude = ['damaged']
         widgets = {'name': forms.TextInput(attrs={'placeholder':'Agogo 1 (example)'}),}
     
     def clean_name(self):
