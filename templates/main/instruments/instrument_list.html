@@ -14,8 +14,6 @@
 
 {% block body %}
     <h1>Instruments <small>owned by the band</small></h1>
-    {% load get_instruments %}
-    {% get_instruments as instrument_list %}
     <table class="zebra-striped">
         <thead>
             <tr>
@@ -55,8 +53,13 @@
         </tbody>
     </table>
     <div class="row table-options">
+        <div class="span12">
+            {% load paginate %}
+            {% display_pagination %}
+            &nbsp;
+        </div>
         <div class="pull-right">
-            <a href="{% url instrument_list_removed %}" class="btn info">View deceased instruments</a>
+            <a href="{% url instrument_list_removed %}" class="btn info btn-paginate">View deceased instruments</a>
         </div>
     </div>
 {% endblock %}

@@ -28,11 +28,12 @@ urlpatterns = patterns('sambasite.main.views.instruments',
     url(r'^remove_note/(?P<pk>\d+)/$', RemoveNote.as_view(), name='remove_note'),
     
     ###### Lists #######
-    url(r'^list/$', ActiveTemplateView.as_view(template_name='main/instruments/instrument_list.html'),
-                                            name='instrument_list'),
+    url(r'^list/$', ListInstruments.as_view(queryset=Instrument.live.all(),
+                                        template_name='main/instruments/instrument_list.html', paginate_by=10),
+                                        name='instrument_list'),
     url(r'^list/mia/$', ActiveTemplateView.as_view(template_name='main/instruments/instrument_list_missing.html'),
-                                            name='instrument_list_missing'),
+                                        name='instrument_list_missing'),
     url(r'^list/deceased/$', ListInstruments.as_view(queryset=Instrument.objects.filter(is_removed=True),
-                                        template_name='main/instruments/instrument_list_removed.html', paginate_by=None),
+                                        template_name='main/instruments/instrument_list_removed.html', paginate_by=10),
                                         name='instrument_list_removed'),
 )
