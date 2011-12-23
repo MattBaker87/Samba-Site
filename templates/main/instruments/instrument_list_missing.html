@@ -1,0 +1,70 @@
+{% extends "main/base.html" %}
+
+{% block title %}Instruments not yet returned{% endblock %}
+
+{% block body %}
+    <h1>Instruments not yet returned <small>signed out but not yet returned</small></h1>
+    {% load get_instruments %}
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th colspan="4" style="padding-bottom:0;">
+                    <h4>Signed out more than 24 hours ago (missing in action)</h4>
+                </th>
+            </tr>
+        </thead>
+        {% get_instruments as instrument_list mia %}
+        {% include 'main/instruments/instrument_mia_table.html' %}
+        {% if not instrument_list %}
+            <tbody>
+                <tr>
+                    <td colspan="4">
+                        No instruments missing in action!
+                    </td>
+                </tr>
+            </tbody>
+        {% endif %}
+        <thead>
+            <tr>
+                <th colspan="4" style="padding-bottom:0;">
+                    <h4>Signed out recently</h4>
+                </th>
+            </tr>
+        </thead>
+        {% get_instruments as instrument_list just_played %}
+        {% include 'main/instruments/instrument_mia_table.html' %}
+        {% if not instrument_list %}
+            <tbody>
+                <tr>
+                    <td colspan="4">
+                        All instruments signed out recently have been returned.
+                    </td>
+                </tr>
+            </tbody>
+        {% endif %}
+    </table>
+    <div class="row table-options">
+        <div class="pull-right">
+            <a href="{% url instrument_list %}" class="btn info">Full instrument list</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+    	<li>
+    		<a href="{% url home %}">Home</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li>
+    		<a href="{% url instrument_list %}">Instruments</a>
+    		<span class="divider">/</span>
+    	</li>
+    	<li class="active">
+    	    <a href="#">Instruments not yet returned</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe %}
+{% endblock %}

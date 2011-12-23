@@ -14,7 +14,7 @@ class AdminEvents(ListView, AdminViewMixin):
 
 class AdminInstruments(ListView, AdminViewMixin):
     template_name = 'main/admin/admin_instruments.html'
-    paginate_by = 5
+    paginate_by = 10
 
     def get_queryset(self):
         return Instrument.live.all()
@@ -23,7 +23,7 @@ class AdminInstruments(ListView, AdminViewMixin):
 class AdminUsers(ListView, AdminViewMixin):
     template_name = 'main/admin/admin_users.html'
     context_object_name = 'registration_list'
-    paginate_by = 5
+    paginate_by = 10
 
     def get_queryset(self):
         return RegistrationProfile.objects.filter(id__in=[x.id for x in RegistrationProfile.objects.all() \

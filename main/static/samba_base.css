@@ -191,6 +191,11 @@ a.label.warning:hover {
     background-color: #f60;
     text-decoration: none;
 }
+a.label.success:hover {
+    color: #fff;
+    background-color: #373;
+    text-decoration: none;
+}
 
 /* Admin buttons (mini) */
 a.admin.btn-inline {

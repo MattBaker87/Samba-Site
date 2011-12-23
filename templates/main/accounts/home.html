@@ -34,57 +34,13 @@
     <h1>Hello <a href="{% url profile %}">{{ user.get_profile.name }}</a>!</h1>
     <p>This site will help you keep track of what's going on with the samba band. The links in the black navigation bar above let you quickly get information about upcoming events, where our instruments are, and people's contact details. We'll also display the most relevant information below.</p>
     {% load get_instruments %}
-    {% get_instruments as your_mia mia user %}
+    {% get_instruments as your_mia not_signed_in user %}
     {% if your_mia %}
         <div class="home-alert">
-            <p><strong>Are there instruments you haven't signed in yet?</strong> According to our records you played the below but haven't returned them.</p>
+            <p><strong>Are there instruments you haven't signed in yet?</strong> According to our records you played the below but haven't returned them:</p>
             {% with your_mia as instrument_list %}
             <table style="background-color:#fff; margin-top:9px; margin-bottom:0px; border-radius:4px;">
-                <thead>
-                    <tr>
-                        <th>Instrument name</th>
-                        <th>Type</th>
-                        <th>Not signed in after...</th>
-                        <th>Next user</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for instrument in instrument_list %}
-                        <tr>
-                            <td>{{ instrument.get_linked_name }}</td>
-                            <td>{{ instrument.get_instrument_type_display }}</td>
-                                <td>
-                                    <ul class="unstyled">
-                                        {% for b in instrument.bookings.not_signed_in %}
-                                            <li>
-                                                {{ b.user.get_profile.get_linked_name }} played it at {{ b.event.get_linked_name }}
-                                                {% if user == b.user %}
-                                                    &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                    </ul>
-                                </td>
-                            {% with instrument.get_next_booking as b %}
-                                <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
-                            {% endwith %}
-                        </tr>
-                    {% empty %}  
-                        <tr>
-                            <td colspan="4">
-                                {% if not target_user %}
-                                    All instruments are safely accounted for!
-                                {% else %}
-                                    {% if target_user == user %}
-                                        You're not currently responsible for any instruments
-                                    {% else %}
-                                        {{ target_user.get_profile.name }} isn't currently responsible for any instruments
-                                    {% endif %}
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+                {% include 'main/instruments/instrument_mia_table.html' %}
             </table>
             {% endwith %}
         </div>
@@ -102,9 +58,21 @@
         </div>
     </div>
     <h3>Instruments currently missing in action</h3>
+    <p>The below instruments still haven't been signed in, more than 24 hours after the event they were signed out for... Shame on you!</p>
     {% load get_instruments %}
     {% get_instruments as instrument_list mia %}
-    {% include 'main/instruments/instrument_mia_table.html' %}
+    <table class="zebra-striped">
+        {% include 'main/instruments/instrument_mia_table.html' %}
+        {% if not instrument_list %}
+            <tbody>
+                <tr>
+                    <td colspan="4">
+                        All instruments are safely accounted for!
+                    </td>
+                </tr>
+            </tbody>
+        {% endif %}
+    </table>
     <div class="row table-options">
         <div class="pull-right">
             <a href="{% url instrument_list %}" class="btn info">View all instruments</a>

@@ -30,12 +30,14 @@
                     <td>{{ instrument.get_linked_name }}</td>
                     <td>{{ instrument.get_instrument_type_display }}</td>
                     <td>
-                        {% if instrument.damaged %}<span class="label important">Damaged</span><br>{% endif %}
-                        {% if not instrument.get_signed_in %}
-                            <span class="label warning">Missing in action</span>
-                        {% endif %}
-                        {% if instrument.get_signed_in and not instrument.damaged %}
-                            Safely in the store room
+                        {% if instrument.get_mia %}
+                            <a href="{% url instrument_list_missing %}" class="label warning">Missing in action</a>
+                        {% else %}
+                            {% if instrument.get_just_played %}
+                                <a href="{% url instrument_list_missing %}" class="label success">Recently signed out</a>
+                            {% else %}
+                                Safely in the store room
+                            {% endif %}
                         {% endif %}
                     </td>
                     {% with instrument.get_last_booking as b %}

@@ -15,7 +15,12 @@
                 <td>{{ event.start|date:"j M Y,"}}<br>{{ event.start|date:"P" }}</td>
                 <td>{% if event.coordinator %}{{ event.coordinator.get_profile.get_linked_name }}{% else %}-{% endif %}</td>
                 <td>{{ event.notes }}</td>
-                <td style="white-space: nowrap;"><span class="label {{ event.get_label }}">{{ event.get_sign_ups.count }}</span> signed up</td>
+                <td style="white-space: nowrap;">
+                    <span class="label {{ event.get_label }}">{{ event.get_sign_ups.count }}</span> signed up
+                    {% if not event.get_available %}
+                        <span class="label notice">FULL!</span>
+                    {% endif %}
+                </td>
             </tr>
         {% empty %}
             <tr>

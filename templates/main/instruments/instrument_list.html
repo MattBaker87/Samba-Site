@@ -34,10 +34,14 @@
                     <td>{% if instrument.damaged %}<span class="label important">Damaged</span>{% endif %}</td>
                     <td>{{ instrument.get_instrument_type_display }}</td>
                     <td>
-                        {% if not instrument.get_signed_in %}
-                            <a href="{% url instrument_mia_list %}" class="label warning">Missing in action</a>
+                        {% if instrument.get_mia %}
+                            <a href="{% url instrument_list_missing %}" class="label warning">Missing in action</a>
                         {% else %}
-                            Store room
+                            {% if instrument.get_just_played %}
+                                <a href="{% url instrument_list_missing %}" class="label success">Recently signed out</a>
+                            {% else %}
+                                Store room
+                            {% endif %}
                         {% endif %}
                     </td>
                     {% with instrument.get_last_booking as b %}

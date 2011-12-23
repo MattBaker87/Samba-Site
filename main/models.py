@@ -114,8 +114,15 @@ class Instrument(models.Model):
     def get_signed_in(self):
         return not self.bookings.not_signed_in().exists()
     
-    ########## Remove instrument (and clean up past and future bookings) ##########
+    def get_mia(self):
+        return self.bookings.not_signed_in().exists() and self.bookings.not_signed_in()[0].event.start + timedelta(1) < \
+                                                                datetime.now()
     
+    def get_just_played(self):
+        return self.bookings.not_signed_in().exists() and self.bookings.not_signed_in()[0].event.start + timedelta(1) >= \
+                                                                datetime.now()
+    
+    ########## Remove instrument (and clean up past and future bookings) ##########
     def do_remove(self):
         self.is_removed = True
         self.save()

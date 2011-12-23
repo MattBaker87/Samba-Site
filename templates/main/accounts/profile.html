@@ -66,8 +66,23 @@
                 {% endif %}
             <div class="span13">
                 {% load get_instruments %}
-                {% get_instruments as instrument_list mia target_user %}
-                {% include 'main/instruments/instrument_mia_table.html' %}
+                {% get_instruments as instrument_list not_signed_in target_user %}
+                <table class="zebra-striped">
+                    {% include 'main/instruments/instrument_mia_table.html' %}
+                    {% if not instrument_list %}
+                        <tbody>
+                            <tr>
+                                <td colspan="4">
+                                    {% if target_user == user %}
+                                        You're not currently responsible for any instruments
+                                    {% else %}
+                                        {{ target_user.get_profile.name }} isn't currently responsible for any instruments
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    {% endif %}
+                </table>
             </div>
         </div>
     {% endblock %}

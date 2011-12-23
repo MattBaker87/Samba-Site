@@ -161,7 +161,7 @@ class ResurrectInstrument(InstrumentWriteNote, AdminViewMixin):
         return HttpResponseRedirect(self.instrument.get_absolute_url())
 
 
-class DamageInstrument(InstrumentWriteNote, AdminViewMixin):
+class DamageInstrument(InstrumentWriteNote, ActiveViewMixin):
     form_class = InstrumentNoteRequiredForm
     form_context_name = 'form'
     template_name = 'main/instruments/instrument_damage.html'
@@ -179,7 +179,7 @@ class DamageInstrument(InstrumentWriteNote, AdminViewMixin):
         return HttpResponseRedirect(self.instrument.get_absolute_url())
 
 
-class RepairInstrument(InstrumentWriteNote, AdminViewMixin):
+class RepairInstrument(InstrumentWriteNote, ActiveViewMixin):
     form_class = InstrumentNoteRequiredForm
     form_context_name = 'form'
     template_name = 'main/instruments/instrument_repair.html'
@@ -203,7 +203,7 @@ class SignInInstrument(InstrumentWriteNote, AdminViewMixin):
     template_name = 'main/instruments/instrument_signin_admin.html'
     
     def check_instrument(self):
-        if instrument.get_signed_in:
+        if self.instrument.get_signed_in:
             return HttpResponseRedirect(self.instrument.get_absolute_url())
 
     def form_valid(self, form):

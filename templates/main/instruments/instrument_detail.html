@@ -30,7 +30,7 @@
                 <tr {% if item == instrument %}class="highlighted"{% endif %}>
                     <td>{{ item.get_linked_name }}</td>
                     <td style="text-align:right;">{% if item.damaged %}<span class="label important">Dmg</span>{% endif %}
-                        {% if not item.get_signed_in %}<span class="label warning">MIA</span>{% endif %}</td>
+                        {% if item.get_mia %}<span class="label warning">MIA</span>{% endif %}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -83,20 +83,24 @@
                 {% if instrument.is_removed %}
                     <p><span class="label notice">The band no longer has access to this instrument</span></p>
                 {% else %}
-                    {% if not instrument.get_signed_in %}
-                        <p><span class="label warning">This instrument is missing in action</span></p>
+                    {% if instrument.get_signed_in %}
+                        <p>In the store room</p>
+                    {% else %}
+                        {% if instrument.get_mia %}
+                            <p><span class="label warning">This instrument is missing in action</span></p>
+                        {% else %}
+                            <p><span class="label success">This instrument was recently signed out</span></p>
+                        {% endif %}
                         <ul class="unstyled">
                             {% for b in instrument.bookings.not_signed_in %}
                                 <li>
-                                    {{ b.user.get_profile.get_linked_name }} didn't sign {{ instrument.name }} in after {{ b.event.get_linked_name }}
+                                    {{ b.user.get_profile.get_linked_name }} didn't sign '{{ instrument.name }}' in after {{ b.event.get_linked_name }}
                                     {% if user == b.user %}
                                         &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn">Sign in</a>
                                     {% endif %}
                                 </li>
                             {% endfor %}
                         </ul>
-                    {% else %}
-                        <p>In the store room</p>
                     {% endif %}
                 {% endif %}
             </div>
@@ -109,7 +113,7 @@
                 <p>
                     {% with instrument.get_last_booking as b %}
                         {% if b %}
-                            {{ b.user.get_profile.get_linked_name }} played {{ instrument.name }} at {{ b.event.get_linked_name }}, {{ b.event.start|timesince }} ago
+                            {{ b.user.get_profile.get_linked_name }} played '{{ instrument.name }}' at {{ b.event.get_linked_name }}, {{ b.event.start|timesince }} ago
                         {% else %}
                             Brand new!
                         {% endif %}
@@ -125,7 +129,7 @@
                 <p>
                     {% with instrument.get_next_booking as b %}
                         {% if b %}
-                            {{ b.user.get_profile.get_linked_name }} is playing {{ instrument.name }} at {{ b.event.get_linked_name }} in {{ b.event.start|timeuntil }} time
+                            {{ b.user.get_profile.get_linked_name }} is playing '{{ instrument.name }}' at {{ b.event.get_linked_name }} in {{ b.event.start|timeuntil }} time
                         {% else %}
                             No future bookings
                         {% endif %}
