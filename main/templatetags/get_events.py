@@ -15,7 +15,6 @@ def do_get_future_events(parser, token):
     return GetFutureEventsNode(parts[2])
 
 class GetFutureEventsNode(template.Node):
-
     def __init__(self, var_name):
         self.var_name = var_name
 

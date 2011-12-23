@@ -20,7 +20,7 @@
                     <ul class="nav secondary-nav">
                         {% if user.is_staff %}
                             <li {% if active == 'admin' %}class="active"{% endif %}>
-                                <a href="{% url admin_home %}">Admin</a>
+                                <a href="{% url admin_events %}">Admin</a>
                             </li>
                             {% block admin_options %}
                             {% endblock %}

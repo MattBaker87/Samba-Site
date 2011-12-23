@@ -1,0 +1,86 @@
+{% extends "main/base.html" %}
+
+{% block title %}Admin homepage{% endblock %}
+
+{% block nav %}
+    {% with "admin" as active %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}
+
+{% block top %}
+    <h1>Admin homepage</h1>
+    <p>As an admin you can alter information about events and instruments, as well as editing who's signed up for what. This page is an index for the most common admin tasks.</p>
+    <p>We know that the people who administer this site are likely to also be those who are keenest on playing samba, so we've set up the admin site to get out of your way when you don't need it. You can use the rest of the website just like anyone else would, but when you come across something you need to change look for the admin buttons in the nav bar. Your admin privileges are always just a click away, but they're not in your face all the time.</p>
+{% endblock %}
+{% block body %}
+    <ul class="tabs">
+        <li class="active">
+            <a href="#">Upcoming Sambatage events</a>
+        </li>
+        <li>
+            <a href="{% url admin_instruments %}">Instruments</a>
+        </li>
+        <li>
+            <a href="{% url admin_users %}">Users awaiting approval to join the site</a>
+        </li>
+    </ul>
+    <h3>Upcoming Sambatage events</h3>
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th width="85px">When</th>
+                <th>Location</th>
+                <th>Notes</th>
+                <th>Instruments</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in event_list %}
+                <tr>
+                    <td>{{ event.get_linked_name }}</td>
+                    <td>{{ event.start|date:"j M Y,"}}<br>{{ event.start|date:"P" }}</td>
+                    <td>{{ event.location }}</td>
+                    <td>{{ event.notes }}</td>
+                    <td style="white-space: nowrap;"><span class="label {{ event.get_label }}">{{ event.get_sign_ups.count }}</span> signed up</td>
+                    <td style="text-align:right;">
+                        <a class="info btn-inline btn admin" href="{{ event.get_edit_url }}">Edit</a><br>
+                        <a class="info btn-inline btn admin" href="{{ event.get_edit_url }}">Players</a><br>
+                        <a class="info btn-inline btn admin" href="{{ event.get_delete_url }}">Delete</a>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No upcoming events!</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="row table-options">
+        <div class="span12">
+            {% load paginate %}
+            {% display_pagination %}
+            &nbsp;
+        </div>
+        <div class="pull-right" style="margin-right:10px;">
+            <a href="{% url event_add %}" class="btn success btn-paginate">Add event</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url home %}">Home</a>
+            <span class="divider">/</span>
+        </li>
+    	<li class="active">
+    		<a href="#">Admin events</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe %}
+{% endblock %}

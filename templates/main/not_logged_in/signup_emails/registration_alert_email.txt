@@ -6,4 +6,4 @@ Name: {{ user.get_profile.name }}
 Email: {{ user.email }}
 Phone: {{ user.get_profile.telephone }}
 
-To approve the registration log in to http://{{ site.domain }}{% url admin_home %} and authorise {{ user.get_profile.name }}'s membership from the admin homepage. {{ user.get_profile.name }} won't be able to log in before you've approved them.
+To approve the registration log in to http://{{ site.domain }}{% url admin_users %} and authorise {{ user.get_profile.name }}'s membership from the admin homepage. {{ user.get_profile.name }} won't be able to log in before you've approved them.

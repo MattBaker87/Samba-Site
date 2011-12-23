@@ -1,0 +1,81 @@
+{% extends "main/admin/admin_events.html" %}
+
+{% block body %}
+    <ul class="tabs">
+        <li>
+            <a href="{% url admin_events %}">Upcoming Sambatage events</a>
+        </li>
+        <li class="active">
+            <a href="#">Instruments</a>
+        </li>
+        <li>
+            <a href="{% url admin_users %}">Users awaiting approval to join the site</a>
+        </li>
+    </ul>
+    <h3>Instruments</h3>
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Instrument name</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Last user</th>
+                <th>Next user</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for instrument in instrument_list %}
+                <tr>
+                    <td>{{ instrument.get_linked_name }}</td>
+                    <td>{{ instrument.get_instrument_type_display }}</td>
+                    <td>
+                        {% if instrument.damaged %}<span class="label important">Damaged</span><br>{% endif %}
+                        {% if not instrument.get_signed_in %}
+                            <span class="label warning">Missing in action</span>
+                        {% endif %}
+                        {% if instrument.get_signed_in and not instrument.damaged %}
+                            Safely in the store room
+                        {% endif %}
+                    </td>
+                    {% with instrument.get_last_booking as b %}
+                        <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}Brand new!{% endif %}</td>
+                    {% endwith %}
+                    {% with instrument.get_next_booking as b %}
+                        <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
+                    {% endwith %}
+                    <td style="text-align:right;">
+                        <a class="info btn-inline btn admin" href="{{ instrument.get_edit_url }}">Edit</a><br>
+                        {% if not instrument.get_signed_in %}<a class="info btn-inline btn admin" href="{{ instrument.get_signin_url }}">Sign in</a><br>{% endif %}
+                        <a class="info btn-inline btn admin" href="{{ instrument.get_delete_url }}">Retire</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="row table-options">
+        <div class="span12">
+            {% load paginate %}
+            {% display_pagination %}
+            &nbsp;
+        </div>
+        <div class="pull-right" style="margin-right:10px;">
+            <a href="{% url instrument_add %}" class="btn success btn-paginate">Add instrument</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url home %}">Home</a>
+            <span class="divider">/</span>
+        </li>
+    	<li class="active">
+    		<a href="#">Admin instruments</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe %}
+{% endblock %}

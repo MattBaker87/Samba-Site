@@ -1,0 +1,70 @@
+{% extends "main/admin/admin_events.html" %}
+
+{% block body %}
+    <ul class="tabs">
+        <li>
+            <a href="{% url admin_events %}">Upcoming Sambatage events</a>
+        </li>
+        <li>
+            <a href="{% url admin_instruments %}">Instruments</a>
+        </li>
+        <li class="active">
+            <a href="{% url admin_users %}">Users awaiting approval to join the site</a>
+        </li>
+    </ul>
+    <h3>Users awaiting approval to join the site</h3>
+    <table class="zebra-striped">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reg in registration_list %}
+            <form action="{% url moderate_new_users activation_key=reg.activation_key %}" method="POST">
+                {% csrf_token %}
+                <tr>
+                    <td>{{ reg.user.get_profile.name }}</td>
+                    <td>{{ reg.user.email }}</td>
+                    <td>{{ reg.user.get_profile.telephone }}</td>
+                    <td style="text-align:right;">
+                        <button class="info btn-inline btn admin" name="approve" type="submit">Approve</button><br>
+                        <button class="info btn-inline btn admin" name="deny" type="submit">Deny</button>
+                    </td>
+                </tr>
+            </form>
+            {% empty %}
+                <tr>
+                    <td colspan="4">No users awaiting approval</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% if is_paginated %}
+        <div class="row table-options">
+            <div class="span12">
+                {% load paginate %}
+                {% display_pagination %}
+                &nbsp;
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block breadcrumb %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="{% url home %}">Home</a>
+            <span class="divider">/</span>
+        </li>
+    	<li class="active">
+    		<a href="#">Admin users</a>
+    	</li>
+    </ul>
+{% endblock %}
+
+{% block wireframe %}
+{% endblock %}

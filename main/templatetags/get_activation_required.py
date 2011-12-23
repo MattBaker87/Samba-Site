@@ -15,7 +15,6 @@ def do_get_activation_required(parser, token):
     return GetActivationRequiredNode(parts[2])
 
 class GetActivationRequiredNode(template.Node):
-
     def __init__(self, var_name):
         self.var_name = var_name
 

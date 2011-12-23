@@ -84,12 +84,12 @@ class ChangePassword(UpdateView, ActiveViewMixin):
 
 class ModerateNewUser(TemplateView, AdminViewMixin):
     def get(self, request, *args, **kwargs):
-        return HttpResponseRedirect(reverse_lazy('admin_home'))
+        return HttpResponseRedirect(reverse_lazy('admin_users'))
     
     def post(self, request, *args, **kwargs):
         if self.request.POST.has_key('approve'):
             return registration.views.activate(request, **self.kwargs)
         if self.request.POST.has_key('deny'):
             registration.models.RegistrationProfile.objects.get(activation_key=kwargs['activation_key']).user.delete()
-            return HttpResponseRedirect(reverse('admin_home'))
+            return HttpResponseRedirect(reverse('admin_users'))
 

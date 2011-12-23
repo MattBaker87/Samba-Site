@@ -7,7 +7,7 @@ from main.managers import BookingManager, EventManager, InstrumentManager
 
 from django.contrib.sites.models import Site
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 ####### Models #######
@@ -139,6 +139,9 @@ class Instrument(models.Model):
     def get_next_booking(self):
         x = self.get_future_bookings()
         return x[0] if x else None
+    
+    def get_next_needed_date(self):
+        return self.get_next_booking().event.start if self.get_next_booking() else datetime.now() + timedelta(10000)
     
     def get_users_since_signed_in(self):
         return User.objects.filter(id__in=[b.user.id for b in self.bookings.not_signed_in()])
