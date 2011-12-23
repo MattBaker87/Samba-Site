@@ -3,7 +3,7 @@
         <th>Instrument name</th>
         <th>Type</th>
         <th>Not signed in after...</th>
-        <th>Next user</th>
+        <th>Next needed</th>
     </tr>
 </thead>
 <tbody>
@@ -24,7 +24,7 @@
                 </ul>
             </td>
             {% with instrument.get_next_booking as b %}
-                <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
+                <td>{% if b %}{{ b.event.start|timeuntil }} away ({{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}){% else %}No future bookings{% endif %}</td>
             {% endwith %}
         </tr>
     {% endfor %}
