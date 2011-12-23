@@ -55,24 +55,26 @@
                 <p>{{ instrument.get_instrument_type_display }}</p>
             </div>
         </div>
-        <div class="row">
-            <div class="span2">
-                <p><strong>Damage:</strong></p>
+        {% if not instrument.is_removed %}
+            <div class="row">
+                <div class="span2">
+                    <p><strong>Damage:</strong></p>
+                </div>
+                <div class="span11">
+                    {% if instrument.damaged %}
+                    <p>
+                        <span class="label important">This instrument is flagged as damaged</span>
+                        &nbsp;<a href="{{ instrument.get_repair_url }}" class="info btn-inline btn">Mark as repaired</a>
+                    </p>
+                    {% else %}
+                    <p>
+                        No damage, hurrah!
+                        &nbsp;<a href="{{ instrument.get_damage_url }}" class="info btn-inline btn">Mark as damaged</a>
+                    </p>
+                    {% endif %}
+                </div>
             </div>
-            <div class="span11">
-                {% if instrument.damaged %}
-                <p>
-                    <span class="label important">This instrument is flagged as damaged</span>
-                    &nbsp;<a href="{{ instrument.get_repair_url }}" class="info btn-inline btn">Mark as repaired</a>
-                </p>
-                {% else %}
-                <p>
-                    No damage, hurrah!
-                    &nbsp;<a href="{{ instrument.get_damage_url }}" class="info btn-inline btn">Mark as damaged</a>
-                </p>
-                {% endif %}
-            </div>
-        </div>
+        {% endif %}
         <div class="row">
             <div class="span2">
                 <p><strong>Location:</strong></p>
