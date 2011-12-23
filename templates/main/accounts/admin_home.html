@@ -125,7 +125,7 @@
                     <td style="text-align:right;">
                         <a class="info btn-inline btn admin" href="{{ instrument.get_edit_url }}">Edit</a><br>
                         {% if not instrument.get_signed_in %}<a class="info btn-inline btn admin" href="{{ instrument.get_signin_url }}">Sign in</a><br>{% endif %}
-                        <a class="info btn-inline btn admin" href="{{ instrument.get_delete_url }}">Delete</a>
+                        <a class="info btn-inline btn admin" href="{{ instrument.get_delete_url }}">Retire</a>
                     </td>
                 </tr>
             {% endfor %}

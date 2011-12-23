@@ -174,10 +174,11 @@ class EventForm(forms.ModelForm):
         self.fields['coordinator'] = fields.OrganiserChoiceField(required=False, initial=self.instance.coordinator,
                                                         queryset=User.objects.filter(is_active=True).order_by('userprofile'))
         for instrument in Instrument.live.all():
+            label = instrument.name
+            label +=' <span class="label important">Dmg</span>' if instrument.damaged else ''
+            label +=' <span class="label warning">MIA</span>' if not instrument.get_signed_in() else ''
             self.fields[instrument.name] = forms.BooleanField(required=False,
-                    label=mark_safe(instrument.name +
-                        ' <span class="label important">Dmg</span>' if instrument.damaged else instrument.name ),
-                    initial= self.instance.bookings.filter(instrument=instrument).exists())
+                    label=mark_safe(label), initial= self.instance.bookings.filter(instrument=instrument).exists())
     
     class Meta:
         model = Event

@@ -2,15 +2,20 @@
 
 {% block title %}Edit event - {{ event }}{% endblock %}
 
-{% block heading %}Edit details of {{ event }}{% endblock %}
+{% block heading %}{{ event.name }} <small>Edit players</small>{% endblock %}
 
 {% block instruments %}
     {% if event.bookings %}
-        <h3>Instruments</h3>
         <form action="" method="post">
             {% csrf_token %}
+            <h3>Instruments</h3>
             <table class="zebra-striped">
                 <thead>
+                    <tr>
+                        <th colspan="4" style="padding-bottom:0;">
+                            <h4>Signed up</h4>
+                        </th>
+                    </tr>
                     <tr>
                         <th>Name</th>
                         <th>Type</th>
@@ -18,14 +23,45 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for booking in event.bookings.display %}
+                    {% for booking in event.get_sign_ups %}
                         <tr>
                             <td>{{ booking.instrument.get_linked_name }}</td>
                             <td>{{ booking.instrument.get_instrument_type_display }}</td>
                             <td>{% for item in form %}{% if item.label == booking.instrument.name %}{{ item }}{% endif %}{% endfor %}</td>
                         </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="3">No instruments signed up yet!</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
+                {% if not event.start|timeuntil == "0 minutes" %}
+                    <thead>
+                        <tr>
+                            <th colspan="4" style="padding-bottom:0;">
+                                <h4>Available</h4>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Player</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for booking in event.get_available %}
+                            <tr>
+                                <td>{{ booking.instrument.get_linked_name }}</td>
+                                <td>{{ booking.instrument.get_instrument_type_display }}</td>
+                                <td>{% for item in form %}{% if item.label == booking.instrument.name %}{{ item }}{% endif %}{% endfor %}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="3">No instruments available!</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                {% endif %}
             </table>
             <div class="row table-options">
                 <div class="pull-right">

@@ -39,11 +39,14 @@ class Event(models.Model):
     def get_sign_ups(self):
         return self.bookings.exclude(user=None)
     
+    def get_available(self):
+        return self.bookings.filter(user=None)
+    
     def get_label(self):
         x = self.get_sign_ups().count()
-        if x < 5:
+        if x < 10:
             return "important"
-        elif x < 10:
+        elif x < 15:
             return "warning"
         else:
             return "success"
@@ -230,8 +233,8 @@ class Booking(models.Model):
         ordering = ['instrument']
     
     def __unicode__(self):
-        return "%s played %s at %s" % (self.user.get_profile().get_linked_name(),
-                                        self.instrument.get_linked_name(),
+        return "%s played '%s' at %s" % (self.user.get_profile().get_linked_name(),
+                                        self.instrument.name,
                                         self.event.get_linked_name())
     
     ################ URLs and links #################
@@ -282,24 +285,24 @@ class InstrumentNote(models.Model):
         return Booking.objects.get(instrument=self.instrument, user=self.user, event=self.event) if self.event else None
     
     def get_note_display(self):
-        display_options = {'damage':'<p>%s marked %s as damaged</p>' % (self.user.get_profile().get_linked_name(), \
-                                                                            self.instrument.get_linked_name()),
-            'repair':'<p>%s marked %s as repaired</p>' % (self.user.get_profile().get_linked_name(), \
-                                                                            self.instrument.get_linked_name()),
+        display_options = {'damage':"<p>%s marked '%s' as damaged</p>" % (self.user.get_profile().get_linked_name(), \
+                                                                            self.instrument.name),
+            'repair':"<p>%s marked '%s' as repaired</p>" % (self.user.get_profile().get_linked_name(), \
+                                                                            self.instrument.name),
             'general':'<p>%s wrote:</p><blockquote>%s</blockquote>' % (self.user.get_profile().get_linked_name(), self.note),
             'event':'<p>%s and wrote:</p><blockquote>%s</blockquote>' % (unicode(self.get_booking()), self.note) if self.note \
                                                                             else '<p>%s</p>' % unicode(self.get_booking()),
             'rename':'<p>%s renamed the instrument %s</p>' % (self.user.get_profile().get_linked_name(), self.note),
-            'type':'<p>%s changed the type of %s %s</p>' % (self.user.get_profile().get_linked_name(), self.instrument.name, \
+            'type':"<p>%s changed the type of '%s' %s</p>" % (self.user.get_profile().get_linked_name(), self.instrument.name, \
                                                                             self.note),
-            'added':'<p>%s added %s</p>' % (self.user.get_profile().get_linked_name(), self.instrument.name),
-            'remove':"<p>%s marked %s as no longer in the band's possession and wrote:</p><blockquote>%s</blockquote>" % (
+            'added':"<p>%s added '%s'</p>" % (self.user.get_profile().get_linked_name(), self.instrument.name),
+            'remove':"<p>%s marked '%s' as no longer in the band's possession and wrote:</p><blockquote>%s</blockquote>" % (
                         self.user.get_profile().get_linked_name(), self.instrument.name, self.note) if self.note else \
-                        "<p>%s marked %s as no longer in the band's possession</p>" % (self.user.get_profile().get_linked_name(),
+                        "<p>%s marked '%s' as no longer in the band's possession</p>" % (self.user.get_profile().get_linked_name(),
                                                                                         self.instrument.name),
-            'resurrect':"<p>%s marked %s as back in the band's possession and wrote:</p><blockquote>%s</blockquote>" % (
+            'resurrect':"<p>%s marked '%s' as back in the band's possession and wrote:</p><blockquote>%s</blockquote>" % (
                         self.user.get_profile().get_linked_name(), self.instrument.name, self.note) if self.note else \
-                        "<p>%s marked %s as back in the band's possession</p>" % (self.user.get_profile().get_linked_name(),
+                        "<p>%s marked '%s' as back in the band's possession</p>" % (self.user.get_profile().get_linked_name(),
                                                                                         self.instrument.name),
             }
     

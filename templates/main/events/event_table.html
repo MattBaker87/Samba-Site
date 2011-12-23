@@ -3,7 +3,7 @@
         <tr>
             <th>Event</th>
             <th width="85px">When</th>
-            <th>Location</th>
+            <th>Coordinator</th>
             <th>Notes</th>
             <th>Instruments</th>
         </tr>
@@ -13,7 +13,7 @@
             <tr>
                 <td>{{ event.get_linked_name }}</td>
                 <td>{{ event.start|date:"j M Y,"}}<br>{{ event.start|date:"P" }}</td>
-                <td>{{ event.location }}</td>
+                <td>{% if event.coordinator %}{{ event.coordinator.get_profile.get_linked_name }}{% else %}-{% endif %}</td>
                 <td>{{ event.notes }}</td>
                 <td style="white-space: nowrap;"><span class="label {{ event.get_label }}">{{ event.get_sign_ups.count }}</span> signed up</td>
             </tr>

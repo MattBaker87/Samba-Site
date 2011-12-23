@@ -1,5 +1,6 @@
 from django import template
 from main.models import Instrument
+from datetime import datetime, timedelta
 
 register = template.Library()
 
@@ -30,7 +31,7 @@ class GetInstrumentsNode(template.Node):
         if self.mia and self.user:
             instruments = instruments.filter(id__in=[i.id for i in instruments if i.bookings.not_signed_in().filter(user=user).exists()])
         elif self.mia:
-            instruments = instruments.filter(id__in=[i.id for i in instruments if not i.get_signed_in()])
+            instruments = sorted(instruments.filter(id__in=[i.id for i in instruments if not i.get_signed_in()]), key=lambda x: x.get_next_booking().event.start if x.get_next_booking() else datetime.now() + timedelta(1000))
         context[self.var_name] = instruments
         return u""
 

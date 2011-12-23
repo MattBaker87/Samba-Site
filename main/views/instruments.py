@@ -40,10 +40,10 @@ class EditInstrument(UpdateView, AdminViewMixin):
         if form.has_changed():
             if 'damaged' in form._changed_data:
                 InstrumentNote.objects.create(instrument=self.object, user=self.request.user, date_made=datetime.now(),
-                            subject="damage" if instrument.damaged else "repair")
+                            subject="damage" if self.object.damaged else "repair")
             if 'name' in form._changed_data:
                 InstrumentNote.objects.create(instrument=self.object, user=self.request.user, date_made=datetime.now(),
-                            subject="rename", note="from %s to %s" % (self.old_obj.name, self.object.name))
+                            subject="rename", note="from '%s' to '%s'" % (self.old_obj.name, self.object.name))
             if 'instrument_type' in form._changed_data:
                 InstrumentNote.objects.create(instrument=self.object, user=self.request.user, date_made=datetime.now(),
                             subject="type", note="from %s to %s" % (self.old_obj.get_instrument_type_display(),

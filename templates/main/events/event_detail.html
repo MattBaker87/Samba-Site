@@ -2,7 +2,7 @@
 
 {% block title %}Event detail{% endblock %}
 
-{% block heading %}Event details for '{{ event }}'{% endblock %}
+{% block heading %}{{ event.name }} <small>Event details</small>{% endblock %}
 
 {% block sub-nav %}
     {% load get_events %}
@@ -111,10 +111,76 @@
         </div>
     </div>
     {% block instruments %}
-        {% if event.bookings %}
-            <h3>Instruments</h3>
-            <table class="zebra-striped">
+        <h3>Instruments</h3>
+        <table class="zebra-striped">
+            <thead>
+                <tr>
+                    <th colspan="4" style="padding-bottom:0;">
+                        <h4>Signed up</h4>
+                    </th>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Player</th>
+                    <th>{% if event.start|timeuntil == "0 minutes" %}Status{% endif %}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for booking in event.get_sign_ups %}
+                    <tr>
+                        <td>
+                            {{ booking.instrument.get_linked_name }}
+                            {% if booking.instrument.damaged %} <span class="label important">Dmg</span>{% endif %}
+                            {% if not booking.instrument.get_signed_in %} <span class="label warning">MIA</span>{% endif %}
+                            </td>
+                        <td>{{ booking.instrument.get_instrument_type_display }}</td>
+                        <td>{% if booking.user %}{{ booking.user.get_profile.get_linked_name }}{% else %}-{% endif %}</td>
+                        {% if event.start|timeuntil == "0 minutes" %}
+                            {% if booking.signed_in %}
+                                <td>Returned</td>
+                            {% else %}
+                                <td>Not yet returned
+                                    {% if user == booking.user %}
+                                        <a href="{{ booking.get_signin_url }}" class="success btn-inline btn pull-right">Sign in</a>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        {% else %}
+                            {% if booking.user == user %}
+                                <form action="{{ booking.get_cancel_url}}" method="POST">
+                                    {% csrf_token %}
+                                    <td>
+                                        <input type="submit" class="btn-inline btn error pull-right" value="Cancel booking" />
+                                    </td>
+                                </form>
+                            {% else %}
+                                {% if not booking.user %}
+                                    <form action="{{ booking.get_book_url}}" method="POST">
+                                        {% csrf_token %}
+                                        <td>
+                                        <input type="submit" class="btn-inline btn success pull-right" value="Book this instrument" />
+                                        </td>
+                                    </form>
+                                {% else %}
+                                    <td></td>
+                                {% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="4">No instruments signed up yet!</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            {% if not event.start|timeuntil == "0 minutes" %}
                 <thead>
+                    <tr>
+                        <th colspan="4" style="padding-bottom:0;">
+                            <h4>Available</h4>
+                        </th>
+                    </tr>
                     <tr>
                         <th>Name</th>
                         <th>Type</th>
@@ -123,9 +189,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for booking in event.bookings.display %}
+                    {% for booking in event.get_available %}
                         <tr>
-                            <td>{{ booking.instrument.get_linked_name }}</td>
+                            <td>
+                                {{ booking.instrument.get_linked_name }}
+                                {% if booking.instrument.damaged %} <span class="label important">Dmg</span>{% endif %}
+                                {% if not booking.instrument.get_signed_in %} <span class="label warning">MIA</span>{% endif %}
+                                </td>
                             <td>{{ booking.instrument.get_instrument_type_display }}</td>
                             <td>{% if booking.user %}{{ booking.user.get_profile.get_linked_name }}{% else %}-{% endif %}</td>
                             {% if event.start|timeuntil == "0 minutes" %}
@@ -160,10 +230,14 @@
                                 {% endif %}
                             {% endif %}
                         </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="4">No instruments available!</td>
+                        </tr>
                     {% endfor %}
                 </tbody>
-            </table>
-        {% endif %}
+            {% endif %}
+        </table>
     {% endblock %}
 {% endblock %}
 

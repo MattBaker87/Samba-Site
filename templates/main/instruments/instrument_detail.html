@@ -2,11 +2,11 @@
 
 {% block title %}Instrument detail{% endblock %}
 
-{% block heading %}Instrument details for '{{ instrument.name }}'{% endblock %}
+{% block heading %}{{ instrument.name }} <small>Instrument details</small>{% endblock %}
 
 {% block admin_options %}
     {% if not instrument.is_removed %}
-        <li><a href="{{ instrument.get_delete_url }}" class="btn danger btn-nav">Delete</a></li>
+        <li><a href="{{ instrument.get_delete_url }}" class="btn danger btn-nav">Retire</a></li>
         <li><a href="{{ instrument.get_edit_url }}" class="btn info btn-nav">Edit</a></li>
         {% if not instrument.get_signed_in %}
             <li><a href="{{ instrument.get_signin_url }}" class="btn success btn-nav">Sign in</a></li>

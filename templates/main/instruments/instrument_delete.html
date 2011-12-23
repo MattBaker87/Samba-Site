@@ -8,14 +8,14 @@
         <div class="alert-message block-message error">
             <div class="row">
                 <div class="span5">
-                    <h5>Delete the instrument '{{ instrument.name }}'?</h5>
+                    <h5>Retire the instrument '{{ instrument.name }}'?</h5>
                     <p>This will automatically cancel all future bookings of the instrument, and prevent it from being added to future events.</p>
                     <p>(Don't worry though, we never delete an instrument's history or details, so it's possible to resurrect them later if required.)</p>
                 </div>
                 <div class="span10">
                     <fieldset style="padding-top:0; margin-bottom:0;">
                         <div class="clearfix {% if form.note.errors %}error{% endif %}" style="margin-top:0; margin-bottom:0;">
-                            <label for="id_note">Why is this instrument being deleted?</label>
+                            <label for="id_note">Why is this instrument being retired?</label>
                             <div class="input">
                                 {{ form.note }}
                                 {% if form.note.errors %}
@@ -30,7 +30,7 @@
             		</fieldset>
             		</fieldset>
                     <div class="alert-actions">
-                        <button class="btn" type="submit">Yes, delete this instrument</button>
+                        <button class="btn" type="submit">Yes, retire this instrument</button>
                         <a class="btn" href="{{ instrument.get_absolute_url }}" style="font-weight:normal;">No, I've changed my mind</a>
                     </div>
                 </div>
@@ -54,7 +54,7 @@
     		<span class="divider">/</span>
     	</li>
     	<li class="active">
-    		<a href="#">Delete instrument</a>
+    		<a href="#">Retire instrument</a>
     	</li>
     </ul>
 {% endblock %}

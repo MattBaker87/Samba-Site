@@ -3,9 +3,6 @@ from django.db import models
 from datetime import datetime
 
 class BookingManager(models.Manager):    
-    def display(self):
-	    return self.exclude(user=None, event__start__lt=datetime.now())
-	
     def future_bookings(self):
 	    return self.filter(event__start__gte=datetime.now()).order_by('event__start')
 	
