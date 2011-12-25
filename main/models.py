@@ -83,17 +83,6 @@ class InstrumentType(models.Model):
     name = models.CharField(max_length=SHORT)
 
 class Instrument(models.Model):
-    INSTRUMENT_CHOICES = (
-        ('agog', 'Agogo'),
-        ('caix', 'Caixa'),
-        ('repi', 'Repinique'),
-        ('shak', 'Shaker'),
-        ('sur1', 'Surdo (low)'),
-        ('sur2', 'Surdo (mid)'),
-        ('sur3', 'Surdo (high)'),
-        ('tamb', 'Tamborim'),
-        )
-    
     slug = models.SlugField(unique=True, editable=False)
     instrument_type = models.ForeignKey('InstrumentType', related_name='instruments')
     name = models.CharField(max_length=SHORT, verbose_name="Instrument name")
