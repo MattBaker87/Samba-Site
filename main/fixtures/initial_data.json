@@ -54,5 +54,26 @@
         "fields": {
             "name": "Tamborim"
         }
+    },
+    {
+        "model": "auth.user",
+        "pk": 1,
+        "fields": {
+            "username": "admin",
+            "email": "admin@example.com",
+            "password": "sha1$8e7f2$5a9103465cafc2ea3aae3f28f06b3a55d5707a7c",
+            "is_staff": 1,
+            "is_active": 1
+        }
+    },
+    {
+        "model": "main.userprofile",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "name": "admin",
+            "telephone": "07000 000000",
+            "slug": 1
+        }
     }
 ]
