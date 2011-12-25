@@ -28,7 +28,7 @@
             {% for instrument in instrument_list %}
                 <tr>
                     <td>{{ instrument.get_linked_name }}</td>
-                    <td>{{ instrument.get_instrument_type_display }}</td>
+                    <td>{{ instrument.instrument_type.name }}</td>
                     <td>
                         {% if instrument.get_mia %}
                             <a href="{% url instrument_list_missing %}" class="label warning">Missing in action</a>

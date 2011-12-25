@@ -52,7 +52,7 @@
                 <p><strong>Type:</strong></p>
             </div>
             <div class="span11">
-                <p>{{ instrument.get_instrument_type_display }}</p>
+                <p>{{ instrument.instrument_type.name }}</p>
             </div>
         </div>
         {% if not instrument.is_removed %}

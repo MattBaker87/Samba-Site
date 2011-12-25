@@ -26,7 +26,7 @@
                     {% for booking in event.get_sign_ups %}
                         <tr>
                             <td>{{ booking.instrument.get_linked_name }}</td>
-                            <td>{{ booking.instrument.get_instrument_type_display }}</td>
+                            <td>{{ booking.instrument.instrument_type.name }}</td>
                             <td>{% for item in form %}{% if item.label == booking.instrument.name %}{{ item }}{% endif %}{% endfor %}</td>
                         </tr>
                     {% empty %}
@@ -52,7 +52,7 @@
                         {% for booking in event.get_available %}
                             <tr>
                                 <td>{{ booking.instrument.get_linked_name }}</td>
-                                <td>{{ booking.instrument.get_instrument_type_display }}</td>
+                                <td>{{ booking.instrument.instrument_type.name }}</td>
                                 <td>{% for item in form %}{% if item.label == booking.instrument.name %}{{ item }}{% endif %}{% endfor %}</td>
                             </tr>
                         {% empty %}

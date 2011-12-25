@@ -2,15 +2,19 @@
 from p_obfiscate import accounts
 
 import socket
-if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+RUNNING_ON_MY_MACHINE = bool(socket.gethostname() == 'grey-bakers-macbook-pro.local')
+
+import os
+PROJECT_DIR = os.path.dirname(__file__)
+
+if RUNNING_ON_MY_MACHINE:
     DEBUG = True
     TEMPLATE_DEBUG = DEBUG
 else:
     DEBUG = False
     TEMPLATE_DEBUG = False
 
-import os
-PROJECT_DIR = os.path.dirname(__file__)
+
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -19,7 +23,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 import socket
-if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+if RUNNING_ON_MY_MACHINE:
 	DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
@@ -67,7 +71,7 @@ USE_L10N = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+if RUNNING_ON_MY_MACHINE:
 	MEDIA_ROOT = PROJECT_DIR.replace('\\', '/')
 else:
 	MEDIA_ROOT = '/home/greysteil/sambasite/public/site_media/'
@@ -85,7 +89,7 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, "static")
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-if socket.gethostname() == 'grey-bakers-macbook-pro.local':
+if RUNNING_ON_MY_MACHINE:
 	STATIC_URL = '/static/'
 else:
 	STATIC_URL = '/site_media/styles/css/'
@@ -130,8 +134,7 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'sambasite.urls'
 
-if socket.gethostname() == 'grey-bakers-macbook-pro.local':
-	import os.path
+if RUNNING_ON_MY_MACHINE:
 	TEMPLATE_DIRS = (
 		os.path.join(PROJECT_DIR, 'templates').replace('\\', '/'),
 	 	# Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
@@ -208,7 +211,7 @@ EMAIL_USE_TLS = True
 
 # Default e-mail address to use for various automated correspondence from
 # the site managers.
-DEFAULT_FROM_EMAIL = 'webmaster@localhost'
+DEFAULT_FROM_EMAIL = 'webmaster@sambatage.com'
 
 # Subject-line prefix for email messages send with django.core.mail.mail_admins
 # or ...mail_managers.  Make sure to include the trailing space.

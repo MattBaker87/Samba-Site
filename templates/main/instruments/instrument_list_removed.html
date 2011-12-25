@@ -22,7 +22,7 @@
             {% for instrument in instrument_list %}
                 <tr>
                     <td>{{ instrument.get_linked_name }}</td>
-                    <td>{{ instrument.get_instrument_type_display }}</td>
+                    <td>{{ instrument.instrument_type.name }}</td>
                     {% with instrument.get_last_booking as b %}
                         <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}Brand new!{% endif %}</td>
                     {% endwith %}

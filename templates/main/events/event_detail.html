@@ -134,7 +134,7 @@
                             {% if booking.instrument.damaged %} <span class="label important">Dmg</span>{% endif %}
                             {% if not booking.instrument.get_signed_in %} <span class="label warning">MIA</span>{% endif %}
                             </td>
-                        <td>{{ booking.instrument.get_instrument_type_display }}</td>
+                        <td>{{ booking.instrument.instrument_type.name }}</td>
                         <td>{% if booking.user %}{{ booking.user.get_profile.get_linked_name }}{% else %}-{% endif %}</td>
                         {% if event.start|timeuntil == "0 minutes" %}
                             {% if booking.signed_in %}
@@ -196,7 +196,7 @@
                                 {% if booking.instrument.damaged %} <span class="label important">Dmg</span>{% endif %}
                                 {% if not booking.instrument.get_signed_in %} <span class="label warning">MIA</span>{% endif %}
                                 </td>
-                            <td>{{ booking.instrument.get_instrument_type_display }}</td>
+                            <td>{{ booking.instrument.instrument_type.name }}</td>
                             <td>{% if booking.user %}{{ booking.user.get_profile.get_linked_name }}{% else %}-{% endif %}</td>
                             {% if event.start|timeuntil == "0 minutes" %}
                                 {% if booking.signed_in %}

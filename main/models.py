@@ -52,32 +52,35 @@ class Event(models.Model):
             return "success"
     
     ############ URLs and links ##############
-    def get_absolute_url(self):
-        return ('event_detail', (), {'slug': self.slug})
-    get_absolute_url = models.permalink(get_absolute_url)
-    
     def get_linked_name(self):
         return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
     
+    @models.permalink
+    def get_absolute_url(self):
+        return ('event_detail', (), {'slug': self.slug})
+    
+    @models.permalink
     def get_delete_url(self):
         return ('event_delete', (), {'slug': self.slug})
-    get_delete_url = models.permalink(get_delete_url)
     
+    @models.permalink
     def get_edit_url(self):
         return ('event_edit', (), {'slug': self.slug})
-    get_edit_url = models.permalink(get_edit_url)
     
+    @models.permalink
     def get_edit_players_url(self):
         return ('event_edit_players', (), {'slug': self.slug})
-    get_edit_players_url = models.permalink(get_edit_players_url)
-    
+
+    @models.permalink
     def get_coordinate_url(self):
         return ('event_coordinate', (), {'slug': self.slug})
-    get_coordinate_url = models.permalink(get_coordinate_url)
-    
+
+    @models.permalink
     def get_cancel_coordinate_url(self):
         return ('event_cancel_coordinate', (), {'slug': self.slug})
-    get_cancel_coordinate_url = models.permalink(get_cancel_coordinate_url)
+
+class InstrumentType(models.Model):
+    name = models.CharField(max_length=SHORT)
 
 class Instrument(models.Model):
     INSTRUMENT_CHOICES = (
@@ -92,7 +95,7 @@ class Instrument(models.Model):
         )
     
     slug = models.SlugField(unique=True, editable=False)
-    instrument_type = models.CharField(max_length=4, choices=INSTRUMENT_CHOICES, verbose_name="Instrument type")
+    instrument_type = models.ForeignKey('InstrumentType', related_name='instruments')
     name = models.CharField(max_length=SHORT, verbose_name="Instrument name")
     damaged = models.BooleanField(default=False, verbose_name="This instrument is damaged")
     is_removed = models.BooleanField(default=False, editable=False, verbose_name="Removed from website")
@@ -157,41 +160,41 @@ class Instrument(models.Model):
         x = self.user_notes.filter(subject="remove")
         return x[0] if x else None
     
-    ########## URLS and links ##########
-    def get_absolute_url(self):
-        return ('instrument_detail', (), {'slug': self.slug})
-    get_absolute_url = models.permalink(get_absolute_url)
-    
+    ########## URLS and links ##########    
     def get_linked_name(self):
         return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
     
+    @models.permalink
+    def get_absolute_url(self):
+        return ('instrument_detail', (), {'slug': self.slug})
+    
+    @models.permalink
     def get_edit_url(self):
         return ('instrument_edit', (), {'slug': self.slug})
-    get_edit_url = models.permalink(get_edit_url)
     
+    @models.permalink
     def get_delete_url(self):
         return ('instrument_delete', (), {'slug': self.slug})
-    get_delete_url = models.permalink(get_delete_url)
-
+    
+    @models.permalink
     def get_resurrect_url(self):
         return ('instrument_resurrect', (), {'slug': self.slug})
-    get_resurrect_url = models.permalink(get_resurrect_url)
     
+    @models.permalink
     def get_signin_url(self):
         return ('instrument_signin_admin', (), {'slug': self.slug})
-    get_signin_url = models.permalink(get_signin_url)
     
+    @models.permalink
     def get_note_url(self):
         return ('instrument_write_note', (), {'slug': self.slug})
-    get_note_url = models.permalink(get_note_url)
     
+    @models.permalink
     def get_repair_url(self):
         return ('instrument_repair', (), {'slug': self.slug})
-    get_repair_url = models.permalink(get_repair_url)
     
+    @models.permalink
     def get_damage_url(self):
         return ('instrument_damage', (), {'slug': self.slug})
-    get_damage_url = models.permalink(get_damage_url)
     
 
 class UserProfile(models.Model):
@@ -226,16 +229,16 @@ class UserProfile(models.Model):
         return x[0] if x else None
     
     ############### URLs and links ###############
-    def get_absolute_url(self):
-        return ('view_profile', (), {'slug': self.slug})
-    get_absolute_url = models.permalink(get_absolute_url)
-
     def get_linked_name(self):
         return mark_safe('<a href="'+self.get_absolute_url()+'">'+self.name+'</a>')
     
+    @models.permalink
+    def get_absolute_url(self):
+        return ('view_profile', (), {'slug': self.slug})
+    
+    @models.permalink
     def get_past_events_url(self):
         return ('profile_past_events', (), {'slug': self.slug})
-    get_past_events_url = models.permalink(get_past_events_url)
 
 
 class Booking(models.Model):
@@ -255,21 +258,21 @@ class Booking(models.Model):
                                         self.event.get_linked_name())
     
     ################ URLs and links #################
+    @models.permalink
     def get_absolute_url(self):
         return ('event_detail', (), {'slug': self.event.slug})
-    get_absolute_url = models.permalink(get_absolute_url)
     
+    @models.permalink
     def get_book_url(self):
         return ('instrument_sign_out', (), {'pk': self.id})
-    get_book_url = models.permalink(get_book_url)
     
+    @models.permalink
     def get_cancel_url(self):
         return ('cancel_sign_out', (), {'pk': self.id})
-    get_cancel_url = models.permalink(get_cancel_url)
     
+    @models.permalink
     def get_signin_url(self):
         return ('instrument_booking_signin', (), {'booking_id': self.id})
-    get_signin_url = models.permalink(get_signin_url)
 
 
 class InstrumentNote(models.Model):
@@ -331,7 +334,6 @@ class InstrumentNote(models.Model):
         
         
     ################ URLs ##############
-    
+    @models.permalink
     def get_delete_url(self):
         return ('remove_note', (), {'pk': self.id})
-    get_delete_url = models.permalink(get_delete_url)

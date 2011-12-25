@@ -46,8 +46,8 @@ class EditInstrument(UpdateView, AdminViewMixin):
                             subject="rename", note="from '%s' to '%s'" % (self.old_obj.name, self.object.name))
             if 'instrument_type' in form._changed_data:
                 InstrumentNote.objects.create(instrument=self.object, user=self.request.user, date_made=datetime.now(),
-                            subject="type", note="from %s to %s" % (self.old_obj.get_instrument_type_display(),
-                                                                    self.object.get_instrument_type_display()))
+                            subject="type", note="from %s to %s" % (self.old_obj.instrument_type.name,
+                                                                    self.object.instrument_type.name))
         return HttpResponseRedirect(self.get_success_url())
 
 
