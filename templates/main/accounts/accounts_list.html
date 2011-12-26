@@ -32,6 +32,12 @@
             {% endfor %}
         </tbody>
     </table>
+    <div class="row table-options">
+        <div class="span12">
+            {% load paginate %}
+            {% display_pagination %}
+        </div>
+    </div>
     <p>Note: Users who have not logged in to this site for over a year do not appear on this list
 {% endblock %}
 

@@ -46,12 +46,15 @@ class ViewProfile(DetailView, ActiveViewMixin):
 
 class ListAccounts(ListView, ActiveViewMixin):
     template_name = 'main/accounts/accounts_list.html'
+    paginate_by = 10
+    
     def get_queryset(self):
         return User.objects.filter(last_login__gte=datetime.now()-timedelta(365), is_active=True).order_by('userprofile__name')
 
 
 class ProfilePastEvents(ListView, ActiveViewMixin):
     template_name = 'main/accounts/profile_past_events.html'
+    
     def get_queryset(self):
         self.userprofile = get_object_or_404(UserProfile, slug=self.kwargs['slug'])
         return self.userprofile.get_past_events()
