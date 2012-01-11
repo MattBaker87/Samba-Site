@@ -81,6 +81,9 @@ class Event(models.Model):
 
 class InstrumentType(models.Model):
     name = models.CharField(max_length=SHORT)
+    
+    def __unicode__(self):
+        return self.name
 
 class Instrument(models.Model):
     slug = models.SlugField(unique=True, editable=False)

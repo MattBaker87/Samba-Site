@@ -49,6 +49,10 @@
                         <td>{% if b %}{{ b.user.get_profile.get_linked_name }} at {{ b.event.get_linked_name }}{% else %}No future bookings{% endif %}</td>
                     {% endwith %}
                 </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No instruments! Eek, that's not much of a band!</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>

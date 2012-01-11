@@ -9,11 +9,10 @@ PROJECT_DIR = os.path.dirname(__file__)
 
 if RUNNING_ON_MY_MACHINE:
     DEBUG = True
-    TEMPLATE_DEBUG = DEBUG
 else:
     DEBUG = False
-    TEMPLATE_DEBUG = False
 
+TEMPLATE_DEBUG = DEBUG
 
 
 ADMINS = (
@@ -38,10 +37,10 @@ else:
 	DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'greysteil_samba',                      # Or path to database file if using sqlite3.
+        'NAME': 'samba',                      # Or path to database file if using sqlite3.
         'USER': accounts['database']['USER'],                      # Not used with sqlite3.
         'PASSWORD': accounts['database']['PASSWORD'],                  # Not used with sqlite3.
-        'HOST': 'mysql.alwaysdata.com',                      # Set to empty string for localhost. Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
 }
@@ -74,7 +73,7 @@ USE_L10N = True
 if RUNNING_ON_MY_MACHINE:
 	MEDIA_ROOT = PROJECT_DIR.replace('\\', '/')
 else:
-	MEDIA_ROOT = '/home/greysteil/sambasite/public/site_media/'
+	MEDIA_ROOT = '/home/grey/sambasite/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -92,7 +91,7 @@ STATIC_ROOT = os.path.join(PROJECT_DIR, "static")
 if RUNNING_ON_MY_MACHINE:
 	STATIC_URL = '/static/'
 else:
-	STATIC_URL = '/site_media/styles/css/'
+	STATIC_URL = '/static/'
 
 # URL prefix for admin static files -- CSS, JavaScript and images.
 # Make sure to use a trailing slash.
@@ -143,7 +142,7 @@ if RUNNING_ON_MY_MACHINE:
 		)
 else:
 	TEMPLATE_DIRS = (
-		'/home/greysteil/sambasite/public/site_media/templates',
+		'/home/grey/sambasite/templates',
 		)
 
 INSTALLED_APPS = (
@@ -198,20 +197,18 @@ LOGGING = {
 # to a module that defines an EmailBackend class.
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
-# Host for sending e-mail.
-EMAIL_HOST = 'smtp.alwaysdata.com'
-
-# Port for sending e-mail.
-EMAIL_PORT = 25
-
-# Optional SMTP authentication information for EMAIL_HOST.
-EMAIL_HOST_USER = accounts['email']['USER']
-EMAIL_HOST_PASSWORD = accounts['email']['PASSWORD']
-EMAIL_USE_TLS = True
-
-# Default e-mail address to use for various automated correspondence from
-# the site managers.
-DEFAULT_FROM_EMAIL = 'webmaster@sambatage.com'
+if RUNNING_ON_MY_MACHINE:
+    EMAIL_HOST = 'smtp.alwaysdata.com'
+    EMAIL_PORT = 25
+    EMAIL_HOST_USER = accounts['email']['USER']
+    EMAIL_HOST_PASSWORD = accounts['email']['PASSWORD']
+    EMAIL_USE_TLS = True
+    DEFAULT_FROM_EMAIL = 'greysteil@gmail.com'
+else:
+    EMAIL_HOST = 'smtp.soas.ac.uk'
+    EMAIL_PORT = 25
+    EMAIL_USE_TLS = False
+    DEFAULT_FROM_EMAIL = '211549@soas.ac.uk'
 
 # Subject-line prefix for email messages send with django.core.mail.mail_admins
 # or ...mail_managers.  Make sure to include the trailing space.

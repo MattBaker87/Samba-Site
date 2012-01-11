@@ -52,6 +52,10 @@
                         <a class="info btn-inline btn admin" href="{{ instrument.get_delete_url }}">Retire</a>
                     </td>
                 </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">No instruments! Probably better add some!</td>
+                </tr>
             {% endfor %}
         </tbody>
     </table>
