@@ -208,7 +208,7 @@ else:
     EMAIL_HOST = 'smtp.soas.ac.uk'
     EMAIL_PORT = 25
     EMAIL_USE_TLS = False
-    DEFAULT_FROM_EMAIL = '211549@soas.ac.uk'
+    DEFAULT_FROM_EMAIL = 'samba@soas.ac.uk'
 
 # Subject-line prefix for email messages send with django.core.mail.mail_admins
 # or ...mail_managers.  Make sure to include the trailing space.
