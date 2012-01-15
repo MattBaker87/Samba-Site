@@ -1,5 +1,23 @@
 {% extends "main/admin/admin_events.html" %}
 
+{% block scripts %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+<script language="JavaScript">
+    $(function($) {
+        $('.alert-message a.close').click(function() {
+            elt = $(this)
+            while (elt.parent) {
+                elt = elt.parent()
+                if (elt.is('.alert-message')) {
+                    elt.remove();
+                    return false;
+                }
+            }
+        });
+    })
+</script>
+{% endblock %}
+
 {% block body %}
     <ul class="tabs">
         <li>
