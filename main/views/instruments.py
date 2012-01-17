@@ -71,7 +71,8 @@ class DetailInstrument(ListView, ActiveViewMixin):
 
     def dispatch(self, request, *args, **kwargs):
         self.instrument = get_object_or_404(Instrument, slug=kwargs.pop('slug'))
-        self.check_instrument()
+        if self.check_instrument():
+            return self.check_instrument()
         return super(DetailInstrument, self).dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
