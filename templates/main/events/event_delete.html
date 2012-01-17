@@ -7,7 +7,7 @@
         {% csrf_token %}
         <div class="alert-message block-message error">
             <div style="position:absolute; right:10px; top:4px;">
-                    <button class="btn" type="submit">Yes, delete this event</button> <a class="btn" href="{{ event.get_absolute_url }}" style="font-weight:normal;">No, I've changed my mind</a>
+                    <button class="btn" type="submit">Yes, delete this event</button> <a class="btn closedim" href="{{ event.get_absolute_url }}" style="font-weight:normal;">No, I've changed my mind</a>
 
             </div>
             <p>Are you sure you want to <strong>delete the event '{{ event.name }}'?</strong></p>

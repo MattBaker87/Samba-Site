@@ -32,7 +32,7 @@
 {% endblock %}
 
 {% block admin_options %}
-    <li><a href="{{ event.get_delete_url }}" class="btn danger btn-nav">Delete</a></li>
+    <li><a href="{{ event.get_delete_url }}" class="btn danger btn-nav alertdim">Delete</a></li>
     {% if not event.start|timeuntil == "0 minutes" %}
         <li><a href="{{ event.get_edit_url }}" class="btn info btn-nav">Edit details</a></li>
         <li><a href="{{ event.get_edit_players_url }}" class="btn info btn-nav">Edit players</a></li>
