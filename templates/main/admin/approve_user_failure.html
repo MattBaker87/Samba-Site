@@ -2,20 +2,7 @@
 
 {% block scripts %}
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
-<script language="JavaScript">
-    $(function($) {
-        $('.alert-message a.close').click(function() {
-            elt = $(this)
-            while (elt.parent) {
-                elt = elt.parent()
-                if (elt.is('.alert-message')) {
-                    elt.remove();
-                    return false;
-                }
-            }
-        });
-    })
-</script>
+<script src="{{ STATIC_URL }}samba.js" type="text/javascript"></script>
 {% endblock %}
 
 {% block body %}

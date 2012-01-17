@@ -1,58 +1,58 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Samba Site - {% block title %}Default{% endblock %}</title>
-    <link rel="stylesheet" href="{{ STATIC_URL }}samba_base.css">
-    {% block scripts %}{% endblock %}
-</head>
-<body>
-{% block nav %}
-    <div class="topbar">
-        <div class="fill">
-            <div class="container">
-                <a class="brand" href="{% url index %}">Samba Site</a>
-                {% if user.is_authenticated %}
-                    <ul class="nav">
-                        <li {% if active == 'home' %}class="active"{% endif %}><a href="{% url index %}">Home</a></li>
-                        <li {% if active == 'people' %}class="active"{% endif %}><a href="{% url people %}">People</a></li>
-                        <li {% if active == 'events' %}class="active"{% endif %}><a href="{% url events_upcoming %}">Events</a></li>
-                        <li {% if active == 'instruments' %}class="active"{% endif %}><a href="{% url instrument_list %}">Instruments</a></li>
-                    </ul>
-                    <ul class="nav secondary-nav">
-                        {% if user.is_staff %}
-                            <li {% if active == 'admin' %}class="active"{% endif %}>
-                                <a href="{% url admin_events %}">Admin</a>
-                            </li>
-                            {% block admin_options %}
-                            {% endblock %}
+    <head>
+        <title>Samba Site - {% block title %}Default{% endblock %}</title>
+        <link rel="stylesheet" href="{{ STATIC_URL }}samba_base.css">
+        {% block scripts %}{% endblock %}
+    </head>
+    <body>
+        {% block nav %}
+            <div class="topbar">
+                <div class="fill">
+                    <div class="container">
+                        <a class="brand" href="{% url index %}">Samba Site</a>
+                        {% if user.is_authenticated %}
+                            <ul class="nav">
+                                <li {% if active == 'home' %}class="active"{% endif %}><a href="{% url index %}">Home</a></li>
+                                <li {% if active == 'people' %}class="active"{% endif %}><a href="{% url people %}">People</a></li>
+                                <li {% if active == 'events' %}class="active"{% endif %}><a href="{% url events_upcoming %}">Events</a></li>
+                                <li {% if active == 'instruments' %}class="active"{% endif %}><a href="{% url instrument_list %}">Instruments</a></li>
+                            </ul>
+                            <ul class="nav secondary-nav">
+                                {% if user.is_staff %}
+                                    <li {% if active == 'admin' %}class="active"{% endif %}>
+                                        <a href="{% url admin_events %}">Admin</a>
+                                    </li>
+                                    {% block admin_options %}
+                                    {% endblock %}
+                                {% endif %}
+                                <li {% if active == 'profile' %}class="active"{% endif %}>
+                                    {{ user.get_profile.get_linked_name }}
+                                </li>
+                                <li><a href="{% url logout %}">Logout</a></li>
+                            </ul>
                         {% endif %}
-                        <li {% if active == 'profile' %}class="active"{% endif %}>
-                            {{ user.get_profile.get_linked_name }}
-                        </li>
-                        <li><a href="{% url logout %}">Logout</a></li>
-                    </ul>
-                {% endif %}
+                    </div>
+                </div>
             </div>
-        </div>
-    </div>
-{% endblock %}
-<div class="container">
-    {% block top %}
-    {% endblock %}
-    {% block body %}
-    {% endblock %}
-    
-    {% block breadcrumb %}
-    {% endblock %}
-    
-    {% block wireframe %}
-    <div class="content">
-        <hr>
-        <h3>To do</h3>
-        {% block todo %}
         {% endblock %}
-    </div>
-    {% endblock %}
-</div>
-</body>
+        <div class="container">
+            {% block top %}
+            {% endblock %}
+            {% block body %}
+            {% endblock %}
+    
+            {% block breadcrumb %}
+            {% endblock %}
+    
+            {% block wireframe %}
+            <div class="content">
+                <hr>
+                <h3>To do</h3>
+                {% block todo %}
+                {% endblock %}
+            </div>
+            {% endblock %}
+        </div>
+    </body>
 </html>

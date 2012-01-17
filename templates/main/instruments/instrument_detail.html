@@ -2,17 +2,22 @@
 
 {% block title %}Instrument detail{% endblock %}
 
+{% block scripts %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js" type="text/javascript"></script>
+<script src="{{ STATIC_URL }}samba.js" type="text/javascript"></script>
+{% endblock %}
+
 {% block heading %}{{ instrument.name }} <small>Instrument details</small>{% endblock %}
 
 {% block admin_options %}
     {% if not instrument.is_removed %}
-        <li><a href="{{ instrument.get_delete_url }}" class="btn danger btn-nav">Retire</a></li>
+        <li><a href="{{ instrument.get_delete_url }}" class="btn danger btn-nav alertdim">Retire</a></li>
         <li><a href="{{ instrument.get_edit_url }}" class="btn info btn-nav">Edit</a></li>
         {% if not instrument.get_signed_in %}
-            <li><a href="{{ instrument.get_signin_url }}" class="btn success btn-nav">Sign in</a></li>
+            <li><a href="{{ instrument.get_signin_url }}" class="btn success btn-nav alertdim">Sign in</a></li>
         {% endif %}
     {% else %}
-        <li><a href="{{ instrument.get_resurrect_url }}" class="btn success btn-nav">Resurrect!</a></li>
+        <li><a href="{{ instrument.get_resurrect_url }}" class="btn success btn-nav alertdim">Resurrect!</a></li>
     {% endif %}
 {% endblock %}
 
@@ -64,12 +69,12 @@
                     {% if instrument.damaged %}
                     <p>
                         <span class="label important">This instrument is flagged as damaged</span>
-                        &nbsp;<a href="{{ instrument.get_repair_url }}" class="info btn-inline btn">Mark as repaired</a>
+                        &nbsp;<a href="{{ instrument.get_repair_url }}" class="info btn-inline btn alertdim">Mark as repaired</a>
                     </p>
                     {% else %}
                     <p>
                         No damage, hurrah!
-                        &nbsp;<a href="{{ instrument.get_damage_url }}" class="info btn-inline btn">Mark as damaged</a>
+                        &nbsp;<a href="{{ instrument.get_damage_url }}" class="info btn-inline btn alertdim">Mark as damaged</a>
                     </p>
                     {% endif %}
                 </div>
@@ -96,7 +101,7 @@
                                 <li>
                                     {{ b.user.get_profile.get_linked_name }} didn't sign '{{ instrument.name }}' in after {{ b.event.get_linked_name }}
                                     {% if user == b.user %}
-                                        &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn">Sign in</a>
+                                        &nbsp;<a href="{{ b.get_signin_url }}" class="success btn-inline btn alertdim">Sign in</a>
                                     {% endif %}
                                 </li>
                             {% endfor %}
