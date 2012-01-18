@@ -304,24 +304,6 @@ a.btn.delete {
   text-align: center;
 }
 
-.signup-unit {
-  background: rgb(255,255,255);
-  background: rgba(255,255,255,0.6);
-  margin-bottom: 30px;
-  padding: 20px 30px;
-  -webkit-border-radius: 12px;
-  -moz-border-radius: 12px;
-  border-radius: 12px;
-}
-
-.signup-unit {
-  color: rgb(0,0,0);
-}
-
-.signup-unit h1, .signup-unit h2, .signup-unit h3, .signup-unit h4, .signup-unit h5, .signup-unit h6 {
-  color: rgb(40,40,40);
-}
-
 .login-unit {
   background: rgb(255,255,255);
   background: rgba(255,255,255,0.6);
