@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Samba Site - {% block title %}Default{% endblock %}</title>
+        <link rel="stylesheet" href="{{ STATIC_URL }}samba_base.css">
+        {% block scripts %}{% endblock %}
+    </head>
+    <body style="background-image: url('{{STATIC_URL}}/wall-background.gif'); background-repeat: repeat; padding-top:30px;">
+        <div class="container">
+            {% block top %}
+            {% endblock %}
+            {% block body %}
+            {% endblock %}
+    
+            {% block breadcrumb %}
+            {% endblock %}
+    
+            {% block wireframe %}
+            <div class="content">
+                <hr>
+                <h3>To do</h3>
+                {% block todo %}
+                {% endblock %}
+            </div>
+            {% endblock %}
+        </div>
+    </body>
+</html>

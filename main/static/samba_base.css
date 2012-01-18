@@ -41,6 +41,10 @@ tbody tr.highlighted td, tbody tr.highlighted td a, .zebra-striped tbody tr.high
   margin-top: 10px;
 }
 
+.signup-header h1 {
+  color: rgb(225,225,225);
+}
+
 #signup-form {
   position: relative;
   width: 400px;
@@ -69,11 +73,16 @@ tbody tr.highlighted td, tbody tr.highlighted td a, .zebra-striped tbody tr.high
 #signup-form .help-inline {
   display: block;
   position: absolute;
+  color: rgb(225,225,225);
   top: -8px;
   left: 406px;
   width: 214px;
   margin-top: 14px;
   line-height: 16px;
+}
+
+#signup-form .error .help-inline {
+  color: #FB4;
 }
 
 form .clearfix.error > label, form .clearfix.error .help-block, form .clearfix.error .help-inline {
@@ -105,13 +114,20 @@ form .clearfix.error > label, form .clearfix.error .help-block, form .clearfix.e
 }
 
 /*Unique to login*/
-#login-form .help-inline {
+#login-form .help-block {
+  font-size: inherit;
+  line-height: inherit;
+  color: rgb(0,0,0);
   display: block;
-  position: absolute;
-  left: 230px;
-  width: 254px;
-  margin-top: 11px;
-  line-height: 16px;
+  margin: 5px 0px;
+}
+
+#login-form a {
+  color: rgb(0,0,0);
+}
+
+#login-form .error .help-block {
+  color: #A22;
 }
 
 .options .btn {
@@ -286,4 +302,40 @@ button.btn.delete {
 a.btn.delete {
   width: 170px;
   text-align: center;
+}
+
+.signup-unit {
+  background: rgb(255,255,255);
+  background: rgba(255,255,255,0.6);
+  margin-bottom: 30px;
+  padding: 20px 30px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+}
+
+.signup-unit {
+  color: rgb(0,0,0);
+}
+
+.signup-unit h1, .signup-unit h2, .signup-unit h3, .signup-unit h4, .signup-unit h5, .signup-unit h6 {
+  color: rgb(40,40,40);
+}
+
+.login-unit {
+  background: rgb(255,255,255);
+  background: rgba(255,255,255,0.6);
+  margin-bottom: 30px;
+  padding: 20px 30px;
+  -webkit-border-radius: 12px;
+  -moz-border-radius: 12px;
+  border-radius: 12px;
+}
+
+.login-unit {
+  color: rgb(0,0,0);
+}
+
+.login-unit h1, .login-unit h2, .login-unit h3, .login-unit h4, .login-unit h5, .login-unit h6, {
+  color: rgb(40,40,40);
 }

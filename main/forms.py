@@ -136,7 +136,7 @@ class LoginForm(AuthenticationForm):
             self.user_cache = authenticate(username=username, password=password)
             if self.user_cache is None:
                 if User.objects.filter(username=username).exists() or User.objects.filter(email=username).exists():
-                    raise forms.ValidationError(_("Password didn't match username/email"))
+                    raise forms.ValidationError(_("Password didn't match username"))
                 else:
                     raise forms.ValidationError(_("No account with that username/email"))
             elif not self.user_cache.is_active:

@@ -1,51 +1,59 @@
-{% extends 'main/base.html' %}
+{% extends 'main/not_logged_in/base.html' %}
 
 {% block title %}Login{% endblock %}
 
+{% block nav %}
+{% endblock %}
+
 {% block top %}
-    <div class="hero-unit">
-    	<h1>Samba site</h1>
-    	<p>Big sambatage logo will go here</p>
+    <div class="hero-unit" style="padding: 20px 60px; background:none; margin-bottom:0px;">
+        <a href="{% url index %}"><img src="{{ STATIC_URL }}/sambatage_logo.gif"></a>
     </div>
 {% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="span5 offset1">
-            {% block index_left %}
-                <h2>Sign up</h2>
-                <p style="padding-top:5px;">Not already signed up for samba? Sign up today!</p>
-                <p> We'll approve you as quickly as we can (assuming we know you!). Once that's done you'll be able to sign up for all the events the band has coming up.</p>
-                <a class="btn large success" href="{% url signup %}">Sign up</a>
-            {% endblock %}
+            <div class="signup-unit">
+                {% block index_left %}
+                    <h2>Sign up</h2>
+                    <p style="padding-top:5px;">Not already signed up for samba? Sign up today!</p>
+                    <p> We'll approve you as quickly as we can (assuming we know you!). Once that's done you'll be able to sign up for all the events the band has coming up.</p>
+                    <a class="btn large success" href="{% url signup %}">Sign up</a>
+                {% endblock %}
+            </div>
         </div>
-        <div class="span9 offset1">
-            {% block index_right %}
-                <h2>Log in</h2>
-                <form id="login-form" action="{% url login %}" method="post">
-                    {% csrf_token %}
-                    <input name="next" type="hidden" value="{{ next }}">
-                    <fieldset style="padding-top:5px;">
-                        <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
-                            <div class="input">
-                                {% for error in form.non_field_errors %}
-                                    <span class="help-inline">{{ error }}</span>
-                                {% endfor %}
-                                {{ form.username }}
+        <div class="span5 offset3">
+            <div class="login-unit">
+                {% block index_right %}
+                    <h2>Log in</h2>
+                    <form id="login-form" action="{% url login %}" method="post" style="margin-bottom:0px;">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ next }}">
+                        <fieldset style="padding-top:5px;">
+                            <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
+                                <div class="input">
+                                    {{ form.username }}
+                                </div>
                             </div>
-                        </div>
-                        <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
-                            <div class="input">
-                                <span class="help-inline"><a href="{% url forgotten %}">Forgotten it?</a></span>
-                                {{ form.password }}
+                            <div class="clearfix {% if form.non_field_errors %}error{% endif %}">
+                                <div class="input">
+                                    {{ form.password }}
+                                </div>
+                                <div class="help-block">
+                                    <a href="{% url forgotten %}">Forgotten it?</a>
+                                </div>
+                                            <div class="{% if form.non_field_errors %}error{% endif %}">
+                                            {% for error in form.non_field_errors %}
+                                                <div class="help-block">{{ error }}</div>
+                                            {% endfor %}
+                                            </div>
                             </div>
-                        </div>
-                        <div class="clearfix">
-                            <button class="btn large" type="submit" tabindex="1">Log in</button>
-                        </div>
-                    </fieldset>
-                </form>
-            {% endblock %}
+                            <button class="btn large info" type="submit" tabindex="1">Log in</button>
+                        </fieldset>
+                    </form>
+                {% endblock %}
+            </div>
         </div>
     </div>
 {% endblock %}
