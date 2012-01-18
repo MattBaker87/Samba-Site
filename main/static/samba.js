@@ -104,17 +104,8 @@ $(function() {
                 	        url: action,
                 	        data: $("tr.writenote form").serialize(),
                 	        success: function(data) {
-                	            // get the table in the new html
-                	            var temp = $(data).find("tr.writenote");
-                	            while (!temp.is("table")) {
-                	                temp = temp.parent()
-                	            }
-                	            // get the table in the old html
-                	            var temp2 = $("tr.writenote");
-                	            while (!temp2.is("table")) {
-                	                temp2 = temp2.parent()
-                	            }
-                	            temp2.replaceWith(temp)
+                	            // update the table in the html
+                                $("table").has("tr.writenote").replaceWith($(data).find("tr.writenote").closest("table"));
                 	            writeNote();
                             },
                 	        dataType: 'html'
