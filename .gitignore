@@ -1,3 +1,4 @@
+
 *.pyc
 database
 .DS_Store
@@ -5,5 +6,3 @@ p_obfiscate.py
 *.iws
 *.ipr
 *.iml
-local_test.py
-
