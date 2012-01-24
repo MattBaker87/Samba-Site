@@ -1,8 +1,13 @@
 # Django settings for sambasite project.
 from p_obfiscate import accounts
 
-import socket
-RUNNING_ON_MY_MACHINE = bool(socket.gethostname() == 'grey-bakers-macbook-pro.local')
+RUNNING_ON_MY_MACHINE = False
+try:
+   from local_test import *
+   RUNNING_ON_MY_MACHINE = True
+except ImportError, e:
+   pass
+
 
 import os
 PROJECT_DIR = os.path.dirname(__file__)
@@ -25,10 +30,10 @@ import socket
 if RUNNING_ON_MY_MACHINE:
 	DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'django_samba',                      # Or path to database file if using sqlite3.
-        'USER': 'django',                      # Not used with sqlite3.
-        'PASSWORD': 'password',                  # Not used with sqlite3.
+        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': os.path.join(PROJECT_DIR, 'database'),      # Or path to database file if using sqlite3.
+        'USER': '',                     # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     }
